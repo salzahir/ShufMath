@@ -23,7 +23,7 @@ struct GameSetupView: View {
     var body: some View {
         VStack{
             Section("Practice Choices"){
-                Stepper("Count Value \(count)", value: $count, in: 1...12)
+                Stepper("Count Value \(count)", value: $count, in: 2...12)
                 Picker("Choose Number of Questions", selection: $choice) {
                     ForEach(questionChoices, id: \.self){ number in
                         Text("\(number)")
@@ -187,8 +187,8 @@ struct ContentView: View {
         var questions: [Question] = []
         
         for _ in 0..<lengthQuestions {
-            let choice1 = Int.random(in: 2...pracNumbers)
-            let choice2 = Int.random(in: 2...pracNumbers)
+            let choice1 = Int.random(in: 1...pracNumbers)
+            let choice2 = Int.random(in: 1...pracNumbers)
             
             let questionText = "What is \(choice1) x \(choice2)?"  // Generate the question text
             let correctAnswer = choice1 * choice2
