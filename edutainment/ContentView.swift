@@ -14,7 +14,7 @@ struct Question {
 }
 
 // View for setting up Game
-struct PracticeSettingsView: View {
+struct GameSetupView: View {
     
     @Binding var count: Int
     @Binding var choice: Int
@@ -69,11 +69,12 @@ struct MainGameView: View {
     
     var body: some View {
         VStack{
-            Section{
-                ScoreTitle(highScore: $highScore, questions: $questions, currQuesIDX: $currQuesIDX, correctAnswers: $correctAnswers)
-            }
-            
             if currQuesIDX < questions && !gameOver{
+                
+                Section{
+                    ScoreTitle(highScore: $highScore, questions: $questions, currQuesIDX: $currQuesIDX, correctAnswers: $correctAnswers)
+                }
+                
                 Text("\(playQuestions[currQuesIDX].questionText)")
                     .font(.title)
                     .fontWeight(.bold)
@@ -135,7 +136,7 @@ struct ContentView: View {
                                 Text("Welcome to SwiftQuiz!")
                                     .font(.title)
                                     .foregroundColor(Color.white)
-                                PracticeSettingsView(count: $count, choice: $choice, questionChoices: questionChoices)
+                                GameSetupView(count: $count, choice: $choice, questionChoices: questionChoices)
                                 
                                 Button("Play"){
                                     startGame()
@@ -208,7 +209,18 @@ struct ContentView: View {
     }
     
     func playRound(){
-        let userAnswer = Int(input)
+        
+        guard !input.isEmpty else {
+            alertMessage = "Empty input, please enter a number."
+            showAlert = true
+            return
+        }
+        
+        guard let userAnswer = Int(input) else{
+            alertMessage = "Invalid Input please enter a number"
+            showAlert = true
+            return
+        }
         if userAnswer == playQuestions[currQuesIDX].correctAnswer{
             correctAnswers += 1
             alertMessage = "Correct"
