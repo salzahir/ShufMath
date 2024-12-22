@@ -80,7 +80,7 @@ struct MainGameView: View {
     @Binding var gameOver: Bool
     @Binding var gameStarted: Bool
     @Binding var skipCounter: Int
-    var playRound: (Bool) -> Void
+    var checkAnswer: (Bool) -> Void
     var playAgain: () -> Void
     
     var body: some View {
@@ -113,13 +113,13 @@ struct MainGameView: View {
                 // Buttons
                 HStack{
                     Button("Check Answer"){
-                        playRound(false)
+                        checkAnswer(false)
                     }
                     .buttonStyle(.borderedProminent)
                     .padding()
                     
                     Button("Skip") {
-                        playRound(true)
+                        checkAnswer(true)
                     }
                     .buttonStyle(.borderedProminent)
                     .padding()
@@ -194,7 +194,7 @@ struct ContentView: View {
                             gameOver: $gameOver,
                             gameStarted: $gameStarted,
                             skipCounter: $skipCounter,
-                            playRound: playRound,
+                            checkAnswer: playRound,
                             playAgain: playAgain
                         )
                         
