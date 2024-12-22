@@ -24,12 +24,24 @@ struct GameSetupView: View {
         VStack{
             Section("Practice Choices"){
                 Stepper("Count Value \(count)", value: $count, in: 2...12)
+                    .padding()
+                    .background(Color.blue)
+                    .cornerRadius(10)
+                    .font(.headline)
+                    .foregroundStyle(Color.white)
+                    .shadow(radius: 5)
+                             
                 Picker("Choose Number of Questions", selection: $choice) {
                     ForEach(questionChoices, id: \.self){ number in
                         Text("\(number)")
                     }
                 }
-                .pickerStyle(.menu)
+                .pickerStyle(WheelPickerStyle())
+                .padding()
+                .background(Color.yellow)
+                .cornerRadius(10)
+                .shadow(radius: 5)
+                
             }
             .padding()
         }
@@ -39,7 +51,7 @@ struct GameSetupView: View {
 struct ScoreTitle: View {
     @Binding var highScore: Int
     @Binding var questions: Int
-    @Binding var currQuesIDX: Int
+    @Binding var index: Int
     @Binding var correctAnswers: Int
     @Binding var skipCounter: Int
     
@@ -48,7 +60,7 @@ struct ScoreTitle: View {
             Text("Current High Score is \(highScore)")
             Text("Current Score is \(correctAnswers) / \(questions)")
             Text("Skips left: \(skipCounter)")
-            Text("\(questions - currQuesIDX) questions left")
+            Text("\(questions - index) questions left")
         }
         .padding()
         .background(Color.white.opacity(0.8))
@@ -60,7 +72,7 @@ struct ScoreTitle: View {
 struct MainGameView: View {
     
     @Binding var input: String
-    @Binding var currQuesIDX: Int
+    @Binding var index: Int
     @Binding var questions: Int
     @Binding var highScore: Int
     @Binding var correctAnswers: Int
@@ -69,38 +81,41 @@ struct MainGameView: View {
     @Binding var gameStarted: Bool
     @Binding var skipCounter: Int
     var playRound: (Bool) -> Void
+    var playAgain: () -> Void
     
     var body: some View {
         VStack{
-            if currQuesIDX < questions && !gameOver{
+            if index < questions && !gameOver{
                 
-                Section{
+                Section("Game Started"){
                     ScoreTitle(
                         highScore: $highScore,
                         questions: $questions,
-                        currQuesIDX: $currQuesIDX,
+                        index: $index,
                         correctAnswers: $correctAnswers,
                         skipCounter: $skipCounter
                     )
                 }
+                .padding()
                 
-                Text("\(playQuestions[currQuesIDX].questionText)")
+                Text("Question \(index+1)")
+                Text("\(playQuestions[index].questionText)")
                     .font(.title)
                     .fontWeight(.bold)
                     .padding()
                 
                 HStack{
-                    TextField("What is your answer", text: $input)
+                    TextField("What is your answer?", text: $input)
                         .keyboardType(.numberPad)
                         .textFieldStyle(.roundedBorder)
                 }
                 .padding()
                 
                 HStack{
+                    
                     Button("Check Answer"){
                         playRound(false)
                     }
-                    
                     .buttonStyle(.borderedProminent)
                     .padding()
                     
@@ -108,7 +123,15 @@ struct MainGameView: View {
                         playRound(true)
                     }
                     .buttonStyle(.borderedProminent)
-                    .padding()                }
+                    .padding()
+                    
+                    Button("Restart"){
+                        playAgain()
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .padding()
+                  
+                }
             
                 
    
@@ -165,20 +188,20 @@ struct ContentView: View {
                             }
                         }
                         
-                        Section("Questions Generated"){
-                            MainGameView(
-                                input: $input,
-                                currQuesIDX: $index,
-                                questions: $questions,
-                                highScore: $highScore,
-                                correctAnswers: $correctAnswers,
-                                playQuestions: $playQuestions,
-                                gameOver: $gameOver,
-                                gameStarted: $gameStarted,
-                                skipCounter: $skipCounter,
-                                playRound: playRound
-                            )
-                        }
+                        
+                        MainGameView(
+                            input: $input,
+                            index: $index,
+                            questions: $questions,
+                            highScore: $highScore,
+                            correctAnswers: $correctAnswers,
+                            playQuestions: $playQuestions,
+                            gameOver: $gameOver,
+                            gameStarted: $gameStarted,
+                            skipCounter: $skipCounter,
+                            playRound: playRound,
+                            playAgain: playAgain
+                        )
                         
                         Spacer()
                         
