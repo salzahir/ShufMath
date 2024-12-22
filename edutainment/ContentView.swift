@@ -16,14 +16,14 @@ struct Question {
 // View for setting up Game
 struct GameSetupView: View {
     
-    @Binding var count: Int
+    @Binding var maxMultiplier: Int
     @Binding var choice: Int
     var questionChoices: [Int]
     
     var body: some View {
         VStack{
             Section("Practice Choices"){
-                Stepper("Count Value \(count)", value: $count, in: 2...12)
+                Stepper("Max Multiplier is \(maxMultiplier)", value: $maxMultiplier, in: 2...12)
                     .padding()
                     .background(Color.blue)
                     .cornerRadius(10)
@@ -84,7 +84,7 @@ struct MainGameView: View {
     
     var body: some View {
         VStack{
-            if index < totalQuestions && gameState == .inProgress{
+            if index < totalQuestions && gameState == .inProgress {
                 
                 ScoreTitle(
                     highScore: $highScore,
@@ -179,7 +179,7 @@ struct ContentView: View {
                                 Text("Welcome to SwiftQuiz!")
                                     .font(.title)
                                     .foregroundColor(Color.white)
-                                GameSetupView(count: $maxMultiplier, choice: $choice, questionChoices: questionChoices)
+                                GameSetupView(maxMultiplier: $maxMultiplier, choice: $choice, questionChoices: questionChoices)
                                 
                                 Button("Play"){
                                     startGame()
@@ -265,9 +265,17 @@ struct ContentView: View {
         
         if skips > 0 {
             index += 1
+            
+            if index == totalQuestions{
+                gameState = .finished
+                alertMessage = "Last Question skipped game over"
+                return
+            }
+            
             alertMessage = "Question Skipped Successfully No Point"
             showAlert = true
             skips -= 1
+        
         }
         
         else{
