@@ -87,15 +87,13 @@ struct MainGameView: View {
         VStack{
             if index < questions && !gameOver{
                 
-                Section("Game Started"){
-                    ScoreTitle(
-                        highScore: $highScore,
-                        questions: $questions,
-                        index: $index,
-                        correctAnswers: $correctAnswers,
-                        skipCounter: $skipCounter
-                    )
-                }
+                ScoreTitle(
+                    highScore: $highScore,
+                    questions: $questions,
+                    index: $index,
+                    correctAnswers: $correctAnswers,
+                    skipCounter: $skipCounter
+                )
                 .padding()
                 
                 Text("Question \(index+1)")
@@ -104,6 +102,7 @@ struct MainGameView: View {
                     .fontWeight(.bold)
                     .padding()
                 
+                // Answer Input
                 HStack{
                     TextField("What is your answer?", text: $input)
                         .keyboardType(.numberPad)
@@ -111,8 +110,8 @@ struct MainGameView: View {
                 }
                 .padding()
                 
+                // Buttons
                 HStack{
-                    
                     Button("Check Answer"){
                         playRound(false)
                     }
@@ -132,9 +131,6 @@ struct MainGameView: View {
                     .padding()
                   
                 }
-            
-                
-   
             }
             
         }
@@ -187,7 +183,6 @@ struct ContentView: View {
                                 .padding()
                             }
                         }
-                        
                         
                         MainGameView(
                             input: $input,
@@ -245,6 +240,7 @@ struct ContentView: View {
     
     func startGame(){
         playQuestions = generateQuestions(pracNumbers: count, lengthQuestions: choice)
+        playQuestions.shuffle()
         gameOver = false
         questions = playQuestions.count
         index = 0
@@ -257,7 +253,7 @@ struct ContentView: View {
         // On Last question and skips available
         if skippedRound && index < questions - 1 && skipCounter > 0 {
             index += 1
-            alertMessage = "Question Skipped Successfully"
+            alertMessage = "Question Skipped Successfully No Point"
             showAlert = true
             skipCounter -= 1
             return
@@ -280,12 +276,12 @@ struct ContentView: View {
         // Increment by 1 for correct answer
         if userAnswer == playQuestions[index].correctAnswer{
             correctAnswers += 1
-            alertMessage = "Correct"
+            alertMessage = "Correct +1 Point"
         }
         
         // Decrement by 1 for incorrect answer
         else{
-            alertMessage = "Incorrect"
+            alertMessage = "Incorrect -1 Point"
             
             // Decrement only above 0 no negative points
             if correctAnswers > 0 {
@@ -325,11 +321,6 @@ struct ContentView: View {
     
 }
 
-
 #Preview {
     ContentView()
 }
-
-
-
-
