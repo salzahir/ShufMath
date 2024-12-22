@@ -16,14 +16,14 @@ struct Question {
 // View for setting up Game
 struct GameSetupView: View {
     
-    @Binding var count: Int
+    @Binding var maxMultiplier: Int
     @Binding var choice: Int
     var questionChoices: [Int]
     
     var body: some View {
         VStack{
             Section("Practice Choices"){
-                Stepper("Count Value \(count)", value: $count, in: 2...12)
+                Stepper("Max Multiplier is \(maxMultiplier)", value: $maxMultiplier, in: 2...12)
                     .padding()
                     .background(Color.blue)
                     .cornerRadius(10)
@@ -53,13 +53,13 @@ struct ScoreTitle: View {
     @Binding var questions: Int
     @Binding var index: Int
     @Binding var correctAnswers: Int
-    @Binding var skipCounter: Int
+    @Binding var skips: Int
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10){
             Text("Current High Score is \(highScore)")
             Text("Current Score is \(correctAnswers) / \(questions)")
-            Text("Skips left: \(skipCounter)")
+            Text("Skips left: \(skips)")
             Text("\(questions - index) questions left")
         }
         .padding()
@@ -71,40 +71,39 @@ struct ScoreTitle: View {
 // Enscapulated MainView logic
 struct MainGameView: View {
     
-    @Binding var input: String
+    @Binding var userInput: String
     @Binding var index: Int
-    @Binding var questions: Int
+    @Binding var totalQuestions: Int
     @Binding var highScore: Int
     @Binding var correctAnswers: Int
-    @Binding var playQuestions: [Question]
-    @Binding var gameOver: Bool
-    @Binding var gameStarted: Bool
-    @Binding var skipCounter: Int
-    var checkAnswer: (Bool) -> Void
+    @Binding var questionsArr: [Question]
+    @Binding var gameState: GameState
+    @Binding var skips: Int
+    var processAnswer: (Bool) -> Void
     var playAgain: () -> Void
     
     var body: some View {
         VStack{
-            if index < questions && !gameOver{
+            if index < totalQuestions && gameState == .inProgress {
                 
                 ScoreTitle(
                     highScore: $highScore,
-                    questions: $questions,
+                    questions: $totalQuestions,
                     index: $index,
                     correctAnswers: $correctAnswers,
-                    skipCounter: $skipCounter
+                    skips: $skips
                 )
                 .padding()
                 
                 Text("Question \(index+1)")
-                Text("\(playQuestions[index].questionText)")
+                Text("\(questionsArr[index].questionText)")
                     .font(.title)
                     .fontWeight(.bold)
                     .padding()
                 
                 // Answer Input
                 HStack{
-                    TextField("What is your answer?", text: $input)
+                    TextField("What is your answer?", text: $userInput)
                         .keyboardType(.numberPad)
                         .textFieldStyle(.roundedBorder)
                 }
@@ -113,13 +112,13 @@ struct MainGameView: View {
                 // Buttons
                 HStack{
                     Button("Check Answer"){
-                        checkAnswer(false)
+                        processAnswer(false)
                     }
                     .buttonStyle(.borderedProminent)
                     .padding()
                     
                     Button("Skip") {
-                        checkAnswer(true)
+                        processAnswer(true)
                     }
                     .buttonStyle(.borderedProminent)
                     .padding()
@@ -137,21 +136,27 @@ struct MainGameView: View {
     }
 }
 
+enum GameState {
+    case notStarted
+    case inProgress
+    case finished
+}
+
 struct ContentView: View {
-    @State var count: Int = 2
-    @State var questionChoices: [Int] = [5, 10, 15, 20, 25, 30]
+    @State var maxMultiplier = 2
+    @State var questionChoices = [5, 10, 15, 20, 25, 30]
     @State var choice = 5
-    @State var questions = 0
+    @State var totalQuestions = 0
     @State var correctAnswers = 0
     @State var index = 0
-    @State var gameOver = false
-    @State var playQuestions: [Question] = []
-    @State var input: String = ""
+    @State var questionsArr: [Question] = []
+    @State var userInput = ""
     @State var showAlert = false
     @State var alertMessage = ""
     @State var highScore = 0
-    @State var gameStarted = false
-    @State var skipCounter = 3
+    @State var skips = 3
+    @State var gameState: GameState = .notStarted
+    @State var isGameOver: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -170,11 +175,11 @@ struct ContentView: View {
                         VStack(spacing: 10){
                             
                             // Presettings and Views presented before game started
-                            if index == 0 && !gameStarted{
+                            if index == 0 && gameState == .notStarted{
                                 Text("Welcome to SwiftQuiz!")
                                     .font(.title)
                                     .foregroundColor(Color.white)
-                                GameSetupView(count: $count, choice: $choice, questionChoices: questionChoices)
+                                GameSetupView(maxMultiplier: $maxMultiplier, choice: $choice, questionChoices: questionChoices)
                                 
                                 Button("Play"){
                                     startGame()
@@ -185,35 +190,43 @@ struct ContentView: View {
                         }
                         
                         MainGameView(
-                            input: $input,
+                            userInput: $userInput,
                             index: $index,
-                            questions: $questions,
+                            totalQuestions: $totalQuestions,
                             highScore: $highScore,
                             correctAnswers: $correctAnswers,
-                            playQuestions: $playQuestions,
-                            gameOver: $gameOver,
-                            gameStarted: $gameStarted,
-                            skipCounter: $skipCounter,
-                            checkAnswer: playRound,
+                            questionsArr: $questionsArr,
+                            gameState: $gameState,
+                            skips: $skips,
+                            processAnswer: processAnswer,
                             playAgain: playAgain
                         )
                         
                         Spacer()
                         
-                            .alert(alertMessage, isPresented: $showAlert) {
-                                Button("OK", role: .cancel){}
+
+                        .alert(alertMessage, isPresented: $showAlert) {
+                            Button("OK", role: .cancel){}
+                        }
+                    
+                        .alert("Game Over", isPresented: $isGameOver) {
+                            Button("Play Again"){
+                                playAgain()
                             }
+                            
+                            Button("Cancel", role: .cancel){}
+                        } message: {
+                            Text("You got \(correctAnswers)/\(totalQuestions)")
+                        }
                         
-                            .alert("Game Over", isPresented: $gameOver) {
-                                Button("Play Again"){
-                                    playAgain()
-                                }
-                                Button("Cancel", role: .cancel){}
-                            } message: {
-                                Text("You got \(correctAnswers)/\(questions)")
-                            }
                     }
                 }
+                
+                // Changes isGameOver boolean for alerts based on the gameState
+                .onChange(of: gameState) {
+                    isGameOver = gameState == .finished
+                }
+
                 .navigationTitle("Edutainment")
             }
         }
@@ -228,7 +241,8 @@ struct ContentView: View {
             let choice1 = Int.random(in: 1...pracNumbers)
             let choice2 = Int.random(in: 1...pracNumbers)
             
-            let questionText = "What is \(choice1) x \(choice2)?"  // Generate the question text
+            // Generate the question text
+            let questionText = "What is \(choice1) x \(choice2)?"
             let correctAnswer = choice1 * choice2
             
             questions.append(Question(questionText: questionText, correctAnswer: correctAnswer))
@@ -239,67 +253,111 @@ struct ContentView: View {
     }
     
     func startGame(){
-        playQuestions = generateQuestions(pracNumbers: count, lengthQuestions: choice)
-        playQuestions.shuffle()
-        gameOver = false
-        questions = playQuestions.count
+        questionsArr = generateQuestions(pracNumbers: maxMultiplier, lengthQuestions: choice)
+        questionsArr.shuffle()
+        gameState = .inProgress
+        totalQuestions = questionsArr.count
         index = 0
-        gameStarted = true
     }
     
-    func playRound(skippedRound: Bool = false){
+    // Helper when user decides to try to skip a question
+    func skipQuestion() {
         
-        // Allows Round to be skipped if skipped button clicked and not
-        // On Last question and skips available
-        if skippedRound && index < questions - 1 && skipCounter > 0 {
+        if skips > 0 {
             index += 1
+            
+            if index == totalQuestions{
+                gameState = .finished
+                alertMessage = "Last Question skipped game over"
+                return
+            }
+            
             alertMessage = "Question Skipped Successfully No Point"
             showAlert = true
-            skipCounter -= 1
-            return
+            skips -= 1
+        
         }
         
-        // Empty String Guard
-        guard !input.isEmpty else {
-            alertMessage = "Empty input, please enter a number."
+        else{
+            alertMessage = "Question can't be skipped"
             showAlert = true
-            return
+        }
+        
+    }
+    
+    private func validInput() -> String? {
+        
+        // Empty String Guard
+        guard !userInput.isEmpty else {
+            return "Empty input, please enter a number."
         }
         
         // Valid Number Check
-        guard let userAnswer = Int(input) else{
-            alertMessage = "Invalid Input please enter a number"
-            showAlert = true
-            return
+        guard let _ = Int(userInput) else{
+            return "Invalid Input please enter a valid number"
         }
         
+        return nil
+        
+    }
+    
+    func checkAnswer(){
+        
         // Increment by 1 for correct answer
-        if userAnswer == playQuestions[index].correctAnswer{
+        let userAnswer = Int(userInput)
+        if userAnswer == questionsArr[index].correctAnswer{
             correctAnswers += 1
             alertMessage = "Correct +1 Point"
         }
         
         // Decrement by 1 for incorrect answer
         else{
-            alertMessage = "Incorrect -1 Point"
             
             // Decrement only above 0 no negative points
             if correctAnswers > 0 {
                 correctAnswers -= 1
+                alertMessage = "Incorrect -1 Point"
             }
+            
+            // No negative points
+            else{
+                alertMessage = "Incorrect No Point"
+            }
+            
+        }
+    }
+    
+    
+    func processAnswer(isSkipping: Bool = false){
+        
+        if isSkipping{
+            skipQuestion()
+            return
         }
         
-        // Increements count and shows alert at the end
-        showAlert = true
+        if let errorMessage = validInput(){
+            alertMessage = errorMessage
+            showAlert = true
+            return
+        }
+        
+        // Checks answer
+        checkAnswer()
+        
+        // Proceed to next question
         index += 1
         
         // End of the Game
-        if index == questions{
-            gameOver = true
+        if index == totalQuestions{
+            gameState = .finished
+            return
         }
         
+        // shows alert at the end
+        showAlert = true
+        
         // Resets input field
-        input = ""
+        userInput = ""
     }
     
     func playAgain() {
@@ -310,13 +368,13 @@ struct ContentView: View {
         }
         
         // Reset Game Logic Resets Everything back to default values
-        questions = 0
+        totalQuestions = 0
         correctAnswers = 0
         index = 0
-        gameOver = false
-        gameStarted = false
-        playQuestions = []
-        input = ""
+        gameState = .notStarted
+        questionsArr = []
+        userInput = ""
+        skips = 3
     }
     
 }
