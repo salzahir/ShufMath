@@ -41,12 +41,14 @@ struct ScoreTitle: View {
     @Binding var questions: Int
     @Binding var currQuesIDX: Int
     @Binding var correctAnswers: Int
+    @Binding var skipCounter: Int
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10){
             Text("Current High Score is \(highScore)")
-            Text("\(questions - currQuesIDX) questions left")
             Text("Current Score is \(correctAnswers) / \(questions)")
+            Text("Skips left: \(skipCounter)")
+            Text("\(questions - currQuesIDX) questions left")
         }
         .padding()
         .background(Color.white.opacity(0.8))
@@ -65,14 +67,21 @@ struct MainGameView: View {
     @Binding var playQuestions: [Question]
     @Binding var gameOver: Bool
     @Binding var gameStarted: Bool
-    var playRound: () -> Void
+    @Binding var skipCounter: Int
+    var playRound: (Bool) -> Void
     
     var body: some View {
         VStack{
             if currQuesIDX < questions && !gameOver{
                 
                 Section{
-                    ScoreTitle(highScore: $highScore, questions: $questions, currQuesIDX: $currQuesIDX, correctAnswers: $correctAnswers)
+                    ScoreTitle(
+                        highScore: $highScore,
+                        questions: $questions,
+                        currQuesIDX: $currQuesIDX,
+                        correctAnswers: $correctAnswers,
+                        skipCounter: $skipCounter
+                    )
                 }
                 
                 Text("\(playQuestions[currQuesIDX].questionText)")
@@ -87,11 +96,20 @@ struct MainGameView: View {
                 }
                 .padding()
                 
-                Button("Check Answer"){
-                    playRound()
-                }
-                .buttonStyle(.borderedProminent)
-                .padding()
+                HStack{
+                    Button("Check Answer"){
+                        playRound(false)
+                    }
+                    
+                    .buttonStyle(.borderedProminent)
+                    .padding()
+                    
+                    Button("Skip") {
+                        playRound(true)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .padding()                }
+            
                 
    
             }
@@ -106,7 +124,7 @@ struct ContentView: View {
     @State var choice = 5
     @State var questions = 0
     @State var correctAnswers = 0
-    @State var currQuesIDX = 0
+    @State var index = 0
     @State var gameOver = false
     @State var playQuestions: [Question] = []
     @State var input: String = ""
@@ -114,7 +132,8 @@ struct ContentView: View {
     @State var alertMessage = ""
     @State var highScore = 0
     @State var gameStarted = false
-    
+    @State var skipCounter = 3
+
     var body: some View {
         NavigationStack {
             ZStack{
@@ -132,7 +151,7 @@ struct ContentView: View {
                         VStack(spacing: 10){
                             
                             // Presettings and Views presented before game started
-                            if currQuesIDX == 0 && !gameStarted{
+                            if index == 0 && !gameStarted{
                                 Text("Welcome to SwiftQuiz!")
                                     .font(.title)
                                     .foregroundColor(Color.white)
@@ -149,13 +168,14 @@ struct ContentView: View {
                         Section("Questions Generated"){
                             MainGameView(
                                 input: $input,
-                                currQuesIDX: $currQuesIDX,
+                                currQuesIDX: $index,
                                 questions: $questions,
                                 highScore: $highScore,
                                 correctAnswers: $correctAnswers,
                                 playQuestions: $playQuestions,
                                 gameOver: $gameOver,
                                 gameStarted: $gameStarted,
+                                skipCounter: $skipCounter,
                                 playRound: playRound
                             )
                         }
@@ -204,37 +224,62 @@ struct ContentView: View {
         playQuestions = generateQuestions(pracNumbers: count, lengthQuestions: choice)
         gameOver = false
         questions = playQuestions.count
-        currQuesIDX = 0
+        index = 0
         gameStarted = true
     }
     
-    func playRound(){
+    func playRound(skippedRound: Bool = false){
         
+        // Allows Round to be skipped if skipped button clicked and not
+        // On Last question and skips available
+        if skippedRound && index < questions - 1 && skipCounter > 0 {
+            index += 1
+            alertMessage = "Question Skipped Successfully"
+            showAlert = true
+            skipCounter -= 1
+            return
+        }
+        
+        // Empty String Guard
         guard !input.isEmpty else {
             alertMessage = "Empty input, please enter a number."
             showAlert = true
             return
         }
         
+        // Valid Number Check
         guard let userAnswer = Int(input) else{
             alertMessage = "Invalid Input please enter a number"
             showAlert = true
             return
         }
-        if userAnswer == playQuestions[currQuesIDX].correctAnswer{
+        
+        // Increment by 1 for correct answer
+        if userAnswer == playQuestions[index].correctAnswer{
             correctAnswers += 1
             alertMessage = "Correct"
         }
+        
+        // Decrement by 1 for incorrect answer
         else{
             alertMessage = "Incorrect"
+            
+            // Decrement only above 0 no negative points
+            if correctAnswers > 0 {
+                correctAnswers -= 1
+            }
         }
-        showAlert = true
         
-        currQuesIDX += 1
-        if currQuesIDX == questions{
+        // Increements count and shows alert at the end
+        showAlert = true
+        index += 1
+        
+        // End of the Game
+        if index == questions{
             gameOver = true
         }
         
+        // Resets input field
         input = ""
     }
     
@@ -248,7 +293,7 @@ struct ContentView: View {
         // Reset Game Logic Resets Everything back to default values
         questions = 0
         correctAnswers = 0
-        currQuesIDX = 0
+        index = 0
         gameOver = false
         gameStarted = false
         playQuestions = []
