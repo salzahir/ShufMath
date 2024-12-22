@@ -53,13 +53,13 @@ struct ScoreTitle: View {
     @Binding var questions: Int
     @Binding var index: Int
     @Binding var correctAnswers: Int
-    @Binding var skipCounter: Int
+    @Binding var skips: Int
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10){
             Text("Current High Score is \(highScore)")
             Text("Current Score is \(correctAnswers) / \(questions)")
-            Text("Skips left: \(skipCounter)")
+            Text("Skips left: \(skips)")
             Text("\(questions - index) questions left")
         }
         .padding()
@@ -71,39 +71,39 @@ struct ScoreTitle: View {
 // Enscapulated MainView logic
 struct MainGameView: View {
     
-    @Binding var input: String
+    @Binding var userInput: String
     @Binding var index: Int
-    @Binding var questions: Int
+    @Binding var totalQuestions: Int
     @Binding var highScore: Int
     @Binding var correctAnswers: Int
-    @Binding var playQuestions: [Question]
+    @Binding var questionsArr: [Question]
     @Binding var gameState: GameState
-    @Binding var skipCounter: Int
+    @Binding var skips: Int
     var processAnswer: (Bool) -> Void
     var playAgain: () -> Void
     
     var body: some View {
         VStack{
-            if index < questions && gameState == .inProgress{
+            if index < totalQuestions && gameState == .inProgress{
                 
                 ScoreTitle(
                     highScore: $highScore,
-                    questions: $questions,
+                    questions: $totalQuestions,
                     index: $index,
                     correctAnswers: $correctAnswers,
-                    skipCounter: $skipCounter
+                    skips: $skips
                 )
                 .padding()
                 
                 Text("Question \(index+1)")
-                Text("\(playQuestions[index].questionText)")
+                Text("\(questionsArr[index].questionText)")
                     .font(.title)
                     .fontWeight(.bold)
                     .padding()
                 
                 // Answer Input
                 HStack{
-                    TextField("What is your answer?", text: $input)
+                    TextField("What is your answer?", text: $userInput)
                         .keyboardType(.numberPad)
                         .textFieldStyle(.roundedBorder)
                 }
@@ -143,18 +143,18 @@ enum GameState {
 }
 
 struct ContentView: View {
-    @State var count = 2
+    @State var maxMultiplier = 2
     @State var questionChoices = [5, 10, 15, 20, 25, 30]
     @State var choice = 5
-    @State var questions = 0
+    @State var totalQuestions = 0
     @State var correctAnswers = 0
     @State var index = 0
-    @State var playQuestions: [Question] = []
-    @State var input = ""
+    @State var questionsArr: [Question] = []
+    @State var userInput = ""
     @State var showAlert = false
     @State var alertMessage = ""
     @State var highScore = 0
-    @State var skipCounter = 3
+    @State var skips = 3
     @State var gameState: GameState = .notStarted
     @State var isGameOver: Bool = false
 
@@ -179,7 +179,7 @@ struct ContentView: View {
                                 Text("Welcome to SwiftQuiz!")
                                     .font(.title)
                                     .foregroundColor(Color.white)
-                                GameSetupView(count: $count, choice: $choice, questionChoices: questionChoices)
+                                GameSetupView(count: $maxMultiplier, choice: $choice, questionChoices: questionChoices)
                                 
                                 Button("Play"){
                                     startGame()
@@ -190,14 +190,14 @@ struct ContentView: View {
                         }
                         
                         MainGameView(
-                            input: $input,
+                            userInput: $userInput,
                             index: $index,
-                            questions: $questions,
+                            totalQuestions: $totalQuestions,
                             highScore: $highScore,
                             correctAnswers: $correctAnswers,
-                            playQuestions: $playQuestions,
+                            questionsArr: $questionsArr,
                             gameState: $gameState,
-                            skipCounter: $skipCounter,
+                            skips: $skips,
                             processAnswer: processAnswer,
                             playAgain: playAgain
                         )
@@ -216,7 +216,7 @@ struct ContentView: View {
                             
                             Button("Cancel", role: .cancel){}
                         } message: {
-                            Text("You got \(correctAnswers)/\(questions)")
+                            Text("You got \(correctAnswers)/\(totalQuestions)")
                         }
                         
                     }
@@ -253,37 +253,39 @@ struct ContentView: View {
     }
     
     func startGame(){
-        playQuestions = generateQuestions(pracNumbers: count, lengthQuestions: choice)
-        playQuestions.shuffle()
+        questionsArr = generateQuestions(pracNumbers: maxMultiplier, lengthQuestions: choice)
+        questionsArr.shuffle()
         gameState = .inProgress
-        questions = playQuestions.count
+        totalQuestions = questionsArr.count
         index = 0
     }
     
     // Helper when user decides to try to skip a question
-    func skipQuestion(_ isSkipping: Bool) -> Bool {
+    func skipQuestion() {
         
-        // Allows Round to be skipped if skipped button clicked and not
-        // On Last question and skips available
-        if isSkipping && index < questions - 1 && skipCounter > 0 {
+        if skips > 0 {
             index += 1
             alertMessage = "Question Skipped Successfully No Point"
             showAlert = true
-            skipCounter -= 1
-            return true
+            skips -= 1
         }
-        return false
+        
+        else{
+            alertMessage = "Question can't be skipped"
+            showAlert = true
+        }
+        
     }
     
     private func validInput() -> String? {
         
         // Empty String Guard
-        guard !input.isEmpty else {
+        guard !userInput.isEmpty else {
             return "Empty input, please enter a number."
         }
         
         // Valid Number Check
-        guard let _ = Int(input) else{
+        guard let _ = Int(userInput) else{
             return "Invalid Input please enter a valid number"
         }
         
@@ -294,8 +296,8 @@ struct ContentView: View {
     func checkAnswer(){
         
         // Increment by 1 for correct answer
-        let userAnswer = Int(input)
-        if userAnswer == playQuestions[index].correctAnswer{
+        let userAnswer = Int(userInput)
+        if userAnswer == questionsArr[index].correctAnswer{
             correctAnswers += 1
             alertMessage = "Correct +1 Point"
         }
@@ -320,7 +322,8 @@ struct ContentView: View {
     
     func processAnswer(isSkipping: Bool = false){
         
-        if skipQuestion(isSkipping){
+        if isSkipping{
+            skipQuestion()
             return
         }
         
@@ -337,7 +340,7 @@ struct ContentView: View {
         index += 1
         
         // End of the Game
-        if index == questions{
+        if index == totalQuestions{
             gameState = .finished
             return
         }
@@ -346,7 +349,7 @@ struct ContentView: View {
         showAlert = true
         
         // Resets input field
-        input = ""
+        userInput = ""
     }
     
     func playAgain() {
@@ -357,12 +360,13 @@ struct ContentView: View {
         }
         
         // Reset Game Logic Resets Everything back to default values
-        questions = 0
+        totalQuestions = 0
         correctAnswers = 0
         index = 0
         gameState = .notStarted
-        playQuestions = []
-        input = ""
+        questionsArr = []
+        userInput = ""
+        skips = 3
     }
     
 }
