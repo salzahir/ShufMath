@@ -56,7 +56,7 @@ struct ScoreTitle: View {
     @Binding var skips: Int
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 10){
+        VStack(alignment: .leading, spacing: 5){
             Text("Current High Score is \(highScore)")
             Text("Current Score is \(correctAnswers) / \(questions)")
             Text("Skips left: \(skips)")
@@ -64,7 +64,11 @@ struct ScoreTitle: View {
         }
         .padding()
         .background(Color.white.opacity(0.8))
-        .cornerRadius(10)
+        .cornerRadius(5)
+        .padding(.top, 15)
+        .safeAreaInset(edge: .top){
+            Color.clear.frame(height: 0)
+        }
     }
 }
 
@@ -81,6 +85,12 @@ struct MainGameView: View {
     @Binding var skips: Int
     var processAnswer: (Bool) -> Void
     var playAgain: () -> Void
+    
+    
+    let items = Array(1...9)
+       
+       // Define number of columns
+    let columns = Array(repeating: GridItem(.flexible(minimum: 25), spacing: 2), count: 3)
     
     var body: some View {
         VStack{
@@ -103,20 +113,20 @@ struct MainGameView: View {
                 
                 // Answer Input
                 HStack{
-                    TextField("What is your answer?", text: $userInput)
-                        .keyboardType(.numberPad)
+                    Text(userInput)
                         .textFieldStyle(.roundedBorder)
                 }
                 .padding()
                 
                 // Buttons
                 HStack{
-                    Button("Check Answer"){
-                        processAnswer(false)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .padding()
                     
+                    Button("Check Answer"){
+                                    processAnswer(false)
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .padding()
+                                        
                     Button("Skip") {
                         processAnswer(true)
                     }
@@ -130,6 +140,59 @@ struct MainGameView: View {
                     .padding()
                   
                 }
+                
+                LazyVGrid(columns: columns, spacing: 2) {
+                    ForEach(items, id: \.self) { item in
+                        Button(action: {
+                            userInput += String(item)
+                        }) {
+                            RoundedRectangle(cornerRadius: 2)
+                                .fill(Color.green.opacity(0.2))
+                                .aspectRatio(1, contentMode: .fit)
+                                .overlay(
+                                    Text("\(item)")
+                                        .foregroundColor(.black)
+                                )
+                        }
+                    }
+                }
+            
+                HStack {
+                    Button(action: {
+                        userInput += "0"
+                    }) {
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(Color.green.opacity(0.2))
+                            .frame(maxWidth: .infinity)  // Add this
+                            .frame(height: 50)
+                            .overlay(
+                                Text("0")
+                                    .foregroundColor(.black)
+                            )
+                    }
+                    
+                    Button(action: {
+                        if !userInput.isEmpty {
+                            userInput.removeLast()
+                        }
+                    }) {
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(Color.green.opacity(0.2))
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 50)
+
+                            .overlay(
+                                Text("X")
+                                    .foregroundColor(.black)
+                            )
+                    }
+                    .onLongPressGesture(minimumDuration: 1.0){
+                        userInput = ""
+                    }
+                                        
+                }
+                .frame(maxWidth: .infinity)
+                        
             }
             
         }
@@ -227,7 +290,6 @@ struct ContentView: View {
                     isGameOver = gameState == .finished
                 }
 
-                .navigationTitle("Edutainment")
             }
         }
     }
@@ -275,6 +337,7 @@ struct ContentView: View {
             alertMessage = "Question Skipped Successfully No Point"
             showAlert = true
             skips -= 1
+            userInput = ""
         
         }
         
