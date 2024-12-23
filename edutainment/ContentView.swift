@@ -153,7 +153,7 @@ struct ContentView: View {
     @State var userInput = ""
     @State var showAlert = false
     @State var alertMessage = ""
-    @State var highScore = 0
+    @AppStorage("highScore") private var highScore = 0
     @State var skips = 3
     @State var gameState: GameState = .notStarted
     @State var isGameOver: Bool = false
