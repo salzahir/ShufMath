@@ -58,7 +58,6 @@ struct MainGameView: View {
                     }
                     .buttonStyle(.borderedProminent)
                     .padding()
-                  
                 }
                 
                 GridView(userInput: $game.userInput)

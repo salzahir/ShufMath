@@ -46,7 +46,6 @@ struct ContentView: View {
                         }
                     }
                 }
-                
                 // Changes isGameOver boolean for alerts based on the gameState
                 .onChange(of: game.gameState) {
                     game.isGameOver = game.gameState == .finished

@@ -31,6 +31,7 @@ struct Game{
     var maxMultiplier = 2
     var questionChoices = [5, 10, 15, 20, 25, 30]
     var isGameOver: Bool = false
+    var midPoint = 0
 
 
     enum GameState {
@@ -106,6 +107,12 @@ struct Game{
             }
             
         }
+        
+        // Commemorate the user if they are half way through the game
+        if index == midPoint{
+            alertMessage += "\n\nYou reached half way!"
+        }
+        
     }
     
     
@@ -182,6 +189,7 @@ struct Game{
         questionsArr.shuffle()
         gameState = .inProgress
         totalQuestions = questionsArr.count
+        midPoint = totalQuestions / 2
         index = 0
     }
     
