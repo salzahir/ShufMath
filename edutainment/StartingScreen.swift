@@ -17,13 +17,29 @@ struct StartingScreen: View {
             if game.index == 0 && game.gameState == .notStarted {
                 Text("Welcome to EduQuiz!")
                     .font(.title)
-                    .foregroundColor(Color.black)
+                        .fontWeight(.bold)
+                        .foregroundColor(Color.white)
+                        .padding()
+                        .background(LinearGradient(gradient: Gradient(colors: [.yellow, .green]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .cornerRadius(10)
+                        .shadow(radius: 10)
+                        .padding(.horizontal)
+                
                 GameSetupView(game: $game)
+                Spacer()
                 Button("Play"){
                     game.startGame()
                 }
-                .buttonStyle(.borderedProminent)
+                .font(.title2)
+                .fontWeight(.bold)
                 .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+                .shadow(radius: 5)
+                .padding(.horizontal)
+                
             }
         }
     }

@@ -27,16 +27,25 @@ struct Game{
     var userInput = ""
     var questionsArr: [Question] = []
     var highScore = 0
-    var choice = 5
     var maxMultiplier = 2
-    var questionChoices = [5, 10, 15, 20, 25, 30]
     var isGameOver: Bool = false
     var midPoint = 0
+    var gameDifficulty: GameDifficulty = .easy
+    var gameChoice = 1
+    var questionChoices = 1...30
+    var useCustom: Bool = false
     
     enum GameState {
         case notStarted
         case inProgress
         case finished
+    }
+    
+    enum GameDifficulty {
+        case easy
+        case medium
+        case hard
+        case custom
     }
     
     // Helper when user decides to try to skip a question
@@ -182,14 +191,45 @@ struct Game{
         
         return questions
     }
+    
+    mutating func gameDifficultySetup(Difficulty: GameDifficulty){
+        
+        switch Difficulty {
+        case .easy:
+            maxMultiplier = 4
+            totalQuestions = 10
+        case .medium:
+            maxMultiplier = 8
+            totalQuestions = 20
+        case .hard:
+            maxMultiplier = 12
+            totalQuestions = 30
+        
+        case .custom:
+            break
+        }
+        self.gameDifficulty = Difficulty // Update to reflect the chosen difficulty
+    }
 
     mutating func startGame(){
-        questionsArr = generateQuestions(pracNumbers: maxMultiplier, lengthQuestions: choice)
+        
+        if totalQuestions == 0 && !useCustom {
+            alertMessage = "Please select a difficulty."
+            showAlert = true
+            return
+        }
+        
+        // Sets the number of questions based on whether custom settings are used or not.
+        // If custom, it uses `gameChoice`; otherwise, it uses the default `totalQuestions`.
+        let questionCount = useCustom ? gameChoice : totalQuestions
+        questionsArr = generateQuestions(pracNumbers: maxMultiplier, lengthQuestions: questionCount)
         questionsArr.shuffle()
         gameState = .inProgress
         totalQuestions = questionsArr.count
         midPoint = totalQuestions / 2
         index = 0
+        
     }
     
 }
+

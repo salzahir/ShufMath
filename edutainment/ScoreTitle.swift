@@ -11,12 +11,18 @@ struct ScoreTitle: View {
     
     @Binding var game: Game
     
+    
+    // Add Difficulty Mode Selected
+    // Add Max Multipler Selected to
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 5){
             Text("Current High Score is \(game.highScore)")
             Text("Current Score is \(game.correctAnswers) / \(game.totalQuestions)")
             Text("Skips left: \(game.skips)")
             Text("\(game.totalQuestions - game.index) questions left")
+            Text("Difficult Mode selected is \(game.gameDifficulty)")
+            Text("Max Multiplier selected is \(game.maxMultiplier)")
         }
         .padding()
         .background(Color.white.opacity(0.8))

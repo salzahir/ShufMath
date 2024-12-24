@@ -16,20 +16,20 @@ struct GridView: View {
     @Binding var userInput: String
     
     var body: some View {
-        VStack{
+        VStack(spacing: 2){
             LazyVGrid(columns: columns, spacing: 2) {
                 ForEach(items, id: \.self) { item in
                     Button(action: {
                         userInput += String(item)
                     }){
                         // Gridbutton View
-                        GridButton(item: item)
+                        GridButton(item: item, userInput: userInput)
                     }
-                    .accessibilityLabel("Number \(item), Current Input: \(userInput)")
                 }
             }
-            .padding()
+            .padding(.horizontal)
             BottomRowControls(userInput: $userInput)
+                .padding(.horizontal)
 
         }
     }
@@ -37,6 +37,7 @@ struct GridView: View {
 
 struct GridButton: View {
     var item: String
+    var userInput: String
     
     var body: some View {
         
@@ -47,13 +48,19 @@ struct GridButton: View {
                 Text("\(item)")
                     .foregroundColor(.black)
             )
+            .frame(minWidth: 30, minHeight: 30) // Adjust button size for consistency
+            .foregroundColor(.white) // Set text color
+            .cornerRadius(12) // Rounded corners for a softer look
+            .shadow(radius: 3) // Add a subtle shadow
+            .accessibilityLabel("Number \(item), Current Input: \(userInput)")
+
     }
 }
 
 struct BottomRowControls: View {
     @Binding var userInput: String
     var body: some View {
-        HStack {
+        HStack(spacing: 2) {
             Button(action: {
                 userInput += "0"
             }) {
@@ -75,6 +82,7 @@ struct BottomRowControls: View {
             
         }
         .frame(maxWidth: .infinity)
+        .padding(.horizontal, 12)
     }
 }
 
@@ -87,7 +95,7 @@ struct HorizontalButton: View {
         RoundedRectangle(cornerRadius: 2)
             .fill(Color.orange.secondary)
             .frame(maxWidth: .infinity)
-            .frame(height: 50)
+            .frame(height: 45)
             .overlay(
                 Text("\(item)")
                     .foregroundColor(.black)
