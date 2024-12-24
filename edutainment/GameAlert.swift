@@ -14,7 +14,10 @@ struct GameAlert: View {
     @Binding var game: Game
     
     var body: some View {
-        VStack{}
+        VStack{
+
+            
+        }
         .alert(game.alertMessage, isPresented: $game.showAlert) {
             Button("OK", role: .cancel){}
         }
@@ -24,7 +27,6 @@ struct GameAlert: View {
                 game.playAgain()
             }
             
-            Button("Cancel", role: .cancel){}
         } message: {
             Text("You got \(game.correctAnswers)/\(game.totalQuestions)")
         }

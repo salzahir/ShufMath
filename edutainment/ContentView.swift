@@ -15,26 +15,13 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ZStack{
-                
-                RadialGradient(stops: gradientStops, center: .top, startRadius: 200, endRadius: 400)
-                .ignoresSafeArea()
-                
-                VStack(spacing: 10){
-                    
+                BackGroundView()
                     VStack(spacing: 10){
-                        
                         StartingScreen(game: $game)
-                        
-                        MainGameView(
-                            game: $game
-                        )
-                        
-                        Spacer()
-                        
+                        MainGameView(game: $game)
                         GameAlert(game: $game)
-                     
                     }
-                }
+                
                 // Changes isGameOver boolean for alerts based on the gameState
                 .onChange(of: game.gameState) {
                     game.isGameOver = game.gameState == .finished
@@ -49,6 +36,8 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
+
+
 
 
 

@@ -9,7 +9,7 @@ import SwiftUI
 
 // The logic and the brains behind the app
 struct Game{
-    
+
     // Represents a question in the app
     struct Question {
         var id = UUID() // Unique identifier for each question
@@ -32,8 +32,7 @@ struct Game{
     var questionChoices = [5, 10, 15, 20, 25, 30]
     var isGameOver: Bool = false
     var midPoint = 0
-
-
+    
     enum GameState {
         case notStarted
         case inProgress
@@ -60,7 +59,7 @@ struct Game{
         }
         
         else{
-            alertMessage = "Question can't be skipped"
+            alertMessage = "Out of skips"
             showAlert = true
         }
         
