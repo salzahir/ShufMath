@@ -31,19 +31,8 @@ struct ContentView: View {
                         
                         Spacer()
                         
-                        .alert(game.alertMessage, isPresented: $game.showAlert) {
-                        Button("OK", role: .cancel){}
-                        }
-                    
-                        .alert("Game Over", isPresented: $game.isGameOver) {
-                            Button("Play Again"){
-                                game.playAgain()
-                            }
-                            
-                            Button("Cancel", role: .cancel){}
-                        } message: {
-                            Text("You got \(game.correctAnswers)/\(game.totalQuestions)")
-                        }
+                        GameAlert(game: $game)
+                     
                     }
                 }
                 // Changes isGameOver boolean for alerts based on the gameState
@@ -60,4 +49,6 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
+
+
 
