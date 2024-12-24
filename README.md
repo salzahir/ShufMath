@@ -15,7 +15,7 @@ This is a SwiftUI-based educational app designed to help users practice and impr
 
 - **Score Tracking:**
   - High score functionality to encourage improvement.
-  - Current score displayed, along with the number of questions answered correctly.
+  - The current score is displayed, along with the number of questions answered correctly.
 
 - **Clean UI Design:**
   - Built using SwiftUI for a user-friendly and visually appealing interface.
@@ -31,4 +31,5 @@ This is a SwiftUI-based educational app designed to help users practice and impr
 ### Future Enhancements 🚀
 
 - Option to review incorrect answers after the game.
-- Include more challenging
+- Include more challenging questions
+- Adding a timer
