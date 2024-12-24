@@ -31,6 +31,9 @@ struct Game{
     var isGameOver: Bool = false
     var midPoint = 0
     var gameDifficulty: GameDifficulty = .easy
+    var gameChoice = 1
+    var questionChoices = 1...30
+    var useCustom: Bool = false
     
     enum GameState {
         case notStarted
@@ -42,6 +45,7 @@ struct Game{
         case easy
         case medium
         case hard
+        case custom
     }
     
     // Helper when user decides to try to skip a question
@@ -192,29 +196,36 @@ struct Game{
         
         switch Difficulty {
         case .easy:
-                maxMultiplier = 4
-                totalQuestions = 10
+            maxMultiplier = 4
+            totalQuestions = 10
         case .medium:
-                maxMultiplier = 8
-                totalQuestions = 20
+            maxMultiplier = 8
+            totalQuestions = 20
         case .hard:
-                maxMultiplier = 12
-                totalQuestions = 30
-        }
+            maxMultiplier = 12
+            totalQuestions = 30
         
+        case .custom:
+            break
+        }
+        self.gameDifficulty = Difficulty // Update to reflect the chosen difficulty
     }
 
     mutating func startGame(){
         
-        if totalQuestions == 0 {
+        if totalQuestions == 0 && !useCustom {
             alertMessage = "Please select a difficulty."
             showAlert = true
             return
         }
         
-        questionsArr = generateQuestions(pracNumbers: maxMultiplier, lengthQuestions: totalQuestions)
+        // Sets the number of questions based on whether custom settings are used or not.
+        // If custom, it uses `gameChoice`; otherwise, it uses the default `totalQuestions`.
+        let questionCount = useCustom ? gameChoice : totalQuestions
+        questionsArr = generateQuestions(pracNumbers: maxMultiplier, lengthQuestions: questionCount)
         questionsArr.shuffle()
         gameState = .inProgress
+        totalQuestions = questionsArr.count
         midPoint = totalQuestions / 2
         index = 0
         

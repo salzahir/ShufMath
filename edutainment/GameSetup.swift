@@ -32,6 +32,36 @@ struct GameSetupView: View {
                     })
                         
                     }
+                
+                GameDifficultyButton(buttonText: "Custom", buttonColor: .teal, action:{
+                    game.useCustom.toggle()
+                    if game.useCustom{
+                        game.gameDifficultySetup(Difficulty: .custom)
+
+                    }
+                })
+                    
+                
+                if game.useCustom{
+                        Stepper("Max Multiplier is \(game.maxMultiplier)", value: $game.maxMultiplier, in: 2...12)
+                            .padding()
+                            .background(Color.blue)
+                            .cornerRadius(10)
+                            .font(.headline)
+                            .foregroundStyle(Color.white)
+                            .shadow(radius: 5)
+                        
+                        Picker("Choose Number of Questions", selection: $game.gameChoice) {
+                            ForEach(game.questionChoices, id: \.self){ number in
+                                Text("\(number)")
+                            }
+                        }
+                        .pickerStyle(WheelPickerStyle())
+                        .padding()
+                        .background(Color.yellow)
+                        .cornerRadius(10)
+                        .shadow(radius: 5)
+                    }
             }
             .padding()
         }
@@ -58,21 +88,4 @@ struct GameDifficultyButton: View {
 }
 
 
-//Stepper("Max Multiplier is \(game.maxMultiplier)", value: $game.maxMultiplier, in: 2...12)
-//    .padding()
-//    .background(Color.blue)
-//    .cornerRadius(10)
-//    .font(.headline)
-//    .foregroundStyle(Color.white)
-//    .shadow(radius: 5)
-//             
-//Picker("Choose Number of Questions", selection: $game.choice) {
-//    ForEach(game.questionChoices, id: \.self){ number in
-//        Text("\(number)")
-//    }
-//}
-//.pickerStyle(WheelPickerStyle())
-//.padding()
-//.background(Color.yellow)
-//.cornerRadius(10)
-//.shadow(radius: 5)
+
