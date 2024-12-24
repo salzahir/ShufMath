@@ -15,28 +15,64 @@ struct GameSetupView: View {
     
     var body: some View {
         VStack{
-            Section("Practice Choices"){
-                Stepper("Max Multiplier is \(game.maxMultiplier)", value: $game.maxMultiplier, in: 2...12)
-                    .padding()
-                    .background(Color.blue)
-                    .cornerRadius(10)
-                    .font(.headline)
-                    .foregroundStyle(Color.white)
-                    .shadow(radius: 5)
-                             
-                Picker("Choose Number of Questions", selection: $game.choice) {
-                    ForEach(game.questionChoices, id: \.self){ number in
-                        Text("\(number)")
-                    }
-                }
-                .pickerStyle(WheelPickerStyle())
-                .padding()
-                .background(Color.yellow)
-                .cornerRadius(10)
-                .shadow(radius: 5)
+            
+            Section("Game Setup"){
                 
+                HStack{
+                    GameDifficultyButton(buttonText: "Easy", buttonColor: Color.green, action: {
+                        game.gameDifficultySetup(Difficulty: .easy)
+                    })
+                        
+                    GameDifficultyButton(buttonText: "Med", buttonColor: Color.yellow, action: {
+                        game.gameDifficultySetup(Difficulty: .medium)
+                    })
+                    
+                    GameDifficultyButton(buttonText: "Hard", buttonColor: Color.red, action: {
+                        game.gameDifficultySetup(Difficulty: .hard)
+                    })
+                        
+                    }
             }
             .padding()
         }
     }
 }
+
+struct GameDifficultyButton: View {
+    var buttonText: String
+    var buttonColor: Color
+    let action: () -> Void
+    
+    var body: some View {
+        Button(buttonText, action: action)
+        .font(.title2)
+        .fontWeight(.bold)
+        .padding()
+        .frame(maxWidth: .infinity)
+        .background(buttonColor)
+        .foregroundColor(.white)
+        .cornerRadius(10)
+        .shadow(radius: 5)
+        .padding(.horizontal)
+    }
+}
+
+
+//Stepper("Max Multiplier is \(game.maxMultiplier)", value: $game.maxMultiplier, in: 2...12)
+//    .padding()
+//    .background(Color.blue)
+//    .cornerRadius(10)
+//    .font(.headline)
+//    .foregroundStyle(Color.white)
+//    .shadow(radius: 5)
+//             
+//Picker("Choose Number of Questions", selection: $game.choice) {
+//    ForEach(game.questionChoices, id: \.self){ number in
+//        Text("\(number)")
+//    }
+//}
+//.pickerStyle(WheelPickerStyle())
+//.padding()
+//.background(Color.yellow)
+//.cornerRadius(10)
+//.shadow(radius: 5)

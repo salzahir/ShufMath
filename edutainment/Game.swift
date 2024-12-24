@@ -27,16 +27,21 @@ struct Game{
     var userInput = ""
     var questionsArr: [Question] = []
     var highScore = 0
-    var choice = 5
     var maxMultiplier = 2
-    var questionChoices = [5, 10, 15, 20, 25, 30]
     var isGameOver: Bool = false
     var midPoint = 0
+    var gameDifficulty: GameDifficulty = .easy
     
     enum GameState {
         case notStarted
         case inProgress
         case finished
+    }
+    
+    enum GameDifficulty {
+        case easy
+        case medium
+        case hard
     }
     
     // Helper when user decides to try to skip a question
@@ -182,14 +187,38 @@ struct Game{
         
         return questions
     }
+    
+    mutating func gameDifficultySetup(Difficulty: GameDifficulty){
+        
+        switch Difficulty {
+        case .easy:
+                maxMultiplier = 4
+                totalQuestions = 10
+        case .medium:
+                maxMultiplier = 8
+                totalQuestions = 20
+        case .hard:
+                maxMultiplier = 12
+                totalQuestions = 30
+        }
+        
+    }
 
     mutating func startGame(){
-        questionsArr = generateQuestions(pracNumbers: maxMultiplier, lengthQuestions: choice)
+        
+        if totalQuestions == 0 {
+            alertMessage = "Please select a difficulty."
+            showAlert = true
+            return
+        }
+        
+        questionsArr = generateQuestions(pracNumbers: maxMultiplier, lengthQuestions: totalQuestions)
         questionsArr.shuffle()
         gameState = .inProgress
-        totalQuestions = questionsArr.count
         midPoint = totalQuestions / 2
         index = 0
+        
     }
     
 }
+
