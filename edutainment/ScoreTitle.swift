@@ -8,18 +8,15 @@
 import SwiftUI
 
 struct ScoreTitle: View {
-    @Binding var highScore: Int
-    @Binding var questions: Int
-    @Binding var index: Int
-    @Binding var correctAnswers: Int
-    @Binding var skips: Int
+    
+    @Binding var game: Game
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5){
-            Text("Current High Score is \(highScore)")
-            Text("Current Score is \(correctAnswers) / \(questions)")
-            Text("Skips left: \(skips)")
-            Text("\(questions - index) questions left")
+            Text("Current High Score is \(game.highScore)")
+            Text("Current Score is \(game.correctAnswers) / \(game.totalQuestions)")
+            Text("Skips left: \(game.skips)")
+            Text("\(game.totalQuestions - game.index) questions left")
         }
         .padding()
         .background(Color.white.opacity(0.8))

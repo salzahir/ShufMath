@@ -17,11 +17,7 @@ struct MainGameView: View {
             if game.index < game.totalQuestions && game.gameState == .inProgress {
                 
                 ScoreTitle(
-                    highScore: $game.highScore,
-                    questions: $game.totalQuestions,
-                    index: $game.index,
-                    correctAnswers: $game.correctAnswers,
-                    skips: $game.skips
+                    game: $game
                 )
                 .padding()
                 
@@ -40,7 +36,6 @@ struct MainGameView: View {
                 
                 // Buttons
                 HStack{
-                    
                     Button("Check Answer"){
                         game.processAnswer(isSkipping: false)
                                 }

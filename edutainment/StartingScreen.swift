@@ -15,9 +15,9 @@ struct StartingScreen: View {
         VStack(spacing: 10){
             // Presettings and Views presented before game started
             if game.index == 0 && game.gameState == .notStarted {
-                Text("Welcome to SwiftQuiz!")
+                Text("Welcome to EduQuiz!")
                     .font(.title)
-                    .foregroundColor(Color.white)
+                    .foregroundColor(Color.black)
                 GameSetupView(game: $game)
                 Button("Play"){
                     game.startGame()

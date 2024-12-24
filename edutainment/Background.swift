@@ -17,3 +17,10 @@ let gradientStops: [Gradient.Stop] = [
     .init(color: skyBlue, location: 0.5),
     .init(color: softGreen, location: 0.8)
 ]
+
+struct BackGroundView: View {
+    var body: some View {
+        RadialGradient(stops: gradientStops, center: .top, startRadius: 200, endRadius: 400)
+            .ignoresSafeArea()
+    }
+}
