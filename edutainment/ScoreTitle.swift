@@ -16,7 +16,7 @@ struct ScoreTitle: View {
     // Add Max Multipler Selected to
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 5){
+        VStack(alignment: .leading, spacing: 2.5){
             Text("Current High Score is \(game.highScore)")
             Text("Current Score is \(game.correctAnswers) / \(game.totalQuestions)")
             Text("Skips left: \(game.skips)")

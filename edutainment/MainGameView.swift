@@ -28,6 +28,10 @@ struct MainGameView: View {
                         .textFieldStyle(.roundedBorder)
                 }
                 .padding()
+                .font(.title2)  // Adjust font size
+                .fontWeight(.bold)  // Make it bolder
+                .foregroundColor(.blue)  // Set color to blue or any color you prefer
+                .padding(.leading)
                 
                 
                 GameButtons(game: $game)
