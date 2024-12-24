@@ -1,18 +1,28 @@
-# Edutainment App 🎓📱
+Edutainment App 🎓📱
 
-This is a SwiftUI-based educational app that helps users practice and improve their multiplication skills. The app generates random multiplication questions based on user-defined settings, tracks progress, and keeps a high score.
+This is a SwiftUI-based educational app designed to help users practice and improve their multiplication skills. The app generates random multiplication questions based on user-defined settings, tracks progress, and keeps a high score.
 
-## Features 🌟
-- **Customizable Practice Settings:**
-  - Select the range of numbers for multiplication.
-  - Choose the number of questions to practice.
+Features 🌟
+	•	Customizable Practice Settings:
+	•	Select the range of numbers for multiplication.
+	•	Choose the number of questions to practice.
+	•	Custom Difficulty: Tailor the difficulty to suit your needs with custom settings for max multiplier and total number of questions.
+	•	Interactive Gameplay:
+	•	Randomly generated multiplication questions.
+	•	User input validation with feedback on correct or incorrect answers.
+	•	Score Tracking:
+	•	High score functionality to encourage improvement.
+	•	Current score displayed, along with the number of questions answered correctly.
+	•	Clean UI Design:
+	•	SwiftUI is used to create a user-friendly and visually appealing interface.
+	•	Responsive layout for a seamless experience on iOS devices.
 
-- **Interactive Gameplay:**
-  - Randomly generated multiplication questions.
-  - User input validation with feedback on correct or incorrect answers.
+How to Use 📝
+	1.	Launch the app.
+	2.	Select a difficulty (Easy, Medium, Hard) or choose Custom for personalized settings.
+	3.	Start practicing multiplication by answering the questions presented.
+	4.	Track your score as you go, and try to beat your high score!
 
-- **Score Tracking:**
-  - High score functionality to encourage improvement.
-
-- **Clean UI Design:**
-  - Uses SwiftUI for a user-friendly and visually appealing interface.
+Future Enhancements 🚀
+	•	Option to review incorrect answers after the game.
+	•	Include more challenging question sets and other educational topics.
