@@ -16,23 +16,12 @@ struct MainGameView: View {
         VStack{
             if game.index < game.totalQuestions && game.gameState == .inProgress {
                 
-                ScoreTitle(
-                    game: $game
-                )
+                ScoreTitle(game: $game)
+                
                 .padding()
                 
-                
-//                QuestionView(game: $game)
-                
-                VStack{
-                    Text("Question \(game.index+1)")
-                    Text("\(game.questionsArr[game.index].questionText)")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .padding()
-                }
-       
-                
+                QuestionView(index: game.index, questionText: game.questionsArr[game.index].questionText)
+                       
                 // Answer Input
                 HStack{
                     Text(game.userInput)
@@ -51,18 +40,19 @@ struct MainGameView: View {
     }
 }
 
-//struct QuestionView: View {
-//    
-//    @Binding var game: Game
-//    
-//    var body: some View {
-//        Text("Question \(game.index+1)")
-//        Text("\(game.questionsArr[game.index].questionText)")
-//            .font(.title)
-//            .fontWeight(.bold)
-//            .padding()
-//    }
-//}
+struct QuestionView: View {
+    
+    let index: Int
+    let questionText: String
+    
+    var body: some View {
+        Text("Question \(index+1)")
+        Text("\(questionText)")
+            .font(.title)
+            .fontWeight(.bold)
+            .padding()
+    }
+}
 
 struct GameButtons: View {
     @Binding var game: Game
