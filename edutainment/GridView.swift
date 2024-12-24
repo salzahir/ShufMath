@@ -24,31 +24,13 @@ struct GridView: View {
                     }){
                         // Gridbutton View
                         GridButton(item: item)
+                    }
+                    .accessibilityLabel("Number \(item), Current Input: \(userInput)")
+                }
+            }
+            .padding()
+            BottomRowControls(userInput: $userInput)
 
-                    }
-                }
-            }
-            
-            HStack {
-                Button(action: {
-                    userInput += "0"
-                }) {
-                    HorizontalButton(item: "0")
-                }
-                
-                Button(action: {
-                    if !userInput.isEmpty {
-                        userInput.removeLast()
-                    }
-                }) {
-                    HorizontalButton(item: "⬅️")
-                }
-                .onLongPressGesture(minimumDuration: 1.0){
-                    userInput = ""
-                }
-                
-            }
-            .frame(maxWidth: .infinity)
         }
     }
 }
@@ -67,6 +49,36 @@ struct GridButton: View {
             )
     }
 }
+
+struct BottomRowControls: View {
+    @Binding var userInput: String
+    var body: some View {
+        HStack {
+            Button(action: {
+                userInput += "0"
+            }) {
+                HorizontalButton(item: "0")
+            }
+            .accessibilityLabel("Number 0, Current Input: \(userInput)")
+            
+            Button(action: {
+                if !userInput.isEmpty {
+                    userInput.removeLast()
+                }
+            }) {
+                HorizontalButton(item: "⬅️")
+            }
+            .accessibilityLabel("Delete, Current Input: \(userInput)")
+            .onLongPressGesture(minimumDuration: 1.0){
+                userInput = ""
+            }
+            
+        }
+        .frame(maxWidth: .infinity)
+    }
+}
+
+
 
 struct HorizontalButton: View {
     var item: String

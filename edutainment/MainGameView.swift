@@ -16,17 +16,12 @@ struct MainGameView: View {
         VStack{
             if game.index < game.totalQuestions && game.gameState == .inProgress {
                 
-                ScoreTitle(
-                    game: $game
-                )
+                ScoreTitle(game: $game)
+                
                 .padding()
                 
-                Text("Question \(game.index+1)")
-                Text("\(game.questionsArr[game.index].questionText)")
-                    .font(.title)
-                    .fontWeight(.bold)
-                    .padding()
-                
+                QuestionView(index: game.index, questionText: game.questionsArr[game.index].questionText)
+                       
                 // Answer Input
                 HStack{
                     Text(game.userInput)
@@ -34,31 +29,53 @@ struct MainGameView: View {
                 }
                 .padding()
                 
-                // Buttons
-                HStack{
-                    Button("Check Answer"){
-                        game.processAnswer(isSkipping: false)
-                                }
-                                .buttonStyle(.borderedProminent)
-                                .padding()
-                                        
-                    Button("Skip") {
-                        game.processAnswer(isSkipping: true)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .padding()
-                    
-                    Button("Restart"){
-                        game.playAgain()
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .padding()
-                }
+                
+                GameButtons(game: $game)
                 
                 GridView(userInput: $game.userInput)
                
             }
             
+        }
+    }
+}
+
+struct QuestionView: View {
+    
+    let index: Int
+    let questionText: String
+    
+    var body: some View {
+        Text("Question \(index+1)")
+        Text("\(questionText)")
+            .font(.title)
+            .fontWeight(.bold)
+            .padding()
+    }
+}
+
+struct GameButtons: View {
+    @Binding var game: Game
+    var body: some View {
+        // Buttons
+        HStack{
+            Button("Check Answer"){
+                game.processAnswer(isSkipping: false)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .padding()
+                                
+            Button("Skip") {
+                game.processAnswer(isSkipping: true)
+            }
+            .buttonStyle(.borderedProminent)
+            .padding()
+            
+            Button("Restart"){
+                game.playAgain()
+            }
+            .buttonStyle(.borderedProminent)
+            .padding()
         }
     }
 }
