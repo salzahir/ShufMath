@@ -79,6 +79,7 @@ struct GameDifficultyButton: View {
     }
 }
 
+// Stepper Modifier
 struct StepperViewMod: ViewModifier {
     func body(content: Content) -> some View {
         content
@@ -97,6 +98,7 @@ extension View{
     }
 }
 
+// Picker Modifier
 struct PickerViewModifer: ViewModifier {
     func body(content: Content) -> some View {
         content
