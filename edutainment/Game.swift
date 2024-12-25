@@ -173,6 +173,8 @@ struct Game{
         // Checks answer
         checkAnswer()
         
+        checkPoint()
+
         // Proceed to next question
         index += 1
         
@@ -187,15 +189,26 @@ struct Game{
     }
     
     mutating func handleTimeUp(){
+        
+        // Alert the user times up
         alertMessage = .timesUp
         showAlert = true
         
-        nextQuestion()
-        
+        // Decrement points if above 0
         if correctAnswers > 0{
             correctAnswers -= 1
         }
+        
+        // Reset Timer State
+        timerAmount = 0.0
+        userInput = ""
+        timesUp = false
+        
+        nextQuestion()
+        
+        // Renable timer
         useTimer = true
+        
         return
     }
     
@@ -224,9 +237,7 @@ struct Game{
             }
             
         }
-        
-        checkPoint()
-        
+                
     }
 
     
@@ -266,7 +277,7 @@ struct Game{
     
     mutating func checkPoint(){
         // Commemorate the user if they are half way through the game
-        if index == midPoint{
+        if (index+1) == midPoint{
             midMessage = AlertMessage.halfway.rawValue
         }
     }
@@ -274,12 +285,13 @@ struct Game{
     mutating func resetQuestion() {
         // shows alert at the end
         showAlert = true
-
-        timerAmount = 0.0
-    
+                
         // Resets input field
         userInput = ""
-        midMessage = ""
+        // Only reset midMessage after it's been shown
+        if midMessage != AlertMessage.halfway.rawValue {
+            midMessage = ""
+        }
     }
     
     mutating private func validInput() -> AlertMessage? {
