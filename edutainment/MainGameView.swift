@@ -28,11 +28,10 @@ struct MainGameView: View {
                         .textFieldStyle(.roundedBorder)
                 }
                 .padding()
-                .font(.title2)  // Adjust font size
-                .fontWeight(.bold)  // Make it bolder
-                .foregroundColor(.blue)  // Set color to blue or any color you prefer
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundColor(.blue)
                 .padding(.leading)
-                
                 
                 GameButtons(game: $game)
                 
@@ -72,14 +71,28 @@ struct GameButtons: View {
             Button("Skip") {
                 game.processAnswer(isSkipping: true)
             }
-            .buttonStyle(.borderedProminent)
-            .padding()
+            .customButtonStyle()
             
             Button("Restart"){
                 game.playAgain()
             }
-            .buttonStyle(.borderedProminent)
-            .padding()
+            .customButtonStyle()
         }
+    }
+}
+
+struct ButtonStyleModifier: ViewModifier {
+    var paddingAmount: CGFloat = 8.0
+    
+    func body(content: Content) -> some View {
+        content
+            .buttonStyle(.borderedProminent)
+            .padding(paddingAmount)
+    }
+}
+
+extension View {
+    func customButtonStyle(paddingAmount: CGFloat = 8.0) -> some View {
+        self.modifier(ButtonStyleModifier(paddingAmount: paddingAmount))
     }
 }

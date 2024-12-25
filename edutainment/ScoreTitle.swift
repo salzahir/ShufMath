@@ -24,12 +24,26 @@ struct ScoreTitle: View {
             Text("Difficult Mode selected is \(game.gameDifficulty)")
             Text("Max Multiplier selected is \(game.maxMultiplier)")
         }
-        .padding()
-        .background(Color.white.opacity(0.8))
-        .cornerRadius(5)
-        .padding(.top, 15)
-        .safeAreaInset(edge: .top){
-            Color.clear.frame(height: 0)
-        }
+        .customScoreTitleModifier()
+     
+    }
+}
+
+struct ScoreTitleModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .padding()
+            .background(Color.white.opacity(0.8))
+            .cornerRadius(5)
+            .padding(.top, 15)
+            .safeAreaInset(edge: .top){
+                Color.clear.frame(height: 0)
+            }
+    }
+}
+
+extension View {
+    func customScoreTitleModifier() -> some View {
+        self.modifier(ScoreTitleModifier())
     }
 }

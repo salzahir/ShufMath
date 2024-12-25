@@ -44,23 +44,15 @@ struct GameSetupView: View {
                 
                 if game.useCustom{
                         Stepper("Max Multiplier is \(game.maxMultiplier)", value: $game.maxMultiplier, in: 2...12)
-                            .padding()
-                            .background(Color.blue)
-                            .cornerRadius(10)
-                            .font(.headline)
-                            .foregroundStyle(Color.white)
-                            .shadow(radius: 5)
+                            .stepperViewModifier()
                         
                         Picker("Choose Number of Questions", selection: $game.gameChoice) {
                             ForEach(game.questionChoices, id: \.self){ number in
                                 Text("\(number)")
                             }
                         }
-                        .pickerStyle(WheelPickerStyle())
-                        .padding()
-                        .background(Color.yellow)
-                        .cornerRadius(10)
-                        .shadow(radius: 5)
+                        .pickerViewModifier()
+                        
                     }
             }
             .padding()
@@ -87,5 +79,37 @@ struct GameDifficultyButton: View {
     }
 }
 
+struct StepperViewMod: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .padding()
+            .background(Color.blue)
+            .cornerRadius(10)
+            .font(.headline)
+            .foregroundStyle(Color.white)
+            .shadow(radius: 5)
+    }
+}
 
+extension View{
+    func stepperViewModifier() -> some View {
+        self.modifier(StepperViewMod())
+    }
+}
 
+struct PickerViewModifer: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .pickerStyle(WheelPickerStyle())
+            .padding()
+            .background(Color.yellow)
+            .cornerRadius(10)
+            .shadow(radius: 5)
+    }
+}
+
+extension View{
+    func pickerViewModifier() -> some View {
+        self.modifier(PickerViewModifer())
+    }
+}
