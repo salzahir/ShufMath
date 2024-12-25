@@ -17,22 +17,24 @@ struct GameSetupView: View {
         VStack{
             
             Section("Game Setup"){
-                
-                HStack{
-                    GameDifficultyButton(buttonText: "Easy", buttonColor: Color.green, action: {
-                        game.gameDifficultySetup(Difficulty: .easy)
-                    })
+                if !game.useCustom {
+                    HStack{
+                        GameDifficultyButton(buttonText: "Easy", buttonColor: Color.green, action: {
+                            game.gameDifficultySetup(Difficulty: .easy)
+                        })
+                            
+                        GameDifficultyButton(buttonText: "Med", buttonColor: Color.yellow, action: {
+                            game.gameDifficultySetup(Difficulty: .medium)
+                        })
                         
-                    GameDifficultyButton(buttonText: "Med", buttonColor: Color.yellow, action: {
-                        game.gameDifficultySetup(Difficulty: .medium)
-                    })
+                        GameDifficultyButton(buttonText: "Hard", buttonColor: Color.red, action: {
+                            game.gameDifficultySetup(Difficulty: .hard)
+                        })
+                            
+                        }
                     
-                    GameDifficultyButton(buttonText: "Hard", buttonColor: Color.red, action: {
-                        game.gameDifficultySetup(Difficulty: .hard)
-                    })
-                        
-                    }
-                
+                }
+             
                 GameDifficultyButton(buttonText: "Custom", buttonColor: .teal, action:{
                     game.useCustom.toggle()
                     if game.useCustom{
@@ -41,13 +43,9 @@ struct GameSetupView: View {
                     }
                 })
                 
-                GameDifficultyButton(buttonText: "Timer?", buttonColor: Color.orange, action: {
-                    game.useTimer.toggle()
-                })
-                    
                 if game.useCustom{
                         Stepper("Max Multiplier is \(game.maxMultiplier)", value: $game.maxMultiplier, in: 2...12)
-                            .stepperViewModifier()
+                        .stepperViewModifier(color: .blue)
                         
                         Picker("Choose Number of Questions", selection: $game.gameChoice) {
                             ForEach(game.questionChoices, id: \.self){ number in
@@ -55,8 +53,17 @@ struct GameSetupView: View {
                             }
                         }
                         .pickerViewModifier()
+                    
+                    Stepper("Number of skips is \(game.skips)", value: $game.skips, in: 1...5)
+                        .stepperViewModifier(color: Color.pink)
                         
                     }
+                
+                GameDifficultyButton(buttonText: "Timer?", buttonColor: Color.orange, action: {
+                    game.useTimer.toggle()
+                })
+                    
+              
                 
                 
             }
@@ -86,10 +93,11 @@ struct GameDifficultyButton: View {
 
 // Stepper Modifier
 struct StepperViewMod: ViewModifier {
+    var colorName: Color
     func body(content: Content) -> some View {
         content
             .padding()
-            .background(Color.blue)
+            .background(colorName)
             .cornerRadius(10)
             .font(.headline)
             .foregroundStyle(Color.white)
@@ -98,13 +106,13 @@ struct StepperViewMod: ViewModifier {
 }
 
 extension View{
-    func stepperViewModifier() -> some View {
-        self.modifier(StepperViewMod())
+    func stepperViewModifier(color: Color) -> some View {
+        self.modifier(StepperViewMod(colorName: color))
     }
 }
 
 // Picker Modifier
-struct PickerViewModifer: ViewModifier {
+struct PickerViewModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .pickerStyle(WheelPickerStyle())
@@ -117,7 +125,7 @@ struct PickerViewModifer: ViewModifier {
 
 extension View{
     func pickerViewModifier() -> some View {
-        self.modifier(PickerViewModifer())
+        self.modifier(PickerViewModifier())
     }
 }
 

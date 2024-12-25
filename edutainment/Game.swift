@@ -22,7 +22,7 @@ struct Game{
     var correctAnswers = 0
     var skips = 3
     var gameState: GameState = .notStarted
-    var alertMessage = ""
+    var alertMessage: AlertMessage = .blank
     var showAlert = false
     var userInput = ""
     var questionsArr: [Question] = []
@@ -51,146 +51,79 @@ struct Game{
         case custom
     }
     
-    // Helper when user decides to try to skip a question
-    mutating func skipQuestion() {
-        
-        if skips > 0 {
-            index += 1
-            
-            if index == totalQuestions{
-                gameState = .finished
-                alertMessage = "Last Question skipped game over"
-                return
-            }
-            
-            alertMessage = "Question Skipped Successfully No Point"
-            showAlert = true
-            skips -= 1
-            userInput = ""
-        
-        }
-        
-        else{
-            alertMessage = "Out of skips"
-            showAlert = true
-        }
-        
+    enum AlertMessage: String {
+        case blank = ""
+        case selectDifficulty = "Please select a difficulty."
+        case timesUp = "Times Up!"
+        case correctAnswer = "Correct +1 Point"
+        case incorrectAnswer = "Incorrect -1 Point"
+        case incorrectNoPoint = "Incorrect No Point"
+        case skippedQuestion = "Question Skipped Successfully No Point"
+        case outOfSkips = "Out of skips"
+        case lastQuestionSkipped = "Last Question skipped game over"
+        case halfway = "You reached half way!"
+        case emptyInput = "Empty input, please enter a number."
+        case invalidInput = "Invalid Input please enter a valid number."
     }
     
-    mutating private func validInput() -> String? {
+    mutating func gameDifficultySetup(Difficulty: GameDifficulty){
         
-        // Empty String Guard
-        guard !userInput.isEmpty else {
-            return "Empty input, please enter a number."
+        switch Difficulty {
+        case .easy:
+            maxMultiplier = 4
+            totalQuestions = 10
+            skips = 5
+        case .medium:
+            maxMultiplier = 8
+            totalQuestions = 20
+            skips = 3
+        case .hard:
+            maxMultiplier = 12
+            totalQuestions = 30
+            skips = 1
+        case .custom:
+            break
         }
-        
-        // Valid Number Check
-        guard let _ = Int(userInput) else{
-            return "Invalid Input please enter a valid number"
-        }
-        
-        return nil
-        
+        self.gameDifficulty = Difficulty // Update to reflect the chosen difficulty
     }
     
-    
-    mutating func checkAnswer(){
+    mutating func generateQuestions(pracNumbers: Int, lengthQuestions: Int) -> [Question] {
         
-        // Increment by 1 for correct answer
-        let userAnswer = Int(userInput)
+        var questions: [Question] = []
         
-        if userAnswer == questionsArr[index].correctAnswer{
-            correctAnswers += 1
-            alertMessage = "Correct +1 Point"
-        }
-        
-        // Decrement by 1 for incorrect answer
-        else{
+        for _ in 0..<lengthQuestions {
+            let choice1 = Int.random(in: 1...pracNumbers)
+            let choice2 = Int.random(in: 1...pracNumbers)
             
-            // Decrement only above 0 no negative points
-            if correctAnswers > 0 {
-                correctAnswers -= 1
-                alertMessage = "Incorrect -1 Point"
-            }
+            // Generate the question text
+            let questionText = "What is \(choice1) x \(choice2)?"
+            let correctAnswer = choice1 * choice2
             
-            // No negative points
-            else{
-                alertMessage = "Incorrect No Point"
-            }
+            questions.append(Question(questionText: questionText, correctAnswer: correctAnswer))
             
         }
         
-        checkPoint()
-        
+        return questions
     }
     
-    mutating func checkPoint(){
-        // Commemorate the user if they are half way through the game
-        if index == midPoint{
-            alertMessage += "\n\nYou reached half way!"
-        }
-    }
-    
-    
-    mutating func processAnswer(isSkipping: Bool = false){
-                
-        if timesUp {
-            
-            alertMessage = "Times Up!"
-            showAlert = true
-            
-            nextQuestion()
-            
-            if correctAnswers > 0{
-                correctAnswers -= 1
-            }
-            self.useTimer = true
-            return
-        }
+    mutating func startGame(){
         
-        if isSkipping{
-            skipQuestion()
-            return
-        }
-        
-        if let errorMessage = validInput(){
-            alertMessage = errorMessage
+        if totalQuestions == 0 && !useCustom {
+            alertMessage = AlertMessage.selectDifficulty
             showAlert = true
             return
         }
         
-        // Checks answer
-        checkAnswer()
+        // Sets the number of questions based on whether custom settings are used or not.
+        // If custom, it uses `gameChoice`; otherwise, it uses the default `totalQuestions`.
+        let questionCount = useCustom ? gameChoice : totalQuestions
+        questionsArr = generateQuestions(pracNumbers: maxMultiplier, lengthQuestions: questionCount)
+        questionsArr.shuffle()
+        gameState = .inProgress
+        totalQuestions = questionsArr.count
+        midPoint = totalQuestions / 2
+        index = 0
         
-        // Proceed to next question
-        index += 1
-        
-        // End of the Game
-        if index == totalQuestions{
-            gameState = .finished
-            return
-        }
-        
-        resetQuestion()
-        
-    }
-    
-    mutating func nextQuestion(){
-        index += 1
-        if index == totalQuestions{
-            self.gameState = .finished
-        }
-        return
-    }
-    
-    mutating func resetQuestion() {
-        // shows alert at the end
-        showAlert = true
-
-        timerAmount = 0.0
-    
-        // Resets input field
-        userInput = ""
     }
     
     mutating func playAgain() {
@@ -213,63 +146,174 @@ struct Game{
         timesUp = false
     }
     
-    mutating func generateQuestions(pracNumbers: Int, lengthQuestions: Int) -> [Question] {
-        
-        var questions: [Question] = []
-        
-        for _ in 0..<lengthQuestions {
-            let choice1 = Int.random(in: 1...pracNumbers)
-            let choice2 = Int.random(in: 1...pracNumbers)
-            
-            // Generate the question text
-            let questionText = "What is \(choice1) x \(choice2)?"
-            let correctAnswer = choice1 * choice2
-            
-            questions.append(Question(questionText: questionText, correctAnswer: correctAnswer))
-            
-        }
-        
-        return questions
-    }
-    
-    mutating func gameDifficultySetup(Difficulty: GameDifficulty){
-        
-        switch Difficulty {
-        case .easy:
-            maxMultiplier = 4
-            totalQuestions = 10
-        case .medium:
-            maxMultiplier = 8
-            totalQuestions = 20
-        case .hard:
-            maxMultiplier = 12
-            totalQuestions = 30
-        
-        case .custom:
-            break
-        }
-        self.gameDifficulty = Difficulty // Update to reflect the chosen difficulty
-    }
 
-    mutating func startGame(){
+    
+    mutating func processAnswer(isSkipping: Bool = false){
         
-        if totalQuestions == 0 && !useCustom {
-            alertMessage = "Please select a difficulty."
+        // User ran out of time skip the question and adjust
+        // points accordingly
+        
+        if timesUp {
+            handleTimeUp()
+            return
+        }
+        
+        if isSkipping{
+            skipQuestion()
+            return
+        }
+        
+        if let errorMessage = validInput(){
+            alertMessage = .selectDifficulty
             showAlert = true
             return
         }
         
-        // Sets the number of questions based on whether custom settings are used or not.
-        // If custom, it uses `gameChoice`; otherwise, it uses the default `totalQuestions`.
-        let questionCount = useCustom ? gameChoice : totalQuestions
-        questionsArr = generateQuestions(pracNumbers: maxMultiplier, lengthQuestions: questionCount)
-        questionsArr.shuffle()
-        gameState = .inProgress
-        totalQuestions = questionsArr.count
-        midPoint = totalQuestions / 2
-        index = 0
+        // Checks answer
+        checkAnswer()
+        
+        // Proceed to next question
+        index += 1
+        
+        // End of the Game
+        if index == totalQuestions{
+            gameState = .finished
+            return
+        }
+        
+        resetQuestion()
         
     }
+    
+    mutating func handleTimeUp(){
+        alertMessage = .timesUp
+        showAlert = true
+        
+        nextQuestion()
+        
+        if correctAnswers > 0{
+            correctAnswers -= 1
+        }
+        useTimer = true
+        return
+    }
+    
+    mutating func checkAnswer(){
+        
+        // Increment by 1 for correct answer
+        let userAnswer = Int(userInput)
+        
+        if userAnswer == questionsArr[index].correctAnswer{
+            correctAnswers += 1
+            alertMessage = .correctAnswer
+        }
+        
+        // Decrement by 1 for incorrect answer
+        else{
+            
+            // Decrement only above 0 no negative points
+            if correctAnswers > 0 {
+                correctAnswers -= 1
+                alertMessage = .incorrectAnswer
+            }
+            
+            // No negative points
+            else{
+                alertMessage = .incorrectNoPoint
+            }
+            
+        }
+        
+        checkPoint()
+        
+    }
+
+    
+    // Helper when user decides to try to skip a question
+    mutating func skipQuestion() {
+        
+        if skips > 0 {
+            index += 1
+            
+            if index == totalQuestions{
+                gameState = .finished
+                alertMessage = .lastQuestionSkipped
+                return
+            }
+            
+            alertMessage = .skippedQuestion
+            showAlert = true
+            skips -= 1
+            userInput = ""
+        
+        }
+        
+        else{
+            alertMessage = .outOfSkips
+            showAlert = true
+        }
+        
+    }
+    
+    mutating func nextQuestion(){
+        index += 1
+        if index == totalQuestions{
+            self.gameState = .finished
+        }
+        return
+    }
+    
+    mutating func checkPoint(){
+        // Commemorate the user if they are half way through the game
+        if index == midPoint{
+            alertMessage = .halfway
+        }
+    }
+    
+    mutating func resetQuestion() {
+        // shows alert at the end
+        showAlert = true
+
+        timerAmount = 0.0
+    
+        // Resets input field
+        userInput = ""
+    }
+    
+    mutating private func validInput() -> String? {
+        
+        // Empty String Guard
+        guard !userInput.isEmpty else {
+            return "Empty input, please enter a number."
+        }
+        
+        // Valid Number Check
+        guard let _ = Int(userInput) else{
+            return "Invalid Input please enter a valid number"
+        }
+        
+        return nil
+        
+    }
+    
+    
+    
+
+    
+    
+
+    
+ 
+    
+
+    
+
+    
+
+    
+
+
+
     
 }
 
