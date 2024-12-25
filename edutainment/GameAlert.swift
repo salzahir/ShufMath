@@ -18,11 +18,10 @@ struct GameAlert: View {
 
             
         }
-        .alert(game.alertMessage, isPresented: $game.showAlert) {
+        .alert(game.alertMessage.rawValue + game.midMessage, isPresented: $game.showAlert) {
             Button("OK", role: .cancel){}
         }
         
-       
         .sheet(isPresented: $game.isGameOver, onDismiss: {game.playAgain()}) {
             ZStack{
                 Color.teal

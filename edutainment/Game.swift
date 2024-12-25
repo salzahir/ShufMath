@@ -23,6 +23,7 @@ struct Game{
     var skips = 3
     var gameState: GameState = .notStarted
     var alertMessage: AlertMessage = .blank
+    var midMessage = ""
     var showAlert = false
     var userInput = ""
     var questionsArr: [Question] = []
@@ -61,7 +62,7 @@ struct Game{
         case skippedQuestion = "Question Skipped Successfully No Point"
         case outOfSkips = "Out of skips"
         case lastQuestionSkipped = "Last Question skipped game over"
-        case halfway = "You reached half way!"
+        case halfway = "\n\nYou reached half way!"
         case emptyInput = "Empty input, please enter a number."
         case invalidInput = "Invalid Input please enter a valid number."
     }
@@ -164,7 +165,7 @@ struct Game{
         }
         
         if let errorMessage = validInput(){
-            alertMessage = .selectDifficulty
+            alertMessage = errorMessage
             showAlert = true
             return
         }
@@ -266,7 +267,7 @@ struct Game{
     mutating func checkPoint(){
         // Commemorate the user if they are half way through the game
         if index == midPoint{
-            alertMessage = .halfway
+            midMessage = AlertMessage.halfway.rawValue
         }
     }
     
@@ -278,42 +279,24 @@ struct Game{
     
         // Resets input field
         userInput = ""
+        midMessage = ""
     }
     
-    mutating private func validInput() -> String? {
+    mutating private func validInput() -> AlertMessage? {
         
         // Empty String Guard
         guard !userInput.isEmpty else {
-            return "Empty input, please enter a number."
+            
+            return AlertMessage.emptyInput
         }
         
         // Valid Number Check
         guard let _ = Int(userInput) else{
-            return "Invalid Input please enter a valid number"
+            return AlertMessage.invalidInput
         }
         
         return nil
         
     }
-    
-    
-    
-
-    
-    
-
-    
- 
-    
-
-    
-
-    
-
-    
-
-
-
-    
 }
 

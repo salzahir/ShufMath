@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import AVFoundation
+
 
 
 struct GridView: View {
@@ -21,10 +23,12 @@ struct GridView: View {
                 ForEach(items, id: \.self) { item in
                     Button(action: {
                         userInput += String(item)
+                        AudioServicesPlaySystemSound(1026)
                     }){
                         // Gridbutton View
                         GridButton(item: item, userInput: userInput)
                     }
+
                 }
             }
             .padding(.horizontal)
@@ -72,6 +76,7 @@ struct BottomRowControls: View {
                 if !userInput.isEmpty {
                     userInput.removeLast()
                 }
+                AudioServicesPlaySystemSound(1026)
             }) {
                 HorizontalButton(item: "⬅️")
             }
