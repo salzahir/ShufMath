@@ -21,7 +21,10 @@ struct MainGameView: View {
                 .padding()
                 
                 QuestionView(index: game.index, questionText: game.questionsArr[game.index].questionText)
-                       
+                
+                if game.useTimer {
+                    TimerView(game: $game, timeLimit: 10.0, incrementAmount: 0.1)
+                }
                 // Answer Input
                 HStack{
                     Text(game.userInput)
@@ -54,6 +57,34 @@ struct QuestionView: View {
             .font(.title)
             .fontWeight(.bold)
             .padding()
+    }
+}
+
+struct TimerView: View {
+
+    @Binding var game: Game
+    var timeLimit: Double
+    var incrementAmount: Double
+    
+    let timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
+
+    var body: some View {
+        ProgressView("Time is ticking…", value: game.timerAmount, total: timeLimit)
+            .onReceive(timer) { _ in
+                if game.timerAmount < timeLimit {
+                    game.timerAmount += incrementAmount
+                } else{
+                    // Stops Timer Overflow
+                    game.timerAmount = timeLimit
+                    timer.upstream.connect().cancel()
+                    game.useTimer = false
+                    game.timesUp = true
+                    game.processAnswer()
+                   
+                }
+                
+            }
+          
     }
 }
 

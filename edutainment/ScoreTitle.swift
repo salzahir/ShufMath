@@ -17,15 +17,14 @@ struct ScoreTitle: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 2.5){
-            Text("Current High Score is \(game.highScore)")
             Text("Current Score is \(game.correctAnswers) / \(game.totalQuestions)")
-            Text("Skips left: \(game.skips)")
             Text("\(game.totalQuestions - game.index) questions left")
+            Text("Skips left: \(game.skips)")
+            Text("Current High Score is \(game.highScore)")
             Text("Difficult Mode selected is \(game.gameDifficulty)")
             Text("Max Multiplier selected is \(game.maxMultiplier)")
         }
         .customScoreTitleModifier()
-     
     }
 }
 
