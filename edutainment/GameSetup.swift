@@ -40,8 +40,11 @@ struct GameSetupView: View {
 
                     }
                 })
-                    
                 
+                GameDifficultyButton(buttonText: "Timer?", buttonColor: Color.orange, action: {
+                    game.useTimer.toggle()
+                })
+                    
                 if game.useCustom{
                         Stepper("Max Multiplier is \(game.maxMultiplier)", value: $game.maxMultiplier, in: 2...12)
                             .stepperViewModifier()
@@ -54,6 +57,8 @@ struct GameSetupView: View {
                         .pickerViewModifier()
                         
                     }
+                
+                
             }
             .padding()
         }
@@ -117,4 +122,3 @@ extension View{
 }
 
 
-//// Modified joke

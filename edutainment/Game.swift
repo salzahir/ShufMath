@@ -34,7 +34,10 @@ struct Game{
     var gameChoice = 1
     var questionChoices = 1...30
     var useCustom: Bool = false
-    
+    var useTimer: Bool = false
+    var timerAmount: Double = 0.0
+    var timesUp: Bool = false
+
     enum GameState {
         case notStarted
         case inProgress
@@ -95,6 +98,7 @@ struct Game{
         
         // Increment by 1 for correct answer
         let userAnswer = Int(userInput)
+        
         if userAnswer == questionsArr[index].correctAnswer{
             correctAnswers += 1
             alertMessage = "Correct +1 Point"
@@ -116,15 +120,33 @@ struct Game{
             
         }
         
+        checkPoint()
+        
+    }
+    
+    mutating func checkPoint(){
         // Commemorate the user if they are half way through the game
         if index == midPoint{
             alertMessage += "\n\nYou reached half way!"
         }
-        
     }
     
     
     mutating func processAnswer(isSkipping: Bool = false){
+                
+        if timesUp {
+            
+            alertMessage = "Times Up!"
+            showAlert = true
+            
+            nextQuestion()
+            
+            if correctAnswers > 0{
+                correctAnswers -= 1
+            }
+            self.useTimer = true
+            return
+        }
         
         if isSkipping{
             skipQuestion()
@@ -149,9 +171,24 @@ struct Game{
             return
         }
         
+        resetQuestion()
+        
+    }
+    
+    mutating func nextQuestion(){
+        index += 1
+        if index == totalQuestions{
+            self.gameState = .finished
+        }
+        return
+    }
+    
+    mutating func resetQuestion() {
         // shows alert at the end
         showAlert = true
-        
+
+        timerAmount = 0.0
+    
         // Resets input field
         userInput = ""
     }
@@ -171,6 +208,9 @@ struct Game{
         questionsArr = []
         userInput = ""
         skips = 3
+        useTimer = false
+        timerAmount = 0.0
+        timesUp = false
     }
     
     mutating func generateQuestions(pracNumbers: Int, lengthQuestions: Int) -> [Question] {
