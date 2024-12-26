@@ -6,15 +6,24 @@
 //
 
 import SwiftUI
+import Foundation
+
 
 // The logic and the brains behind the app
 struct Game{
 
     // Represents a question in the app
-    struct Question {
+    struct Question: Codable {
         var id = UUID() // Unique identifier for each question
         var questionText: String
         var correctAnswer: Int
+    }
+    
+    struct UserStats: Codable {
+        var gamesPlayed: Int
+        var gamesWon: Int
+        var highestScore: Int
+        var averageScore: Double
     }
     
     var index = 0
@@ -85,7 +94,8 @@ struct Game{
         case .custom:
             break
         }
-        self.gameDifficulty = Difficulty // Update to reflect the chosen difficulty
+        // Update to reflect the chosen difficulty
+        self.gameDifficulty = Difficulty
     }
     
     mutating func generateQuestions(pracNumbers: Int, lengthQuestions: Int) -> [Question] {
@@ -173,7 +183,8 @@ struct Game{
         // Checks answer
         checkAnswer()
         
-        checkPoint()
+        // Check if user has reached halfway milestone
+        halfwayCheck()
 
         // Proceed to next question
         index += 1
@@ -276,7 +287,7 @@ struct Game{
         return
     }
     
-    mutating func checkPoint(){
+    mutating func halfwayCheck(){
         // Commemorate the user if they are half way through the game
         if (index+1) == midPoint{
             extraMessage = AlertMessage.halfway.rawValue
@@ -284,11 +295,13 @@ struct Game{
     }
     
     mutating func resetQuestion() {
+        
         // shows alert at the end
         showAlert = true
                 
         // Resets input field
         userInput = ""
+        
         // Only reset midMessage after it's been shown
         if extraMessage != AlertMessage.halfway.rawValue {
             extraMessage = ""

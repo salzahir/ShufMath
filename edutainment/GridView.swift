@@ -7,14 +7,14 @@
 
 import SwiftUI
 import AVFoundation
-
+import CoreHaptics
 
 
 struct GridView: View {
     
     // Define number of columns
     let items = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
-    let columns = Array(repeating: GridItem(.flexible(minimum: 25), spacing: 2), count: 3)
+    let columns = Array(repeating: GridItem(.flexible(minimum: 15), spacing: 2), count: 3)
     @Binding var userInput: String
     
     var body: some View {

@@ -18,6 +18,8 @@ struct GameSetupView: View {
             Section("Game Setup"){
                 if !game.useCustom {
                     HStack{
+                        // Use a ternary operation to indicate button selection status,
+                        // applying a faded appearance for unselected buttons to improve user feedback.
                         GameDifficultyButton(
                             buttonText: "Easy",
                             buttonColor: game.gameDifficulty == .easy ? Color.green : Color.green.opacity(0.5),
@@ -52,7 +54,7 @@ struct GameSetupView: View {
                 
                 if game.useCustom{
                         Stepper("Max Multiplier is \(game.maxMultiplier)", value: $game.maxMultiplier, in: 2...12)
-                        .stepperViewModifier(color: .blue)
+                        .stepperViewModifier(color: .blue, stepperType: "Multiplier")
                         
                         Picker("Choose Number of Questions", selection: $game.gameChoice) {
                             ForEach(game.questionChoices, id: \.self){ number in
@@ -62,8 +64,7 @@ struct GameSetupView: View {
                         .pickerViewModifier()
                     
                     Stepper("Number of skips is \(game.skips)", value: $game.skips, in: 1...5)
-                        .stepperViewModifier(color: Color.pink)
-                        
+                        .stepperViewModifier(color: Color.pink, stepperType: "Skips")
                     }
                 
                 GameDifficultyButton(
@@ -107,6 +108,7 @@ struct GameDifficultyButton: View {
 // Stepper Modifier
 struct StepperViewMod: ViewModifier {
     var colorName: Color
+    var stepperType: String
     func body(content: Content) -> some View {
         content
             .padding()
@@ -115,12 +117,13 @@ struct StepperViewMod: ViewModifier {
             .font(.headline)
             .foregroundStyle(Color.white)
             .shadow(radius: 5)
+            .accessibilityLabel("Tap to increase or decrease \(stepperType)")
     }
 }
 
 extension View{
-    func stepperViewModifier(color: Color) -> some View {
-        self.modifier(StepperViewMod(colorName: color))
+    func stepperViewModifier(color: Color, stepperType: String) -> some View {
+        self.modifier(StepperViewMod(colorName: color, stepperType: stepperType))
     }
 }
 
