@@ -75,16 +75,16 @@ struct TimerView: View {
                     game.timerAmount += incrementAmount
                 } else{
                     // Stops Timer Overflow
-                    game.timerAmount = timeLimit
                     timer.upstream.connect().cancel()
                     game.useTimer = false
                     game.timesUp = true
                     game.processAnswer()
-                   
                 }
                 
             }
-          
+            .onDisappear {
+                timer.upstream.connect().cancel()
+            }
     }
 }
 

@@ -23,6 +23,7 @@ struct Game{
     var skips = 3
     var gameState: GameState = .notStarted
     var alertMessage: AlertMessage = .blank
+    var extraMessage = ""
     var showAlert = false
     var userInput = ""
     var questionsArr: [Question] = []
@@ -30,7 +31,7 @@ struct Game{
     var maxMultiplier = 2
     var isGameOver: Bool = false
     var midPoint = 0
-    var gameDifficulty: GameDifficulty = .easy
+    var gameDifficulty: GameDifficulty?
     var gameChoice = 1
     var questionChoices = 1...30
     var useCustom: Bool = false
@@ -61,7 +62,7 @@ struct Game{
         case skippedQuestion = "Question Skipped Successfully No Point"
         case outOfSkips = "Out of skips"
         case lastQuestionSkipped = "Last Question skipped game over"
-        case halfway = "You reached half way!"
+        case halfway = "\n\nYou reached half way!"
         case emptyInput = "Empty input, please enter a number."
         case invalidInput = "Invalid Input please enter a valid number."
     }
@@ -164,7 +165,7 @@ struct Game{
         }
         
         if let errorMessage = validInput(){
-            alertMessage = .selectDifficulty
+            alertMessage = errorMessage
             showAlert = true
             return
         }
@@ -172,6 +173,8 @@ struct Game{
         // Checks answer
         checkAnswer()
         
+        checkPoint()
+
         // Proceed to next question
         index += 1
         
@@ -186,15 +189,27 @@ struct Game{
     }
     
     mutating func handleTimeUp(){
+        
+        // Alert the user times up
         alertMessage = .timesUp
         showAlert = true
         
-        nextQuestion()
-        
+        // Decrement points if above 0
         if correctAnswers > 0{
             correctAnswers -= 1
+            extraMessage += "\n" + AlertMessage.incorrectAnswer.rawValue
         }
+        
+        // Reset Timer State
+        timerAmount = 0.0
+        userInput = ""
+        timesUp = false
+        
+        nextQuestion()
+        
+        // Renable timer
         useTimer = true
+        
         return
     }
     
@@ -223,8 +238,6 @@ struct Game{
             }
             
         }
-        
-        checkPoint()
         
     }
 
@@ -265,55 +278,40 @@ struct Game{
     
     mutating func checkPoint(){
         // Commemorate the user if they are half way through the game
-        if index == midPoint{
-            alertMessage = .halfway
+        if (index+1) == midPoint{
+            extraMessage = AlertMessage.halfway.rawValue
         }
     }
     
     mutating func resetQuestion() {
         // shows alert at the end
         showAlert = true
-
-        timerAmount = 0.0
-    
+                
         // Resets input field
         userInput = ""
+        // Only reset midMessage after it's been shown
+        if extraMessage != AlertMessage.halfway.rawValue {
+            extraMessage = ""
+        }
+        
+        timerAmount = 0.0
     }
     
-    mutating private func validInput() -> String? {
+    mutating private func validInput() -> AlertMessage? {
         
         // Empty String Guard
         guard !userInput.isEmpty else {
-            return "Empty input, please enter a number."
+            
+            return AlertMessage.emptyInput
         }
         
         // Valid Number Check
         guard let _ = Int(userInput) else{
-            return "Invalid Input please enter a valid number"
+            return AlertMessage.invalidInput
         }
         
         return nil
         
     }
-    
-    
-    
-
-    
-    
-
-    
- 
-    
-
-    
-
-    
-
-    
-
-
-
-    
 }
 
