@@ -15,27 +15,34 @@ struct GameSetupView: View {
     
     var body: some View {
         VStack{
-            
             Section("Game Setup"){
                 if !game.useCustom {
                     HStack{
-                        GameDifficultyButton(buttonText: "Easy", buttonColor: Color.green, action: {
+                        GameDifficultyButton(
+                            buttonText: "Easy",
+                            buttonColor: game.gameDifficulty == .easy ? Color.green : Color.green.opacity(0.5),
+                            action: {
                             game.gameDifficultySetup(Difficulty: .easy)
                         })
                             
-                        GameDifficultyButton(buttonText: "Med", buttonColor: Color.yellow, action: {
+                        GameDifficultyButton(
+                            buttonText: "Med",
+                            buttonColor: game.gameDifficulty == .medium ? Color.yellow : Color.yellow.opacity(0.5),
+                            action: {
                             game.gameDifficultySetup(Difficulty: .medium)
                         })
                         
-                        GameDifficultyButton(buttonText: "Hard", buttonColor: Color.red, action: {
+                        GameDifficultyButton(
+                            buttonText: "Hard",
+                            buttonColor: game.gameDifficulty == .hard ? Color.red : Color.red.opacity(0.5),
+                            action: {
                             game.gameDifficultySetup(Difficulty: .hard)
                         })
-                            
+                
                         }
-                    
                 }
              
-                GameDifficultyButton(buttonText: "Custom", buttonColor: .teal, action:{
+                GameDifficultyButton(buttonText: "Custom", buttonColor: game.useCustom ? .teal : .teal.opacity(0.5), action:{
                     game.useCustom.toggle()
                     if game.useCustom{
                         game.gameDifficultySetup(Difficulty: .custom)
@@ -59,7 +66,10 @@ struct GameSetupView: View {
                         
                     }
                 
-                GameDifficultyButton(buttonText: "Timer?", buttonColor: Color.orange, action: {
+                GameDifficultyButton(
+                    buttonText: "Timer?",
+                    buttonColor: game.useTimer == true ? Color.orange : Color.orange.opacity(0.5),
+                    action:{
                     game.useTimer.toggle()
                 })
                     
@@ -88,7 +98,10 @@ struct GameDifficultyButton: View {
         .cornerRadius(10)
         .shadow(radius: 5)
         .padding(.horizontal)
+        .accessibilityLabel("Tap to select \(buttonText)")
     }
+
+    
 }
 
 // Stepper Modifier

@@ -18,7 +18,7 @@ struct GameAlert: View {
 
             
         }
-        .alert(game.alertMessage.rawValue + game.midMessage, isPresented: $game.showAlert) {
+        .alert(game.alertMessage.rawValue + game.extraMessage, isPresented: $game.showAlert) {
             Button("OK", role: .cancel){}
         }
         

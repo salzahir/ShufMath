@@ -73,9 +73,8 @@ struct TimerView: View {
             .onReceive(timer) { _ in
                 if game.timerAmount < timeLimit {
                     game.timerAmount += incrementAmount
-                } else if !game.timesUp && game.timerAmount >= timeLimit{
+                } else{
                     // Stops Timer Overflow
-                    game.timerAmount = timeLimit
                     timer.upstream.connect().cancel()
                     game.useTimer = false
                     game.timesUp = true

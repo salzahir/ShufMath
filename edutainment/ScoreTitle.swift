@@ -21,7 +21,7 @@ struct ScoreTitle: View {
             Text("\(game.totalQuestions - game.index) questions left")
             Text("Skips left: \(game.skips)")
             Text("Current High Score is \(game.highScore)")
-            Text("Difficult Mode selected is \(game.gameDifficulty)")
+            Text("Difficult Mode selected is \(game.gameDifficulty ?? .easy)")
             Text("Max Multiplier selected is \(game.maxMultiplier)")
         }
         .customScoreTitleModifier()

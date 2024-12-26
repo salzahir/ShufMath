@@ -52,10 +52,10 @@ struct GridButton: View {
                 Text("\(item)")
                     .foregroundColor(.black)
             )
-            .frame(minWidth: 30, minHeight: 30) // Adjust button size for consistency
-            .foregroundColor(.white) // Set text color
-            .cornerRadius(12) // Rounded corners for a softer look
-            .shadow(radius: 3) // Add a subtle shadow
+            .frame(minWidth: 30, minHeight: 30)
+            .foregroundColor(.white)
+            .cornerRadius(12)
+            .shadow(radius: 3)
             .accessibilityLabel("Number \(item), Current Input: \(userInput)")
 
     }
