@@ -50,13 +50,24 @@ struct QuestionView: View {
     
     let index: Int
     let questionText: String
-    
+    @State var questionOpacity: Double = 0.0
+
     var body: some View {
-        Text("Question \(index+1)")
-        Text("\(questionText)")
-            .font(.title)
-            .fontWeight(.bold)
-            .padding()
+        
+        VStack{
+            Text("Question \(index+1)")            
+            Text("\(questionText)")
+                .font(.title)
+                .fontWeight(.bold)
+                .opacity(questionOpacity)
+                .onAppear {
+                    questionOpacity = 0.0
+                    withAnimation(.easeIn(duration: 0.5)) {
+                        questionOpacity = 1.0   // Fade-in effect
+                    }
+            }
+        }
+ 
     }
 }
 

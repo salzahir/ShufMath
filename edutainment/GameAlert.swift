@@ -32,6 +32,7 @@ struct GameAlert: View {
             }
             
         }
+        
     }
 }
 

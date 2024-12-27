@@ -12,6 +12,7 @@ import SwiftUI
 struct GameSetupView: View {
     
     @Binding var game: Game
+    @State var showUserStats: Bool = false
     
     var body: some View {
         VStack{
@@ -73,13 +74,23 @@ struct GameSetupView: View {
                     action:{
                     game.useTimer.toggle()
                 })
-                    
+                
+                GameDifficultyButton(buttonText: "Show Lifetime Stats", buttonColor: showUserStats ? Color.indigo : Color.indigo.opacity(0.5)){
+                    showUserStats.toggle()
+                }
+                .sheet(isPresented: $showUserStats){
+                    ZStack{
+                        Color.gray
+                            .ignoresSafeArea()
+                        userStats(userStats: $game.userStats)
+
+                    }
+                }
               
-                
-                
             }
-            .padding()
         }
+        .padding()
+
     }
 }
 
@@ -145,4 +156,21 @@ extension View{
     }
 }
 
+
+struct userStats: View {
+    @Binding var userStats: Game.UserStats
+    var body: some View {
+        VStack{
+            Section("Player's LifeStats"){
+                Text("Player has played \(userStats.gamesPlayed) games")
+                Text("Player has won \(userStats.gamesWon) games")
+                Text("Player has lost \(userStats.gamesLost) games")
+                Text("Player average score is \(String(format: "%.2f", userStats.averageScore))")
+                Text("Player perfect games is \(userStats.perfectGames)")
+                
+            }
+        }
+    }
+    
+}
 

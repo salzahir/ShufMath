@@ -16,6 +16,7 @@ struct GridView: View {
     let items = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
     let columns = Array(repeating: GridItem(.flexible(minimum: 15), spacing: 2), count: 3)
     @Binding var userInput: String
+    @State var isPressed = false
     
     var body: some View {
         VStack(spacing: 2){
@@ -24,15 +25,16 @@ struct GridView: View {
                     Button(action: {
                         userInput += String(item)
                         AudioServicesPlaySystemSound(1026)
+                        isPressed.toggle()
                     }){
                         // Gridbutton View
-                        GridButton(item: item, userInput: userInput)
+                        GridButton(item: item, userInput: userInput, isPressed: isPressed)
                     }
 
                 }
             }
             .padding(.horizontal)
-            BottomRowControls(userInput: $userInput)
+            BottomRowControls(userInput: $userInput, isPressed: isPressed)
                 .padding(.horizontal)
 
         }
@@ -42,6 +44,7 @@ struct GridView: View {
 struct GridButton: View {
     var item: String
     var userInput: String
+    var isPressed: Bool
     
     var body: some View {
         
@@ -57,16 +60,20 @@ struct GridButton: View {
             .cornerRadius(12)
             .shadow(radius: 3)
             .accessibilityLabel("Number \(item), Current Input: \(userInput)")
-
+            // scale effect to simulate pressing
+            .scaleEffect(isPressed ? 0.9 : 1.0)
+            .animation(.spring(), value: isPressed)
     }
 }
 
 struct BottomRowControls: View {
     @Binding var userInput: String
+    var isPressed: Bool
     var body: some View {
         HStack(spacing: 2) {
             Button(action: {
                 userInput += "0"
+                AudioServicesPlaySystemSound(1026)
             }) {
                 HorizontalButton(item: "0")
             }
@@ -88,6 +95,9 @@ struct BottomRowControls: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 12)
+        // Add scale effect to simulate pressing
+        .scaleEffect(isPressed ? 0.9 : 1.0)
+        .animation(.spring(), value: isPressed)
     }
 }
 
