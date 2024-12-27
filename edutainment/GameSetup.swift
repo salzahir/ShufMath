@@ -49,6 +49,7 @@ struct GameSetupView: View {
                     game.useCustom.toggle()
                     if game.useCustom{
                         game.gameDifficultySetup(Difficulty: .custom)
+                        
 
                     }
                 })
@@ -110,7 +111,8 @@ struct GameDifficultyButton: View {
         .cornerRadius(10)
         .shadow(radius: 5)
         .padding(.horizontal)
-        .accessibilityLabel("Tap to select \(buttonText)")
+        .accessibilityLabel("Select \(buttonText) mode")
+        .accessibilityHint("Changes the game difficulty to \(buttonText)")
     }
 
     

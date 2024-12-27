@@ -88,6 +88,7 @@ struct BottomRowControls: View {
                 HorizontalButton(item: "⬅️")
             }
             .accessibilityLabel("Delete, Current Input: \(userInput)")
+            .accessibilityHint("Deletes the last digit entered")
             .onLongPressGesture(minimumDuration: 1.0){
                 userInput = ""
             }

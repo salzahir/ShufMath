@@ -17,14 +17,14 @@ struct MainGameView: View {
             if game.index < game.totalQuestions && game.gameState == .inProgress {
                 
                 ScoreTitle(game: $game)
-                
-                .padding()
+                    .padding()
                 
                 QuestionView(index: game.index, questionText: game.questionsArr[game.index].questionText)
                 
                 if game.useTimer {
                     TimerView(game: $game, timeLimit: 10.0, incrementAmount: 0.1)
                 }
+                
                 // Answer Input
                 HStack{
                     Text(game.userInput)
@@ -34,14 +34,11 @@ struct MainGameView: View {
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(.blue)
-                .padding(.leading)
                 
                 GameButtons(game: $game)
                 
                 GridView(userInput: $game.userInput)
-               
             }
-            
         }
     }
 }
@@ -65,9 +62,8 @@ struct QuestionView: View {
                     withAnimation(.easeIn(duration: 0.5)) {
                         questionOpacity = 1.0   // Fade-in effect
                     }
-            }
+                }
         }
- 
     }
 }
 
@@ -106,35 +102,36 @@ struct GameButtons: View {
         HStack{
             Button("Check Answer"){
                 game.processAnswer(isSkipping: false)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .padding()
+            }
+            .customButtonStyle(buttonText: "Check Answer")
                                 
             Button("Skip") {
                 game.processAnswer(isSkipping: true)
             }
-            .customButtonStyle()
+            .customButtonStyle(buttonText: "Skip")
             
             Button("Restart"){
                 game.playAgain()
             }
-            .customButtonStyle()
+            .customButtonStyle(buttonText: "Restart")
         }
     }
 }
 
 struct ButtonStyleModifier: ViewModifier {
     var paddingAmount: CGFloat = 8.0
+    var buttonText: String
     
     func body(content: Content) -> some View {
         content
             .buttonStyle(.borderedProminent)
             .padding(paddingAmount)
+            .accessibilityLabel("Tap to \(buttonText)")
     }
 }
 
 extension View {
-    func customButtonStyle(paddingAmount: CGFloat = 8.0) -> some View {
-        self.modifier(ButtonStyleModifier(paddingAmount: paddingAmount))
+    func customButtonStyle(paddingAmount: CGFloat = 8.0, buttonText: String) -> some View {
+        self.modifier(ButtonStyleModifier(paddingAmount: paddingAmount, buttonText: buttonText))
     }
 }
