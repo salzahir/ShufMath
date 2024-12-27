@@ -20,12 +20,37 @@ struct Game{
     }
     
     struct UserStats: Codable {
-        var gamesPlayed: Int
-        var gamesWon: Int
-        var highestScore: Int
-        var averageScore: Double
+        var gamesPlayed: Int = 0
+        var gamesWon: Int = 0
+        var highestScore: Int = 0
+        var averageScore: Double = 0.0
+        var totalScore: Int = 0
+        var gamesLost: Int = 0
+        var perfectGames: Int = 0
+        
+        mutating func updateUserStats(score: Int, totalQuestions: Int){
+            
+            gamesPlayed += 1
+            totalScore += score
+            
+            // If player got at least 70% Considered a win/passing
+            let winCondition = Double(totalQuestions) * 0.7
+            
+            if Double(score) > winCondition {
+                gamesWon += 1
+            }
+            
+            gamesLost = gamesPlayed - gamesWon
+            
+            if score > highestScore {
+                highestScore = score
+            }
+            
+            averageScore = Double(totalScore) / Double(gamesPlayed)
+        }
     }
     
+    var userStats: UserStats = UserStats()
     var index = 0
     var totalQuestions = 0
     var correctAnswers = 0
@@ -138,6 +163,11 @@ struct Game{
     }
     
     mutating func playAgain() {
+        
+        userStats.updateUserStats(score: correctAnswers, totalQuestions: totalQuestions)
+        if correctAnswers == totalQuestions {
+            userStats.perfectGames += 1
+        }
         
         // Sets High Score after Game is Over
         if correctAnswers > highScore {
