@@ -1,5 +1,5 @@
 //
-//  Colors.swift
+//  Background.swift
 //  edutainment
 //
 //  Created by Salman Z on 12/23/24.

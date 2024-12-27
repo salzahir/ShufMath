@@ -21,7 +21,6 @@ struct ContentView: View {
                         MainGameView(game: $game)
                         GameAlert(game: $game)
                     }
-                
                 // Changes isGameOver boolean for alerts based on the gameState
                 .onChange(of: game.gameState) {
                     game.isGameOver = game.gameState == .finished
