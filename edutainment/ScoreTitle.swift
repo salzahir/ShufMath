@@ -11,18 +11,24 @@ struct ScoreTitle: View {
     
     @Binding var game: Game
     
-    
     // Add Difficulty Mode Selected
     // Add Max Multipler Selected to
     
     var body: some View {
+        
+        let progress = game.totalQuestions > 0 ? Double(game.index) / Double(game.totalQuestions) : 0.0
+
         VStack(alignment: .leading, spacing: 2.5){
             Text("Current Score is \(game.correctAnswers) / \(game.totalQuestions)")
-            Text("\(game.totalQuestions - game.index) questions left")
+//            Text("\(game.totalQuestions - game.index) questions left")
             Text("Skips left: \(game.skips)")
             Text("Current High Score is \(game.highScore)")
             Text("Difficult Mode selected is \(game.gameDifficulty ?? .easy)")
             Text("Max Multiplier selected is \(game.maxMultiplier)")
+            ProgressView(value: progress){
+                Label: do { Text("\(String(format: "%.1f", progress * 100))%") }
+            }
+            .progressViewStyle(LinearProgressViewStyle())
         }
         .customScoreTitleModifier()
     }

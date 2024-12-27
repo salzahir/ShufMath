@@ -49,7 +49,8 @@ struct Game{
             averageScore = Double(totalScore) / Double(gamesPlayed)
         }
     }
-    
+//    var hasShownHalfwayMessage = false
+    var hadPerfectGame: Bool = false
     var userStats: UserStats = UserStats()
     var index = 0
     var totalQuestions = 0
@@ -165,13 +166,15 @@ struct Game{
     mutating func playAgain() {
         
         userStats.updateUserStats(score: correctAnswers, totalQuestions: totalQuestions)
-        if correctAnswers == totalQuestions {
+        
+        if hadPerfectGame{
             userStats.perfectGames += 1
         }
         
         // Sets High Score after Game is Over
         if correctAnswers > highScore {
             highScore = correctAnswers
+            
         }
         
         // Reset Game Logic Resets Everything back to default values
@@ -199,11 +202,13 @@ struct Game{
             return
         }
         
+        // Skipping Question Check
         if isSkipping{
             skipQuestion()
             return
         }
         
+        // Valid Input Checker
         if let errorMessage = validInput(){
             alertMessage = errorMessage
             showAlert = true
@@ -220,8 +225,7 @@ struct Game{
         index += 1
         
         // End of the Game
-        if index == totalQuestions{
-            gameState = .finished
+        if isGameFinished(){
             return
         }
         
@@ -287,14 +291,13 @@ struct Game{
     mutating func skipQuestion() {
         
         if skips > 0 {
+                        
             index += 1
             
-            if index == totalQuestions{
-                gameState = .finished
-                alertMessage = .lastQuestionSkipped
+            if isGameFinished(alertMessage: .lastQuestionSkipped){
                 return
             }
-            
+         
             alertMessage = .skippedQuestion
             showAlert = true
             skips -= 1
@@ -311,15 +314,13 @@ struct Game{
     
     mutating func nextQuestion(){
         index += 1
-        if index == totalQuestions{
-            self.gameState = .finished
-        }
+        let _ = isGameFinished()
         return
     }
     
     mutating func halfwayCheck(){
         // Commemorate the user if they are half way through the game
-        if (index+1) == midPoint{
+        if index+1 == midPoint{
             extraMessage = AlertMessage.halfway.rawValue
         }
     }
@@ -333,7 +334,7 @@ struct Game{
         userInput = ""
         
         // Only reset midMessage after it's been shown
-        if extraMessage != AlertMessage.halfway.rawValue {
+        if index != midPoint{
             extraMessage = ""
         }
         
@@ -355,6 +356,15 @@ struct Game{
         
         return nil
         
+    }
+    
+    mutating func isGameFinished(alertMessage: AlertMessage? = nil) -> Bool{
+        if index == totalQuestions{
+            gameState = .finished
+            self.alertMessage = alertMessage ?? .blank
+            return true
+        }
+        return false
     }
 }
 
