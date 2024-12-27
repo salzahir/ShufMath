@@ -11,72 +11,28 @@ import SwiftUI
 // View for setting up Game
 struct GameSetupView: View {
     
+    
     @Binding var game: Game
     @State var showUserStats: Bool = false
-    
+        
     var body: some View {
+        
         VStack{
-            Section("Game Setup"){
-                if !game.useCustom {
-                    HStack{
-                        // Use a ternary operation to indicate button selection status,
-                        // applying a faded appearance for unselected buttons to improve user feedback.
-                        GameDifficultyButton(
-                            buttonText: "Easy",
-                            buttonColor: game.gameDifficulty == .easy ? Color.green : Color.green.opacity(0.5),
-                            action: {
-                            game.gameDifficultySetup(Difficulty: .easy)
-                        })
-                            
-                        GameDifficultyButton(
-                            buttonText: "Med",
-                            buttonColor: game.gameDifficulty == .medium ? Color.yellow : Color.yellow.opacity(0.5),
-                            action: {
-                            game.gameDifficultySetup(Difficulty: .medium)
-                        })
-                        
-                        GameDifficultyButton(
-                            buttonText: "Hard",
-                            buttonColor: game.gameDifficulty == .hard ? Color.red : Color.red.opacity(0.5),
-                            action: {
-                            game.gameDifficultySetup(Difficulty: .hard)
-                        })
-                
-                        }
+            Section("Game Setup") {
+                HStack{
+                    createDifficultyButton(buttonText: "Easy", difficulty: Game.GameDifficulty.easy, color: Color.green)
+                    createDifficultyButton(buttonText: "Med", difficulty: Game.GameDifficulty.medium, color: Color.yellow)
+                    createDifficultyButton(buttonText: "Hard", difficulty: Game.GameDifficulty.hard, color: Color.red)
                 }
-             
-                GameDifficultyButton(buttonText: "Custom", buttonColor: game.useCustom ? .teal : .teal.opacity(0.5), action:{
-                    game.useCustom.toggle()
-                    if game.useCustom{
-                        game.gameDifficultySetup(Difficulty: .custom)
-                        
-
-                    }
-                })
                 
-                if game.useCustom{
-                        Stepper("Max Multiplier is \(game.maxMultiplier)", value: $game.maxMultiplier, in: 2...12)
-                        .stepperViewModifier(color: .blue, stepperType: "Multiplier")
-                        
-                        Picker("Choose Number of Questions", selection: $game.gameChoice) {
-                            ForEach(game.questionChoices, id: \.self){ number in
-                                Text("\(number)")
-                            }
-                        }
-                        .pickerViewModifier()
-                    
-                    Stepper("Number of skips is \(game.skips)", value: $game.skips, in: 1...5)
-                        .stepperViewModifier(color: Color.pink, stepperType: "Skips")
-                    }
-                
-                GameDifficultyButton(
+                GameSetupButton(
                     buttonText: "Timer?",
                     buttonColor: game.useTimer == true ? Color.orange : Color.orange.opacity(0.5),
                     action:{
                     game.useTimer.toggle()
                 })
                 
-                GameDifficultyButton(buttonText: "Show Lifetime Stats", buttonColor: showUserStats ? Color.indigo : Color.indigo.opacity(0.5)){
+                GameSetupButton(buttonText: "Show Lifetime Stats", buttonColor: showUserStats ? Color.indigo : Color.indigo.opacity(0.5)){
                     showUserStats.toggle()
                 }
                 .sheet(isPresented: $showUserStats){
@@ -87,15 +43,38 @@ struct GameSetupView: View {
 
                     }
                 }
-              
+             
+                GameSetupButton(buttonText: "Custom", buttonColor: game.gameDifficulty == .custom ? .teal : .teal.opacity(0.5), action:{
+                    game.gameDifficultySetup(Difficulty: .custom)
+                    game.useCustom.toggle()
+                })
+                .sheet(isPresented: $game.useCustom){
+                    ZStack{
+                        Color.indigo
+                            .ignoresSafeArea()
+                        CustomSettingsView(game: $game)
+                    }
+                }
             }
         }
         .padding()
 
     }
+    
+    // Helper Function to streamline code
+    func createDifficultyButton(buttonText: String, difficulty: Game.GameDifficulty, color: Color) -> some View {
+        // Use a ternary operation to indicate button selection status,
+        // applying a faded appearance for unselected buttons to improve user feedback.
+        let buttonColor = game.gameDifficulty == difficulty ? color : color.opacity(0.5)
+        return GameSetupButton(
+            buttonText: buttonText,
+            buttonColor: buttonColor,
+            action: {game.gameDifficultySetup(Difficulty: difficulty)}
+        )
+    }
 }
 
-struct GameDifficultyButton: View {
+struct GameSetupButton: View {
     var buttonText: String
     var buttonColor: Color
     let action: () -> Void
@@ -195,5 +174,37 @@ struct userStatsModifier: ViewModifier {
 extension View{
     func userViewModifier(backgroundColor: Color) -> some View {
         self.modifier(userStatsModifier(backgroundColor: backgroundColor))
+    }
+}
+
+struct CustomSettingsView: View {
+    @Binding var game: Game
+    
+    var body: some View {
+        VStack(spacing: 10){
+            Stepper("Max Multiplier is \(game.maxMultiplier)", value: $game.maxMultiplier, in: 2...12)
+            .stepperViewModifier(color: .blue, stepperType: "Multiplier")
+            
+            Picker("Choose Number of Questions", selection: $game.gameChoice) {
+                ForEach(game.questionChoices, id: \.self){ number in
+                    Text("\(number)")
+                }
+            }
+            .pickerViewModifier()
+            
+            
+            Stepper("Number of skips is \(game.skips)", value: $game.skips, in: 1...5)
+                .stepperViewModifier(color: Color.pink, stepperType: "Skips")
+            
+            Stepper(
+                "Timelimit is \(game.timeLimit, specifier: "%.1f") seconds",
+                value: $game.timeLimit,
+                in: 1.0...60.0,
+                step: 1.0
+            )
+            .stepperViewModifier(color: Color.brown, stepperType: "TimeLimit")
+            .onChange(of: game.timeLimit) {
+                print("Time limit changed: \(game.timeLimit)")}
+        }
     }
 }

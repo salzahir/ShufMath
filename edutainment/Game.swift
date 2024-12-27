@@ -72,6 +72,7 @@ struct Game{
     var useCustom: Bool = false
     var useTimer: Bool = false
     var timerAmount: Double = 0.0
+    var timeLimit: Double = 0.0
     var timesUp: Bool = false
 
     enum GameState {
@@ -109,14 +110,17 @@ struct Game{
             maxMultiplier = 4
             totalQuestions = 10
             skips = 5
+            timeLimit = 15
         case .medium:
             maxMultiplier = 8
             totalQuestions = 20
             skips = 3
+            timeLimit = 10
         case .hard:
             maxMultiplier = 12
             totalQuestions = 30
             skips = 1
+            timeLimit = 5
         case .custom:
             break
         }

@@ -35,6 +35,9 @@ struct MainGameView: View {
                 }
                 
                 AnswerInputView(userInput: game.userInput)
+                
+                GameButtons(game: $game)
+                GridView(userInput: $game.userInput)
             }
         }
     }
