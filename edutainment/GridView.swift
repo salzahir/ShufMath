@@ -9,7 +9,6 @@ import SwiftUI
 import AVFoundation
 import CoreHaptics
 
-
 struct GridView: View {
     
     // Define number of columns

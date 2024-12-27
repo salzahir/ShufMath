@@ -114,8 +114,6 @@ struct GameDifficultyButton: View {
         .accessibilityLabel("Select \(buttonText) mode")
         .accessibilityHint("Changes the game difficulty to \(buttonText)")
     }
-
-    
 }
 
 // Stepper Modifier

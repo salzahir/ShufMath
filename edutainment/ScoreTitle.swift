@@ -20,7 +20,6 @@ struct ScoreTitle: View {
 
         VStack(alignment: .leading, spacing: 2.5){
             Text("Current Score is \(game.correctAnswers) / \(game.totalQuestions)")
-//            Text("\(game.totalQuestions - game.index) questions left")
             Text("Skips left: \(game.skips)")
             Text("Current High Score is \(game.highScore)")
             Text("Difficult Mode selected is \(game.gameDifficulty ?? .easy)")

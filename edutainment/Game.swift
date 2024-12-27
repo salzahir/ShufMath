@@ -49,7 +49,7 @@ struct Game{
             averageScore = Double(totalScore) / Double(gamesPlayed)
         }
     }
-//    var hasShownHalfwayMessage = false
+    
     var hadPerfectGame: Bool = false
     var userStats: UserStats = UserStats()
     var index = 0
@@ -120,6 +120,7 @@ struct Game{
         case .custom:
             break
         }
+        
         // Update to reflect the chosen difficulty
         self.gameDifficulty = Difficulty
     }
@@ -319,6 +320,7 @@ struct Game{
     }
     
     mutating func halfwayCheck(){
+        
         // Commemorate the user if they are half way through the game
         if index+1 == midPoint{
             extraMessage = AlertMessage.halfway.rawValue

@@ -11,33 +11,30 @@ import SwiftUI
 struct MainGameView: View {
     
     @Binding var game: Game
+    // Simplified variable name to show game is active
+    private var activeGame: Bool {
+            game.index < game.totalQuestions && game.gameState == .inProgress
+    }
     
     var body: some View {
-        VStack{
-            if game.index < game.totalQuestions && game.gameState == .inProgress {
-                
+        VStack {
+            if activeGame {
                 ScoreTitle(game: $game)
-                    .padding()
                 
-                QuestionView(index: game.index, questionText: game.questionsArr[game.index].questionText)
+                QuestionView(
+                    index: game.index,
+                    questionText: game.questionsArr[game.index].questionText
+                )
                 
                 if game.useTimer {
-                    TimerView(game: $game, timeLimit: 10.0, incrementAmount: 0.1)
+                    TimerView(
+                        game: $game,
+                        timeLimit: 10.0,
+                        incrementAmount: 0.1
+                    )
                 }
                 
-                // Answer Input
-                HStack{
-                    Text(game.userInput)
-                        .textFieldStyle(.roundedBorder)
-                }
-                .padding()
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundColor(.blue)
-                
-                GameButtons(game: $game)
-                
-                GridView(userInput: $game.userInput)
+                AnswerInputView(userInput: game.userInput)
             }
         }
     }
@@ -60,7 +57,7 @@ struct QuestionView: View {
                 .onAppear {
                     questionOpacity = 0.0
                     withAnimation(.easeIn(duration: 0.5)) {
-                        questionOpacity = 1.0   // Fade-in effect
+                        questionOpacity = 1.0  // Fades in
                     }
                 }
         }
@@ -78,9 +75,10 @@ struct TimerView: View {
     var body: some View {
         ProgressView("Time is ticking…", value: game.timerAmount, total: timeLimit)
             .onReceive(timer) { _ in
+                
                 if game.timerAmount < timeLimit {
                     game.timerAmount += incrementAmount
-                } else{
+                } else {
                     // Stops Timer Overflow
                     timer.upstream.connect().cancel()
                     game.useTimer = false
@@ -133,5 +131,21 @@ struct ButtonStyleModifier: ViewModifier {
 extension View {
     func customButtonStyle(paddingAmount: CGFloat = 8.0, buttonText: String) -> some View {
         self.modifier(ButtonStyleModifier(paddingAmount: paddingAmount, buttonText: buttonText))
+    }
+}
+
+struct AnswerInputView: View {
+    
+    var userInput: String
+    
+    var body: some View {
+        HStack{
+            Text(userInput)
+                .textFieldStyle(.roundedBorder)
+        }
+        .padding()
+        .font(.title2)
+        .fontWeight(.bold)
+        .foregroundColor(.blue)
     }
 }
