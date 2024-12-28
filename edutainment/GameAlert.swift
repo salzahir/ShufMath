@@ -28,11 +28,8 @@ struct GameAlert: View {
                     .ignoresSafeArea()
                 
                 GameOverView(game: $game)
-
             }
-            
         }
-        
     }
 }
 
