@@ -63,19 +63,12 @@ struct GameSetupView: View {
                     buttonText: "Custom",
                     buttonColor: game.gameDifficulty == .custom ? .teal : .teal.opacity(0.5),
                     action:{
-                        print("Custom button pressed. UseCustom before: \(game.useCustom)")
+                        game.gameDifficultySetup(Difficulty: .custom)
                         game.useCustom.toggle()
-                        print("UseCustom after: \(game.useCustom)")
-                        if game.useCustom{
-                           game.gameDifficultySetup(Difficulty: .custom)
-                        }
                     }
                 )
                 
-                .sheet(
-                    isPresented: $game.useCustom,
-                    onDismiss: {game.gameDifficultySetup(Difficulty: .custom)}
-                ) {
+                .sheet(isPresented: $game.useCustom) {
                     ZStack{
                         Color.indigo
                             .ignoresSafeArea()
@@ -210,38 +203,49 @@ extension View{
 struct CustomSettingsView: View {
     
     @Binding var game: Game
-    
+    @Environment(\.dismiss) var dismiss  // Add this line
+
     var body: some View {
         VStack(spacing: 10){
-            if game.useCustom{
-                Stepper("Max Multiplier is \(game.maxMultiplier)", value: $game.maxMultiplier, in: 2...12)
-                    .stepperViewModifier(color: .blue, stepperType: "Multiplier")
-                
-                Picker("Choose Number of Questions", selection: $game.gameChoice) {
-                    ForEach(game.questionChoices, id: \.self){ number in
-                        Text("\(number)")
-                    }
+            Stepper("Max Multiplier is \(game.maxMultiplier)", value: $game.maxMultiplier, in: 2...12)
+                .stepperViewModifier(color: .blue, stepperType: "Multiplier")
+            
+            Picker("Choose Number of Questions", selection: $game.gameChoice) {
+                ForEach(game.questionChoices, id: \.self){ number in
+                    Text("\(number)")
                 }
-                .pickerViewModifier()
-                
-                
-                Stepper("Number of skips is \(game.skips)", value: $game.skips, in: 1...5)
-                    .stepperViewModifier(color: Color.pink, stepperType: "Skips")
-                
-                Stepper(
-                    "Timelimit is \(game.timeLimit, specifier: "%.1f") seconds",
-                    value: $game.timeLimit,
-                    in: 1.0...60.0,
-                    step: 1.0
-                )
-                    .stepperViewModifier(color: Color.brown, stepperType: "TimeLimit")
-                    .onChange(of: game.timeLimit) {
-                        print("Time limit changed: \(game.timeLimit)")}
-                
-                
             }
-
+            .pickerViewModifier()
+            
+            
+            Stepper("Number of skips is \(game.skips)", value: $game.skips, in: 1...5)
+                .stepperViewModifier(color: Color.pink, stepperType: "Skips")
+            
+            Stepper(
+                "Timelimit is \(game.timeLimit, specifier: "%.1f") seconds",
+                value: $game.timeLimit,
+                in: 1.0...60.0,
+                step: 1.0
+            )
+                .stepperViewModifier(color: Color.brown, stepperType: "TimeLimit")
+                .onChange(of: game.timeLimit) {
+                    print("Time limit changed: \(game.timeLimit)")}
+            
+            
+           // Add a Done button
+           Button(action: {
+            dismiss()
+           }) {
+               Text("Done")
+                   .font(.headline)
+                   .padding()
+                   .frame(maxWidth: .infinity)
+                   .background(Color.green)
+                   .foregroundColor(.white)
+                   .cornerRadius(10)
+                   .shadow(radius: 5)
+           }
+           .padding(.top, 20)
         }
-        
     }
 }
