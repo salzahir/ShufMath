@@ -40,7 +40,13 @@ struct titleViewModifer: ViewModifier {
             .fontWeight(.bold)
             .foregroundColor(Color.white)
             .padding()
-            .background(LinearGradient(gradient: Gradient(colors: [.yellow, .green]), startPoint: .topLeading, endPoint: .bottomTrailing))
+            .background(
+                LinearGradient(
+                    gradient: Gradient(colors: [.yellow, .green]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
             .cornerRadius(10)
             .shadow(radius: 10)
             .padding(.horizontal)

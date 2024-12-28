@@ -76,23 +76,26 @@ struct TimerView: View {
     let timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
 
     var body: some View {
-        ProgressView("Time is ticking…", value: game.timerAmount, total: timeLimit)
-            .onReceive(timer) { _ in
-                
-                if game.timerAmount < timeLimit {
-                    game.timerAmount += incrementAmount
-                } else {
-                    // Stops Timer Overflow
-                    timer.upstream.connect().cancel()
-                    game.useTimer = false
-                    game.timesUp = true
-                    game.processAnswer()
-                }
-                
-            }
-            .onDisappear {
+        ProgressView(
+            "Time is ticking…",
+            value: game.timerAmount,
+            total: timeLimit
+        )
+        .onReceive(timer) { _ in
+            if game.timerAmount < timeLimit {
+                game.timerAmount += incrementAmount
+            } else {
+                // Stops Timer Overflow
                 timer.upstream.connect().cancel()
+                game.useTimer = false
+                game.timesUp = true
+                game.processAnswer()
             }
+                
+        }
+        .onDisappear {
+            timer.upstream.connect().cancel()
+        }
     }
 }
 

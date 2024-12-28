@@ -113,46 +113,101 @@ struct GameSetupButton: View {
     }
 }
 
-// Stepper Modifier
-struct StepperViewMod: ViewModifier {
-    var colorName: Color
+struct GameStepperView: View {
+    
+    var title: String
+    @Binding var value: Int
+    var range: ClosedRange<Int>
+    var color: Color
     var stepperType: String
-    func body(content: Content) -> some View {
-        content
-            .padding()
-            .background(colorName)
-            .cornerRadius(10)
-            .font(.headline)
-            .foregroundStyle(Color.white)
-            .shadow(radius: 5)
-            .accessibilityLabel("Tap to increase or decrease \(stepperType)")
+    
+    var body: some View {
+        Stepper(
+            title,
+            value: $value,
+            in: range
+        )
+        .stepperViewModifier(color: color, stepperType: stepperType, gameValue: value)
     }
 }
 
-extension View{
-    func stepperViewModifier(color: Color, stepperType: String) -> some View {
-        self.modifier(StepperViewMod(colorName: color, stepperType: stepperType))
+struct GamePickerView: View {
+    var gameText: String
+    var gameChoices: ClosedRange<Int>
+    @Binding var selectedChoice: Int
+    
+    var body: some View{
+        Picker(gameText, selection: $selectedChoice) {
+            ForEach(gameChoices, id: \.self){ number in
+                Text("\(number)")
+            }
+        }
+        .pickerViewModifier()
     }
 }
 
-// Picker Modifier
-struct PickerViewModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .pickerStyle(WheelPickerStyle())
-            .padding()
-            .background(Color.yellow)
-            .cornerRadius(10)
-            .shadow(radius: 5)
+struct CustomSettingsView: View {
+    @Binding var isCustomSettingsPresented: Bool
+    @Binding var game: Game
+    @Environment(\.dismiss) var dismiss
+
+    var body: some View {
+        VStack(spacing: 10){
+            
+            GameStepperView(
+                title: "Max Multiplier is \(game.maxMultiplier)",
+                value: $game.maxMultiplier,
+                range: 2...12,
+                color: Color.blue,
+                stepperType: "Multiplier"
+            )
+            
+            GamePickerView(
+                gameText: "Choose Number of Questions",
+                gameChoices: game.questionChoices,
+                selectedChoice: $game.gameChoice
+            )
+            
+            GameStepperView(
+                title: "Number of skips is \(game.skips)",
+                value: $game.skips,
+                range: 1...5,
+                color: Color.pink,
+                stepperType: "Skips"
+            )
+            
+            Stepper(
+                "Timelimit is \(game.timeLimit, specifier: "%.1f") seconds",
+                value: $game.timeLimit,
+                in: 1.0...60.0,
+                step: 1.0
+            )
+            .stepperViewModifier(color: Color.brown, stepperType: "TimeLimit", gameValue: Int(game.timeLimit))
+            .onChange(of: game.timeLimit) {
+                print("Time limit changed: \(game.timeLimit)")}
+            
+            
+           Button(action: {
+            dismiss()
+           }) {
+               VStack {
+                   Image(systemName: "checkmark.circle.fill")
+                       .foregroundColor(.white)
+                       .font(.title)
+                   Text("Done")
+                       .fontWeight(.bold)
+                       .foregroundColor(.white)
+               }
+               .frame(maxWidth: .infinity)
+               .padding()
+               .background(Color.green)
+               .cornerRadius(10)
+               .shadow(radius: 5)
+           }
+           .padding(.top, 20)
+        }
     }
 }
-
-extension View{
-    func pickerViewModifier() -> some View {
-        self.modifier(PickerViewModifier())
-    }
-}
-
 
 struct userStats: View {
     @Binding var userStats: Game.UserStats
@@ -180,6 +235,50 @@ struct userStats: View {
     }
 }
 
+// Stepper Modifier
+struct StepperViewMod: ViewModifier {
+    var colorName: Color
+    var stepperType: String
+    var gameValue: Int
+    
+    func body(content: Content) -> some View {
+        content
+            .padding()
+            .background(colorName)
+            .cornerRadius(10)
+            .font(.headline)
+            .foregroundStyle(Color.white)
+            .shadow(radius: 5)
+            .accessibilityLabel("Tap to increase or decrease \(stepperType)")
+            .animation(.easeInOut, value: gameValue)
+    }
+}
+
+extension View{
+    func stepperViewModifier(color: Color, stepperType: String, gameValue: Int) -> some View {
+        self.modifier(StepperViewMod(colorName: color, stepperType: stepperType, gameValue: gameValue))
+    }
+}
+
+
+// Picker Modifier
+struct PickerViewModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .pickerStyle(WheelPickerStyle())
+            .padding()
+            .background(Color.yellow)
+            .cornerRadius(10)
+            .shadow(radius: 5)
+    }
+}
+
+extension View{
+    func pickerViewModifier() -> some View {
+        self.modifier(PickerViewModifier())
+    }
+}
+
 struct userStatsModifier: ViewModifier {
     let backgroundColor: Color
     func body(content: Content) -> some View{
@@ -196,63 +295,5 @@ struct userStatsModifier: ViewModifier {
 extension View{
     func userViewModifier(backgroundColor: Color) -> some View {
         self.modifier(userStatsModifier(backgroundColor: backgroundColor))
-    }
-}
-
-struct CustomSettingsView: View {
-    @Binding var isCustomSettingsPresented: Bool
-    @Binding var game: Game
-    @Environment(\.dismiss) var dismiss
-
-    var body: some View {
-        VStack(spacing: 10){
-            Stepper(
-                "Max Multiplier is \(game.maxMultiplier)",
-                value: $game.maxMultiplier,
-                in: 2...12
-            )
-            .stepperViewModifier(color: .blue, stepperType: "Multiplier")
-            .animation(.interactiveSpring(), value: game.maxMultiplier)
-            
-            Picker("Choose Number of Questions", selection: $game.gameChoice) {
-                ForEach(game.questionChoices, id: \.self){ number in
-                    Text("\(number)")
-                }
-            }
-            .pickerViewModifier()
-            
-            Stepper("Number of skips is \(game.skips)", value: $game.skips, in: 1...5)
-                .stepperViewModifier(color: Color.pink, stepperType: "Skips")
-            
-            Stepper(
-                "Timelimit is \(game.timeLimit, specifier: "%.1f") seconds",
-                value: $game.timeLimit,
-                in: 1.0...60.0,
-                step: 1.0
-            )
-            .stepperViewModifier(color: Color.brown, stepperType: "TimeLimit")
-            .animation(.interactiveSpring, value: game.timeLimit)
-            .onChange(of: game.timeLimit) {
-                print("Time limit changed: \(game.timeLimit)")}
-            
-           Button(action: {
-            dismiss()
-           }) {
-               VStack {
-                   Image(systemName: "checkmark.circle.fill")
-                       .foregroundColor(.white)
-                       .font(.title)
-                   Text("Done")
-                       .fontWeight(.bold)
-                       .foregroundColor(.white)
-               }
-               .frame(maxWidth: .infinity)
-               .padding()
-               .background(Color.green)
-               .cornerRadius(10)
-               .shadow(radius: 5)
-           }
-           .padding(.top, 20)
-        }
     }
 }
