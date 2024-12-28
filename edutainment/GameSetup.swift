@@ -20,9 +20,21 @@ struct GameSetupView: View {
         VStack{
             Section("Game Setup") {
                 HStack{
-                    createDifficultyButton(buttonText: "Easy", difficulty: Game.GameDifficulty.easy, color: Color.green)
-                    createDifficultyButton(buttonText: "Med", difficulty: Game.GameDifficulty.medium, color: Color.yellow)
-                    createDifficultyButton(buttonText: "Hard", difficulty: Game.GameDifficulty.hard, color: Color.red)
+                    createDifficultyButton(
+                        buttonText: "Easy",
+                        difficulty: Game.GameDifficulty.easy,
+                        color: Color.green
+                    )
+                    createDifficultyButton(
+                        buttonText: "Med",
+                        difficulty: Game.GameDifficulty.medium,
+                        color: Color.yellow
+                    )
+                    createDifficultyButton(
+                        buttonText: "Hard",
+                        difficulty: Game.GameDifficulty.hard,
+                        color: Color.red
+                    )
                 }
                 
                 GameSetupButton(
@@ -32,7 +44,10 @@ struct GameSetupView: View {
                     game.useTimer.toggle()
                 })
                 
-                GameSetupButton(buttonText: "Show Lifetime Stats", buttonColor: showUserStats ? Color.indigo : Color.indigo.opacity(0.5)){
+                GameSetupButton(
+                    buttonText: "Show Lifetime Stats",
+                    buttonColor: showUserStats ? Color.indigo : Color.indigo.opacity(0.5)
+                ){
                     showUserStats.toggle()
                 }
                 .sheet(isPresented: $showUserStats){
@@ -44,11 +59,23 @@ struct GameSetupView: View {
                     }
                 }
              
-                GameSetupButton(buttonText: "Custom", buttonColor: game.gameDifficulty == .custom ? .teal : .teal.opacity(0.5), action:{
-                    game.gameDifficultySetup(Difficulty: .custom)
-                    game.useCustom.toggle()
-                })
-                .sheet(isPresented: $game.useCustom){
+                GameSetupButton(
+                    buttonText: "Custom",
+                    buttonColor: game.gameDifficulty == .custom ? .teal : .teal.opacity(0.5),
+                    action:{
+                        print("Custom button pressed. UseCustom before: \(game.useCustom)")
+                        game.useCustom.toggle()
+                        print("UseCustom after: \(game.useCustom)")
+                        if game.useCustom{
+                           game.gameDifficultySetup(Difficulty: .custom)
+                        }
+                    }
+                )
+                
+                .sheet(
+                    isPresented: $game.useCustom,
+                    onDismiss: {game.gameDifficultySetup(Difficulty: .custom)}
+                ) {
                     ZStack{
                         Color.indigo
                             .ignoresSafeArea()
@@ -58,7 +85,6 @@ struct GameSetupView: View {
             }
         }
         .padding()
-
     }
     
     // Helper Function to streamline code
@@ -144,12 +170,16 @@ struct userStats: View {
                 
                 Text("Player has played \(userStats.gamesPlayed) games")
                     .userViewModifier(backgroundColor: Color.green)
+                
                 Text("Player has won \(userStats.gamesWon) games")
                     .userViewModifier(backgroundColor: Color.blue)
+                
                 Text("Player has lost \(userStats.gamesLost) games")
                     .userViewModifier(backgroundColor: Color.yellow)
+                
                 Text("Player average score is \(String(format: "%.2f", userStats.averageScore))")
                     .userViewModifier(backgroundColor: Color.cyan)
+                
                 Text("Player perfect games is \(userStats.perfectGames)")
                     .userViewModifier(backgroundColor: Color.indigo)
                 
@@ -178,33 +208,40 @@ extension View{
 }
 
 struct CustomSettingsView: View {
+    
     @Binding var game: Game
     
     var body: some View {
         VStack(spacing: 10){
-            Stepper("Max Multiplier is \(game.maxMultiplier)", value: $game.maxMultiplier, in: 2...12)
-            .stepperViewModifier(color: .blue, stepperType: "Multiplier")
-            
-            Picker("Choose Number of Questions", selection: $game.gameChoice) {
-                ForEach(game.questionChoices, id: \.self){ number in
-                    Text("\(number)")
+            if game.useCustom{
+                Stepper("Max Multiplier is \(game.maxMultiplier)", value: $game.maxMultiplier, in: 2...12)
+                    .stepperViewModifier(color: .blue, stepperType: "Multiplier")
+                
+                Picker("Choose Number of Questions", selection: $game.gameChoice) {
+                    ForEach(game.questionChoices, id: \.self){ number in
+                        Text("\(number)")
+                    }
                 }
+                .pickerViewModifier()
+                
+                
+                Stepper("Number of skips is \(game.skips)", value: $game.skips, in: 1...5)
+                    .stepperViewModifier(color: Color.pink, stepperType: "Skips")
+                
+                Stepper(
+                    "Timelimit is \(game.timeLimit, specifier: "%.1f") seconds",
+                    value: $game.timeLimit,
+                    in: 1.0...60.0,
+                    step: 1.0
+                )
+                    .stepperViewModifier(color: Color.brown, stepperType: "TimeLimit")
+                    .onChange(of: game.timeLimit) {
+                        print("Time limit changed: \(game.timeLimit)")}
+                
+                
             }
-            .pickerViewModifier()
-            
-            
-            Stepper("Number of skips is \(game.skips)", value: $game.skips, in: 1...5)
-                .stepperViewModifier(color: Color.pink, stepperType: "Skips")
-            
-            Stepper(
-                "Timelimit is \(game.timeLimit, specifier: "%.1f") seconds",
-                value: $game.timeLimit,
-                in: 1.0...60.0,
-                step: 1.0
-            )
-            .stepperViewModifier(color: Color.brown, stepperType: "TimeLimit")
-            .onChange(of: game.timeLimit) {
-                print("Time limit changed: \(game.timeLimit)")}
+
         }
+        
     }
 }
