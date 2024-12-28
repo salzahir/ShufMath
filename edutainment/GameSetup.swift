@@ -11,7 +11,7 @@ import SwiftUI
 // View for setting up Game
 struct GameSetupView: View {
     
-    
+    @State private var isCustomSettingsPresented: Bool = false
     @Binding var game: Game
     @State var showUserStats: Bool = false
         
@@ -55,7 +55,6 @@ struct GameSetupView: View {
                         Color.gray
                             .ignoresSafeArea()
                         userStats(userStats: $game.userStats)
-
                     }
                 }
              
@@ -64,15 +63,15 @@ struct GameSetupView: View {
                     buttonColor: game.gameDifficulty == .custom ? .teal : .teal.opacity(0.5),
                     action:{
                         game.gameDifficultySetup(Difficulty: .custom)
+                        isCustomSettingsPresented.toggle()
                         game.useCustom.toggle()
                     }
                 )
-                
-                .sheet(isPresented: $game.useCustom) {
+                .sheet(isPresented: $isCustomSettingsPresented) {
                     ZStack{
                         Color.indigo
                             .ignoresSafeArea()
-                        CustomSettingsView(game: $game)
+                        CustomSettingsView(isCustomSettingsPresented: $isCustomSettingsPresented, game: $game)
                     }
                 }
             }
@@ -201,14 +200,19 @@ extension View{
 }
 
 struct CustomSettingsView: View {
-    
+    @Binding var isCustomSettingsPresented: Bool
     @Binding var game: Game
-    @Environment(\.dismiss) var dismiss  // Add this line
+    @Environment(\.dismiss) var dismiss
 
     var body: some View {
         VStack(spacing: 10){
-            Stepper("Max Multiplier is \(game.maxMultiplier)", value: $game.maxMultiplier, in: 2...12)
-                .stepperViewModifier(color: .blue, stepperType: "Multiplier")
+            Stepper(
+                "Max Multiplier is \(game.maxMultiplier)",
+                value: $game.maxMultiplier,
+                in: 2...12
+            )
+            .stepperViewModifier(color: .blue, stepperType: "Multiplier")
+            .animation(.interactiveSpring(), value: game.maxMultiplier)
             
             Picker("Choose Number of Questions", selection: $game.gameChoice) {
                 ForEach(game.questionChoices, id: \.self){ number in
@@ -216,7 +220,6 @@ struct CustomSettingsView: View {
                 }
             }
             .pickerViewModifier()
-            
             
             Stepper("Number of skips is \(game.skips)", value: $game.skips, in: 1...5)
                 .stepperViewModifier(color: Color.pink, stepperType: "Skips")
@@ -227,23 +230,27 @@ struct CustomSettingsView: View {
                 in: 1.0...60.0,
                 step: 1.0
             )
-                .stepperViewModifier(color: Color.brown, stepperType: "TimeLimit")
-                .onChange(of: game.timeLimit) {
-                    print("Time limit changed: \(game.timeLimit)")}
+            .stepperViewModifier(color: Color.brown, stepperType: "TimeLimit")
+            .animation(.interactiveSpring, value: game.timeLimit)
+            .onChange(of: game.timeLimit) {
+                print("Time limit changed: \(game.timeLimit)")}
             
-            
-           // Add a Done button
            Button(action: {
             dismiss()
            }) {
-               Text("Done")
-                   .font(.headline)
-                   .padding()
-                   .frame(maxWidth: .infinity)
-                   .background(Color.green)
-                   .foregroundColor(.white)
-                   .cornerRadius(10)
-                   .shadow(radius: 5)
+               VStack {
+                   Image(systemName: "checkmark.circle.fill")
+                       .foregroundColor(.white)
+                       .font(.title)
+                   Text("Done")
+                       .fontWeight(.bold)
+                       .foregroundColor(.white)
+               }
+               .frame(maxWidth: .infinity)
+               .padding()
+               .background(Color.green)
+               .cornerRadius(10)
+               .shadow(radius: 5)
            }
            .padding(.top, 20)
         }

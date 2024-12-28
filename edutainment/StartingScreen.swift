@@ -10,6 +10,7 @@ import SwiftUI
 struct StartingScreen: View {
     
     @Binding var game: Game
+    @State var playedPress: Bool = false
     
     var body: some View {
         VStack(spacing: 10){
@@ -22,8 +23,9 @@ struct StartingScreen: View {
                 Spacer()
                 Button("Play"){
                     game.startGame()
+                    playedPress.toggle()
                 }
-                .playButtonView()
+                .playButtonView(playedPress: $playedPress)
                
                 
             }
@@ -52,13 +54,14 @@ extension View {
 }
 
 struct playButtonViewModifer: ViewModifier {
+    @Binding var playedPress : Bool
     func body(content: Content) -> some View {
         content
             .font(.title2)
             .fontWeight(.bold)
             .padding()
             .frame(maxWidth: .infinity)
-            .background(Color.blue)
+            .background(playedPress ? Color.blue : Color.blue.opacity(0.5))
             .foregroundColor(.white)
             .cornerRadius(10)
             .shadow(radius: 5)
@@ -67,7 +70,7 @@ struct playButtonViewModifer: ViewModifier {
 }
 
 extension View {
-    public func playButtonView() -> some View {
-        self.modifier(playButtonViewModifer())
+    public func playButtonView(playedPress: Binding<Bool>) -> some View {
+        self.modifier(playButtonViewModifer(playedPress: playedPress))
     }
 }
