@@ -13,11 +13,12 @@ import Foundation
 struct Game{
 
     // Represents a question in the app
-    struct Question: Codable {
+    struct Question: Codable, Identifiable {
         var id = UUID() // Unique identifier for each question
         var questionText: String
         var correctAnswer: Double
         var useInteger: Bool
+        var userAnswer: Double?
     }
     
     struct UserStats: Codable {
@@ -307,8 +308,10 @@ struct Game{
 
     mutating func checkAnswer(){
         
-        // Increment by 1 for correct answer
         guard let userAnswer = Double(userInput) else {return}
+        
+        // Save userAnswer in the array to allow potential for review
+        questionsArr[index].userAnswer = userAnswer
         
         let correctAnswer = questionsArr[index].correctAnswer
         
@@ -319,6 +322,7 @@ struct Game{
             questionsArr[index].correctAnswer - userAnswer < marginCheck
         }
         
+        // Increment by 1 for correct answer
         if isCorrect{
             correctAnswers += 1
             alertMessage = .correctAnswer

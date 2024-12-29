@@ -17,12 +17,12 @@ struct GameSetupView: View {
         
     var body: some View {
         
-        VStack{
+        VStack(spacing: 50){
             Section("Game Setup") {
                 
                 HStack{
                     GameSetupButton(
-                        buttonText: "X",
+                        buttonText: "×",
                         buttonColor: game.gameMode == .multiplication ? Color.brown : Color.brown.opacity(0.5),
                         action: {game.setGameMode(.multiplication)}
                     )
@@ -63,20 +63,6 @@ struct GameSetupView: View {
                 })
                 
                 GameSetupButton(
-                    buttonText: "Show Lifetime Stats",
-                    buttonColor: showUserStats ? Color.indigo : Color.indigo.opacity(0.5)
-                ){
-                    showUserStats.toggle()
-                }
-                .sheet(isPresented: $showUserStats){
-                    ZStack{
-                        Color.gray
-                            .ignoresSafeArea()
-                        userStats(userStats: $game.userStats)
-                    }
-                }
-             
-                GameSetupButton(
                     buttonText: "Custom",
                     buttonColor: game.gameDifficulty == .custom ? .teal : .teal.opacity(0.5),
                     action:{
@@ -90,6 +76,19 @@ struct GameSetupView: View {
                         Color.indigo
                             .ignoresSafeArea()
                         CustomSettingsView(isCustomSettingsPresented: $isCustomSettingsPresented, game: $game)
+                    }
+                }
+                GameSetupButton(
+                    buttonText: "Show Lifetime Stats",
+                    buttonColor: showUserStats ? Color.indigo : Color.indigo.opacity(0.5)
+                ){
+                    showUserStats.toggle()
+                }
+                .sheet(isPresented: $showUserStats){
+                    ZStack{
+                        Color.gray
+                            .ignoresSafeArea()
+                        userStats(userStats: $game.userStats)
                     }
                 }
             }
@@ -314,4 +313,9 @@ extension View{
     func userViewModifier(backgroundColor: Color) -> some View {
         self.modifier(userStatsModifier(backgroundColor: backgroundColor))
     }
+}
+
+
+#Preview {
+    GameSetupView(game: .constant(Game()))
 }

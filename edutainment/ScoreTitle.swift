@@ -51,3 +51,8 @@ extension View {
         self.modifier(ScoreTitleModifier())
     }
 }
+
+
+#Preview {
+    ScoreTitle(game: .constant(Game()))
+}

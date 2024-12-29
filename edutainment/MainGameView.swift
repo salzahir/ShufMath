@@ -155,3 +155,8 @@ struct AnswerInputView: View {
         .foregroundColor(.blue)
     }
 }
+
+
+#Preview {
+    MainGameView(game: .constant(Game()))
+}
