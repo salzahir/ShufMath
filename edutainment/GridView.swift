@@ -92,6 +92,14 @@ struct BottomRowControls: View {
                 userInput = ""
             }
             
+            Button(action: {
+                userInput += "."
+                AudioServicesPlaySystemSound(1026)
+            }) {
+                HorizontalButton(item: ".")
+            }
+            .accessibilityLabel("Add a decimal point, Current Input: \(userInput)")
+            .accessibilityHint("Decimal point allows for fractional numbers")
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 12)
