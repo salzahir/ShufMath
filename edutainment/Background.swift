@@ -24,3 +24,21 @@ struct BackGroundView: View {
             .ignoresSafeArea()
     }
 }
+
+extension Color {
+    static var random: Color {
+        let red = Double.random(in: 0...1)
+        let green = Double.random(in: 0...1)
+        let blue = Double.random(in: 0...1)
+        return Color(red: red, green: green, blue: blue)
+    }
+}
+
+extension ShapeStyle where Self == Color {
+    static var darkBackground: LinearGradient {
+        LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple, Color.red]), startPoint: .top, endPoint: .bottom)
+    }
+    static var lightBackground: LinearGradient {
+        LinearGradient(gradient: Gradient(colors: [Color.white, Color.pink, Color.teal]), startPoint: .top, endPoint: .bottom)
+    }
+}

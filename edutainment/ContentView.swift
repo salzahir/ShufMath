@@ -15,7 +15,6 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             BackGroundView()
-            
             VStack(spacing: 10){
                 StartingScreen(game: $game)
                 MainGameView(game: $game)

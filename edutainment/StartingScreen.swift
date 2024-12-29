@@ -80,3 +80,8 @@ extension View {
         self.modifier(playButtonViewModifer(playedPress: playedPress))
     }
 }
+
+
+#Preview {
+    StartingScreen(game: .constant(Game()))
+}
