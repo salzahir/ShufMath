@@ -16,7 +16,8 @@ struct Game{
     struct Question: Codable {
         var id = UUID() // Unique identifier for each question
         var questionText: String
-        var correctAnswer: Int
+        var correctAnswer: Double
+        var useInteger: Bool
     }
     
     struct UserStats: Codable {
@@ -49,7 +50,7 @@ struct Game{
             averageScore = Double(totalScore) / Double(gamesPlayed)
         }
     }
-    
+    let marginCheck = 0.1
     var hadPerfectGame: Bool = false
     var userStats: UserStats = UserStats()
     var index = 0
@@ -74,6 +75,7 @@ struct Game{
     var timerAmount: Double = 0.0
     var timeLimit: Double = 0.0
     var timesUp: Bool = false
+    var gameMode: GameMode? = .multiplication
 
     enum GameState {
         case notStarted
@@ -86,6 +88,12 @@ struct Game{
         case medium
         case hard
         case custom
+    }
+    
+    enum GameMode: String, CaseIterable {
+        case multiplication = "Multiplication"
+        case division = "Division"
+        case mixed = "Mixed Mode"
     }
     
     enum AlertMessage: String {
@@ -107,17 +115,17 @@ struct Game{
         
         switch Difficulty {
         case .easy:
-            maxMultiplier = 4
+            maxMultiplier = gameMode == .multiplication ? 4 : 6
             totalQuestions = 10
             skips = 5
             timeLimit = 15
         case .medium:
-            maxMultiplier = 8
+            maxMultiplier = gameMode == .multiplication ? 8 : 10
             totalQuestions = 20
             skips = 3
             timeLimit = 10
         case .hard:
-            maxMultiplier = 12
+            maxMultiplier = gameMode == .multiplication ? 12 : 15
             totalQuestions = 30
             skips = 1
             timeLimit = 5
@@ -129,6 +137,10 @@ struct Game{
         self.gameDifficulty = Difficulty
     }
     
+    mutating func setGameMode(_ mode: GameMode) {
+        self.gameMode = mode
+    }
+    
     mutating func generateQuestions(pracNumbers: Int, lengthQuestions: Int) -> [Question] {
         
         var questions: [Question] = []
@@ -137,15 +149,44 @@ struct Game{
             let choice1 = Int.random(in: 1...pracNumbers)
             let choice2 = Int.random(in: 1...pracNumbers)
             
-            // Generate the question text
-            let questionText = "What is \(choice1) x \(choice2)?"
-            let correctAnswer = choice1 * choice2
-            
-            questions.append(Question(questionText: questionText, correctAnswer: correctAnswer))
-            
+            let question = switch gameMode {
+            case .multiplication:
+                makeMultiplicationQuestion(choice1: choice1, choice2: choice2)
+                
+            // Division Mode
+            case .division:
+                divisionQuestion(choice1: choice1, choice2: choice2)
+                
+            // User Selected Mixed Settings
+            case .mixed:
+                Bool.random() ?
+                makeMultiplicationQuestion(choice1: choice1, choice2: choice2) :
+                divisionQuestion(choice1: choice1, choice2: choice2)
+                
+            case nil:
+                fatalError("Game Mode not set")
+            }
+            questions.append(question)
         }
-        
         return questions
+    }
+    
+    private mutating func makeMultiplicationQuestion(choice1: Int, choice2: Int) -> Question {
+        // Generate the question text
+        let questionText = "What is \(choice1) x \(choice2)?"
+        let correctAnswer = Double(choice1 *  choice2)
+        
+        return Question(questionText: questionText, correctAnswer: correctAnswer, useInteger: true)
+    }
+    
+    private mutating func divisionQuestion(choice1: Int, choice2: Int) -> Question {
+        
+        let questionText = "What is \(choice1) / \(choice2)?"
+        let correctAnswer = Double(choice1) / Double(choice2)
+        
+        let useInteger = correctAnswer.truncatingRemainder(dividingBy: 1) == 0
+
+        return Question(questionText: questionText, correctAnswer: correctAnswer, useInteger: useInteger)
     }
     
     mutating func startGame(){
@@ -263,34 +304,44 @@ struct Game{
         return
     }
     
+
     mutating func checkAnswer(){
         
         // Increment by 1 for correct answer
-        let userAnswer = Int(userInput)
+        guard let userAnswer = Double(userInput) else {return}
         
-        if userAnswer == questionsArr[index].correctAnswer{
+        let correctAnswer = questionsArr[index].correctAnswer
+        
+        // Integer Handling
+        let isCorrect = if questionsArr[index].useInteger{
+            userAnswer == correctAnswer
+        } else {
+            questionsArr[index].correctAnswer - userAnswer < marginCheck
+        }
+        
+        if isCorrect{
             correctAnswers += 1
             alertMessage = .correctAnswer
         }
         
-        // Decrement by 1 for incorrect answer
         else{
-            
-            // Decrement only above 0 no negative points
-            if correctAnswers > 0 {
-                correctAnswers -= 1
-                alertMessage = .incorrectAnswer
-            }
-            
-            // No negative points
-            else{
-                alertMessage = .incorrectNoPoint
-            }
-            
+            handleIncorrect()
+
+        }
+    }
+    
+    mutating func handleIncorrect(){
+        // Decrement only above 0 no negative points
+        if correctAnswers > 0 {
+            correctAnswers -= 1
+            alertMessage = .incorrectAnswer
         }
         
+        // No negative points
+        else{
+            alertMessage = .incorrectNoPoint
+        }
     }
-
     
     // Helper when user decides to try to skip a question
     mutating func skipQuestion() {
@@ -356,7 +407,7 @@ struct Game{
         }
         
         // Valid Number Check
-        guard let _ = Int(userInput) else{
+        guard let _ = Double(userInput) else{
             return AlertMessage.invalidInput
         }
         

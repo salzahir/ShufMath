@@ -19,6 +19,24 @@ struct GameSetupView: View {
         
         VStack{
             Section("Game Setup") {
+                
+                HStack{
+                    GameSetupButton(
+                        buttonText: "X",
+                        buttonColor: game.gameMode == .multiplication ? Color.brown : Color.brown.opacity(0.5),
+                        action: {game.setGameMode(.multiplication)}
+                    )
+                    GameSetupButton(
+                        buttonText: "÷",
+                        buttonColor: game.gameMode == .division ? Color.indigo : Color.indigo.opacity(0.5),
+                        action: {game.setGameMode(.division)}
+                    )
+                    GameSetupButton(
+                        buttonText: "Mix",
+                        buttonColor: game.gameMode == .mixed ? Color.mint : Color.mint.opacity(0.5),
+                        action: {game.setGameMode(.mixed)}
+                    )
+                }
                 HStack{
                     createDifficultyButton(
                         buttonText: "Easy",
