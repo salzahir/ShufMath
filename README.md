@@ -37,6 +37,15 @@ The Edutainment App is a SwiftUI-based educational tool designed to make practic
 - SwiftUI
 - Xcode 14+
 
+
+Here’s an example of the game setup and in-game view:
+
+## Game Setup
+![Game Setup](assets/start.png)
+
+## In-Game View
+![In-Game View](assets/in-game.png)
+
 ## Installation 🚀
 1. Clone the repository:
    ```bash
