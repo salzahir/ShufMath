@@ -20,7 +20,7 @@ struct MainGameView: View {
         VStack {
             if activeGame {
                 ScoreTitle(game: $game)
-                
+                Spacer()
                 QuestionView(
                     index: game.index,
                     questionText: game.questionsArr[game.index].questionText
