@@ -5,9 +5,7 @@
 //  Created by Salman Z on 12/23/24.
 //
 
-import SwiftUI
 import Foundation
-
 
 // The logic and the brains behind the app
 struct Game{
@@ -19,6 +17,7 @@ struct Game{
         var correctAnswer: Double
         var useInteger: Bool
         var userAnswer: Double?
+        var timeTaken: Double
     }
     
     struct UserStats: Codable {
@@ -177,7 +176,7 @@ struct Game{
         let questionText = "What is \(choice1) x \(choice2)?"
         let correctAnswer = Double(choice1 *  choice2)
         
-        return Question(questionText: questionText, correctAnswer: correctAnswer, useInteger: true)
+        return Question(questionText: questionText, correctAnswer: correctAnswer, useInteger: true, timeTaken: 0.0)
     }
     
     private mutating func divisionQuestion(choice1: Int, choice2: Int) -> Question {
@@ -187,7 +186,7 @@ struct Game{
         
         let useInteger = correctAnswer.truncatingRemainder(dividingBy: 1) == 0
 
-        return Question(questionText: questionText, correctAnswer: correctAnswer, useInteger: useInteger)
+        return Question(questionText: questionText, correctAnswer: correctAnswer, useInteger: useInteger, timeTaken: 0.0)
     }
     
     mutating func startGame(){
@@ -293,12 +292,14 @@ struct Game{
         }
         
         // Reset Timer State
-        timerAmount = 0.0
-        userInput = ""
-        timesUp = false
+        resetQuestion()
         
         nextQuestion()
         
+        if isGameFinished(){
+            return
+        }
+                
         // Renable timer
         useTimer = true
         
@@ -326,6 +327,9 @@ struct Game{
         if isCorrect{
             correctAnswers += 1
             alertMessage = .correctAnswer
+            if useTimer {
+                questionsArr[index].timeTaken += timerAmount
+            }
         }
         
         else{
@@ -400,6 +404,9 @@ struct Game{
         }
         
         timerAmount = 0.0
+        
+        timesUp = false
+
     }
     
     mutating private func validInput() -> AlertMessage? {

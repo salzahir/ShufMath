@@ -60,7 +60,7 @@ struct GameOverView: View {
                     .styledButton(backgroundColor: Color.teal)
 
                     
-                    NavigationLink(destination: ReviewGameView(gameQuestions: game.questionsArr, index: game.index)){
+                    NavigationLink(destination: ReviewGameView(gameQuestions: game.questionsArr, index: game.index, useTimer: game.useTimer, timeLimit: game.timeLimit)){
                         Text("Review Answers")
                             .styledButton(backgroundColor: Color.yellow)
                     }
@@ -81,16 +81,17 @@ struct ReviewGameView: View {
     
     var gameQuestions : [Game.Question]
     var index: Int
-    
+    var useTimer: Bool
     let cols = [
         GridItem(.flexible())
     ]
+    var timeLimit: Double
     
     var body: some View {
         ScrollView {
             LazyVGrid(columns: cols, spacing: 10){
                 ForEach(gameQuestions.indices, id: \.self) { idx in
-                    ReviewQuestionView(gameQuestion: gameQuestions[idx], index: idx)
+                    ReviewQuestionView(gameQuestion: gameQuestions[idx], index: idx, useTimer: useTimer, timeLimit: timeLimit)
                         .padding()
                         .frame(maxWidth: .infinity)
                         .background(Color.random)
@@ -110,7 +111,9 @@ struct ReviewQuestionView: View {
     var answerCheck: Bool{
         gameQuestion.correctAnswer == gameQuestion.userAnswer
     }
-
+    var useTimer : Bool
+    var timeLimit: Double
+    
     var body: some View{
         
     VStack(alignment: .center, spacing: 10){
@@ -127,6 +130,10 @@ struct ReviewQuestionView: View {
         HStack{
             Text("Your Answer: \(gameQuestion.userAnswer?.description ?? "Unanswered")")
             Text("Correct Answer: \(String(format: "%.2f", gameQuestion.correctAnswer))")
+        }
+        
+        if useTimer{
+            Text(gameQuestion.timeTaken == 0.0 ? "Exceeded time limit \(timeLimit)" : "Time taken: \(String(format: "%.2f", gameQuestion.timeTaken)) seconds")
         }
     }
 }

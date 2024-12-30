@@ -272,7 +272,7 @@ struct StepperViewMod: ViewModifier {
 }
 
 extension View{
-    func stepperViewModifier(color: Color, stepperType: String, gameValue: Int) -> some View {
+    func stepperViewModifier(color: Color, stepperType: String, gameValue: Int) -> some View{
         self.modifier(StepperViewMod(colorName: color, stepperType: stepperType, gameValue: gameValue))
     }
 }

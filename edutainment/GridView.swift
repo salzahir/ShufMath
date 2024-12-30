@@ -7,121 +7,107 @@
 
 import SwiftUI
 import AVFoundation
-import CoreHaptics
 
 struct GridView: View {
     
-    // Define number of columns
-    let items = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
-    let columns = Array(repeating: GridItem(.flexible(minimum: 15), spacing: 2), count: 3)
+   let items = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "."]
+   let columns = Array(repeating: GridItem(.flexible(minimum: 15), spacing: 5), count: 3)
+   let soundEffect: SystemSoundID = 1026
+    
     @Binding var userInput: String
     @State var isPressed = false
     
     var body: some View {
         VStack(spacing: 2){
-            LazyVGrid(columns: columns, spacing: 2) {
+            LazyVGrid(columns: columns, spacing: 5) {
                 ForEach(items, id: \.self) { item in
-                    Button(action: {
-                        userInput += String(item)
-                        AudioServicesPlaySystemSound(1026)
-                        isPressed.toggle()
-                    }){
-                        // Gridbutton View
-                        GridButton(item: item, userInput: userInput, isPressed: isPressed)
-                    }
-
+                    GridButton(
+                        userInput: $userInput,
+                        isPressed: $isPressed,
+                        item: item,
+                        labelMessage: "Item \(item), current input \(userInput)",
+                        labelHint: "Press \(item)",
+                        action: {addVal(userInput: $userInput, value: item, isPressed: $isPressed)}
+                    )
+                    .padding(.vertical)
+                    .padding(.horizontal)
                 }
+                GridButton(
+                    userInput: $userInput,
+                    isPressed: $isPressed,
+                    item: "⬅️",
+                    labelMessage: "Delete, Current Input: \(userInput)",
+                    labelHint: "Deletes the last digit entered",
+                    action: {removeLastNumber(userInput: $userInput)}
+                )
             }
             .padding(.horizontal)
-            BottomRowControls(userInput: $userInput, isPressed: isPressed)
-                .padding(.horizontal)
-
         }
+    }
+    
+    func addVal(userInput: Binding<String>, value: String, isPressed: Binding<Bool>) {
+        userInput.wrappedValue += value
+        playSoundEffect()
+        isPressed.wrappedValue.toggle()
+    }
+
+    func removeLastNumber(userInput: Binding<String>) {
+        if !userInput.wrappedValue.isEmpty {
+            userInput.wrappedValue.removeLast()
+        }
+        playSoundEffect()
+    }
+    
+    private func playSoundEffect() {
+        AudioServicesPlaySystemSound(soundEffect)
     }
 }
 
 struct GridButton: View {
+    @Binding var userInput: String
+    @Binding var isPressed: Bool
+    var item: String
+    var labelMessage: String
+    var labelHint: String
+    var action: () -> Void
+
+    var body: some View {
+        
+        
+        Button(action: {
+            action()
+        }) {
+            RoundedRectangle(cornerRadius: 15)
+                .fill(Color.orange)
+                .GridViewMod(item: item, userInput: userInput, isPressed: isPressed)
+                .accessibilityLabel(labelMessage)
+                .accessibilityHint(labelHint)
+        }
+    }
+}
+
+struct GridButtonModifer: ViewModifier {
     var item: String
     var userInput: String
     var isPressed: Bool
     
-    var body: some View {
-        
-        RoundedRectangle(cornerRadius: 2)
-            .fill(Color.orange.secondary)
-            .aspectRatio(1, contentMode: .fit)
+    func body(content: Content) -> some View {
+        content
+            .shadow(radius: 5)
+            .frame(height: 55)
             .overlay(
                 Text("\(item)")
                     .foregroundColor(.black)
             )
-            .frame(minWidth: 30, minHeight: 30)
-            .foregroundColor(.white)
             .cornerRadius(12)
-            .shadow(radius: 3)
-            .accessibilityLabel("Number \(item), Current Input: \(userInput)")
-            // scale effect to simulate pressing
             .scaleEffect(isPressed ? 0.9 : 1.0)
             .animation(.spring(), value: isPressed)
+            .shadow(radius: 3)
     }
 }
 
-struct BottomRowControls: View {
-    @Binding var userInput: String
-    var isPressed: Bool
-    var body: some View {
-        HStack(spacing: 2) {
-            Button(action: {
-                userInput += "0"
-                AudioServicesPlaySystemSound(1026)
-            }) {
-                HorizontalButton(item: "0")
-            }
-            .accessibilityLabel("Number 0, Current Input: \(userInput)")
-            
-            Button(action: {
-                if !userInput.isEmpty {
-                    userInput.removeLast()
-                }
-                AudioServicesPlaySystemSound(1026)
-            }) {
-                HorizontalButton(item: "⬅️")
-            }
-            .accessibilityLabel("Delete, Current Input: \(userInput)")
-            .accessibilityHint("Deletes the last digit entered")
-            .onLongPressGesture(minimumDuration: 1.0){
-                userInput = ""
-            }
-            
-            Button(action: {
-                userInput += "."
-                AudioServicesPlaySystemSound(1026)
-            }) {
-                HorizontalButton(item: ".")
-            }
-            .accessibilityLabel("Add a decimal point, Current Input: \(userInput)")
-            .accessibilityHint("Decimal point allows for fractional numbers")
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.horizontal, 12)
-        // Add scale effect to simulate pressing
-        .scaleEffect(isPressed ? 0.9 : 1.0)
-        .animation(.spring(), value: isPressed)
-    }
-}
-
-
-
-struct HorizontalButton: View {
-    var item: String
-    
-    var body: some View {
-        RoundedRectangle(cornerRadius: 2)
-            .fill(Color.orange.secondary)
-            .frame(maxWidth: .infinity)
-            .frame(height: 45)
-            .overlay(
-                Text("\(item)")
-                    .foregroundColor(.black)
-            )
+extension View {
+    func GridViewMod(item: String, userInput: String, isPressed: Bool) -> some View {
+        self.modifier(GridButtonModifer(item: item, userInput: userInput, isPressed: isPressed))
     }
 }
