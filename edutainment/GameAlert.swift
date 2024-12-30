@@ -120,10 +120,13 @@ struct ReviewQuestionView: View {
         Text("Question number \(index+1) \(gameQuestion.questionText)")
         
         Text(answerCheck ? "You Got this answer correct" : "You Got this answer wrong")
+            .fontWeight(.bold)
+            .frame(width: .infinity)
+            .padding(.bottom)
             .background(answerCheck ? Color.green : Color.red)
             .foregroundStyle(.white)
             .cornerRadius(10)
-            .padding(.bottom)
+            .shadow(radius: 10)
         }
         
         HStack{
