@@ -236,8 +236,6 @@ struct Game{
         timesUp = false
     }
     
-
-    
     mutating func processAnswer(isSkipping: Bool = false){
         
         // User ran out of time skip the question and adjust
@@ -316,25 +314,30 @@ struct Game{
         
         let correctAnswer = questionsArr[index].correctAnswer
         
+        let isCorrect: Bool
+        
         // Integer Handling
-        let isCorrect = if questionsArr[index].useInteger{
-            userAnswer == correctAnswer
+        if questionsArr[index].useInteger {
+            isCorrect = userAnswer == correctAnswer
         } else {
-            questionsArr[index].correctAnswer - userAnswer < marginCheck
+            isCorrect = abs(correctAnswer - userAnswer) < marginCheck
         }
         
         // Increment by 1 for correct answer
         if isCorrect{
-            correctAnswers += 1
-            alertMessage = .correctAnswer
-            if useTimer {
-                questionsArr[index].timeTaken += timerAmount
-            }
+            handleCorrect()
         }
         
         else{
             handleIncorrect()
-
+        }
+    }
+    
+    mutating func handleCorrect(){
+        correctAnswers += 1
+        alertMessage = .correctAnswer
+        if useTimer {
+            questionsArr[index].timeTaken += timerAmount
         }
     }
     
