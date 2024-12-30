@@ -9,59 +9,81 @@ import SwiftUI
 import AVFoundation
 import CoreHaptics
 
+
+struct NumpadConstants{
+    
+    // Define number of columns
+    static let numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
+    static let columns = Array(repeating: GridItem(.flexible(minimum: 15), spacing: 2), count: 3)
+    static let soundEffect: SystemSoundID = 1026
+    
+}
+
 struct GridView: View {
     
     // Define number of columns
-    let items = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
-    let columns = Array(repeating: GridItem(.flexible(minimum: 15), spacing: 2), count: 3)
     @Binding var userInput: String
     @State var isPressed = false
     
     var body: some View {
         VStack(spacing: 2){
-            LazyVGrid(columns: columns, spacing: 2) {
-                ForEach(items, id: \.self) { item in
-                    Button(action: {
-                        userInput += String(item)
-                        AudioServicesPlaySystemSound(1026)
-                        isPressed.toggle()
-                    }){
-                        // Gridbutton View
-                        GridButton(item: item, userInput: userInput, isPressed: isPressed)
-                    }
-
+            LazyVGrid(columns: NumpadConstants.columns, spacing: 2) {
+                ForEach(NumpadConstants.numbers, id: \.self) { number in
+                    GridButton(userInput: $userInput, isPressed: $isPressed, number: number)
+                        .GridViewMod(item: number, userInput: userInput, isPressed: isPressed)
                 }
             }
             .padding(.horizontal)
             BottomRowControls(userInput: $userInput, isPressed: isPressed)
                 .padding(.horizontal)
-
         }
     }
 }
 
 struct GridButton: View {
-    var item: String
+    @Binding var userInput: String
+    @Binding var isPressed: Bool
+    
+    var number: String
+    
+    var body: some View {
+        Button(action: {
+            userInput += number
+            AudioServicesPlaySystemSound(1026)
+            isPressed.toggle()
+        }) {
+            RoundedRectangle(cornerRadius: 2)
+                .fill(Color.orange.secondary)
+                .aspectRatio(1, contentMode: .fit)
+        }
+    }
+}
+
+struct GridButtonViewModifer: ViewModifier {
+    var number: String
     var userInput: String
     var isPressed: Bool
     
-    var body: some View {
-        
-        RoundedRectangle(cornerRadius: 2)
-            .fill(Color.orange.secondary)
-            .aspectRatio(1, contentMode: .fit)
+    func body(content: Content) -> some View {
+        content
             .overlay(
-                Text("\(item)")
+                Text("\(number)")
                     .foregroundColor(.black)
             )
             .frame(minWidth: 30, minHeight: 30)
             .foregroundColor(.white)
             .cornerRadius(12)
             .shadow(radius: 3)
-            .accessibilityLabel("Number \(item), Current Input: \(userInput)")
+            .accessibilityLabel("Number \(number), Current Input: \(userInput)")
             // scale effect to simulate pressing
             .scaleEffect(isPressed ? 0.9 : 1.0)
             .animation(.spring(), value: isPressed)
+    }
+}
+
+extension View {
+    func GridViewMod(item: String, userInput: String, isPressed: Bool) -> some View {
+        self.modifier(GridButtonViewModifer(number: item, userInput: userInput, isPressed: isPressed))
     }
 }
 
