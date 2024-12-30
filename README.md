@@ -41,10 +41,10 @@ The Edutainment App is a SwiftUI-based educational tool designed to make practic
 Here’s an example of the game setup and in-game view:
 
 ## Game Setup
-![Game Setup](assets/start.png)
+![Game Setup](images/start.png)
 
 ## In-Game View
-![In-Game View](assets/in-game.png)
+![In-Game View](images/in-game.png)
 
 ## Installation 🚀
 1. Clone the repository:
