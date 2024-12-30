@@ -22,7 +22,7 @@ struct ScoreTitle: View {
             Text("Current Score is \(game.correctAnswers) / \(game.totalQuestions)")
             Text("Skips left: \(game.skips)")
             Text("Current High Score is \(game.highScore)")
-            Text("Difficult Mode selected is \(game.gameDifficulty ?? .easy)")
+            Text("Difficulty Mode selected is \(game.gameDifficulty ?? .easy)")
             Text("Max Multiplier selected is \(game.maxMultiplier)")
             ProgressView(value: progress){
                 Label: do { Text("\(String(format: "%.1f", progress * 100))%") }
@@ -30,19 +30,19 @@ struct ScoreTitle: View {
             .progressViewStyle(LinearProgressViewStyle())
         }
         .customScoreTitleModifier()
+        .accessibilityLabel("Your current score is \(game.correctAnswers) out of \(game.totalQuestions)")
     }
 }
 
 struct ScoreTitleModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
+            .fontWeight(.bold)
+            .frame(width: 275, height: 150)
             .padding()
-            .background(Color.white.opacity(0.8))
-            .cornerRadius(5)
-            .padding(.top, 15)
-            .safeAreaInset(edge: .top){
-                Color.clear.frame(height: 0)
-            }
+            .background(Color.teal.opacity(0.8))
+            .clipShape(RoundedRectangle(cornerRadius: 25))
+            .shadow(radius: 10)
     }
 }
 

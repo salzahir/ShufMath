@@ -16,7 +16,7 @@ struct Game{
         var questionText: String
         var correctAnswer: Double
         var useInteger: Bool
-        var userAnswer: Double?
+        var userAnswer: Double? // Optional in case user runs out of time or skips Question
         var timeTaken: Double
     }
     
@@ -50,6 +50,7 @@ struct Game{
             averageScore = Double(totalScore) / Double(gamesPlayed)
         }
     }
+    
     let marginCheck = 0.1
     var hadPerfectGame: Bool = false
     var userStats: UserStats = UserStats()
@@ -304,7 +305,48 @@ struct Game{
         return
     }
     
-
+    // Helper when user decides to try to skip a question
+    mutating func skipQuestion() {
+        
+        if skips > 0 {
+                        
+            index += 1
+            
+            if isGameFinished(alertMessage: .lastQuestionSkipped){
+                return
+            }
+         
+            alertMessage = .skippedQuestion
+            showAlert = true
+            skips -= 1
+            userInput = ""
+        
+        }
+        
+        else{
+            alertMessage = .outOfSkips
+            showAlert = true
+        }
+        
+    }
+    
+    mutating private func validInput() -> AlertMessage? {
+        
+        // Empty String Guard
+        guard !userInput.isEmpty else {
+            
+            return AlertMessage.emptyInput
+        }
+        
+        // Valid Number Check
+        guard let _ = Double(userInput) else{
+            return AlertMessage.invalidInput
+        }
+        
+        return nil
+        
+    }
+    
     mutating func checkAnswer(){
         
         guard let userAnswer = Double(userInput) else {return}
@@ -354,29 +396,12 @@ struct Game{
         }
     }
     
-    // Helper when user decides to try to skip a question
-    mutating func skipQuestion() {
+    mutating func halfwayCheck(){
         
-        if skips > 0 {
-                        
-            index += 1
-            
-            if isGameFinished(alertMessage: .lastQuestionSkipped){
-                return
-            }
-         
-            alertMessage = .skippedQuestion
-            showAlert = true
-            skips -= 1
-            userInput = ""
-        
+        // Commemorate the user if they are half way through the game
+        if index+1 == midPoint{
+            extraMessage = AlertMessage.halfway.rawValue
         }
-        
-        else{
-            alertMessage = .outOfSkips
-            showAlert = true
-        }
-        
     }
     
     mutating func nextQuestion(){
@@ -385,13 +410,17 @@ struct Game{
         return
     }
     
-    mutating func halfwayCheck(){
-        
-        // Commemorate the user if they are half way through the game
-        if index+1 == midPoint{
-            extraMessage = AlertMessage.halfway.rawValue
+    
+    mutating func isGameFinished(alertMessage: AlertMessage? = nil) -> Bool{
+        if index == totalQuestions{
+            gameState = .finished
+            self.alertMessage = alertMessage ?? .blank
+            return true
         }
+        return false
     }
+    
+    
     
     mutating func resetQuestion() {
         
@@ -412,30 +441,4 @@ struct Game{
 
     }
     
-    mutating private func validInput() -> AlertMessage? {
-        
-        // Empty String Guard
-        guard !userInput.isEmpty else {
-            
-            return AlertMessage.emptyInput
-        }
-        
-        // Valid Number Check
-        guard let _ = Double(userInput) else{
-            return AlertMessage.invalidInput
-        }
-        
-        return nil
-        
-    }
-    
-    mutating func isGameFinished(alertMessage: AlertMessage? = nil) -> Bool{
-        if index == totalQuestions{
-            gameState = .finished
-            self.alertMessage = alertMessage ?? .blank
-            return true
-        }
-        return false
-    }
 }
-

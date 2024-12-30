@@ -59,7 +59,6 @@ struct GameOverView: View {
                     }
                     .styledButton(backgroundColor: Color.teal)
 
-                    
                     NavigationLink(destination: ReviewGameView(gameQuestions: game.questionsArr, index: game.index, useTimer: game.useTimer, timeLimit: game.timeLimit)){
                         Text("Review Answers")
                             .styledButton(backgroundColor: Color.yellow)
