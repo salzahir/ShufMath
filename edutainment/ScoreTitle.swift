@@ -38,7 +38,7 @@ struct ScoreTitleModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .fontWeight(.bold)
-            .frame(width: 275, height: 150)
+            .frame(width: 300, height: 150)
             .padding()
             .background(Color.teal.opacity(0.8))
             .clipShape(RoundedRectangle(cornerRadius: 25))

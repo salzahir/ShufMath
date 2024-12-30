@@ -59,6 +59,7 @@ struct GridView: View {
     }
     
     private func playSoundEffect() {
+        print("Playing sound")
         AudioServicesPlaySystemSound(soundEffect)
     }
 }
