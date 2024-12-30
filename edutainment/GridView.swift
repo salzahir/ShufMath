@@ -9,7 +9,6 @@ import SwiftUI
 import AVFoundation
 import CoreHaptics
 
-
 struct NumpadConstants{
     
     // Define number of columns
@@ -49,7 +48,7 @@ struct GridButton: View {
     var body: some View {
         Button(action: {
             userInput += number
-            AudioServicesPlaySystemSound(1026)
+            playSoundEffect()
             isPressed.toggle()
         }) {
             RoundedRectangle(cornerRadius: 2)
@@ -87,41 +86,38 @@ extension View {
     }
 }
 
+func addZero(_ userInput: Binding<String>) -> Void {
+    userInput.wrappedValue += "0"
+    playSoundEffect()
+}
+
 struct BottomRowControls: View {
     @Binding var userInput: String
     var isPressed: Bool
     var body: some View {
         HStack(spacing: 2) {
-            Button(action: {
-                userInput += "0"
-                AudioServicesPlaySystemSound(1026)
-            }) {
-                HorizontalButton(item: "0")
-            }
-            .accessibilityLabel("Number 0, Current Input: \(userInput)")
+            HorizontalButton(
+                item: "0",
+                labelMessage: "Number 0, Current Input: \(userInput)",
+                labelHint: "Press 0",
+                action: {addZero($userInput)}
+            )
             
-            Button(action: {
-                if !userInput.isEmpty {
-                    userInput.removeLast()
-                }
-                AudioServicesPlaySystemSound(1026)
-            }) {
-                HorizontalButton(item: "⬅️")
-            }
-            .accessibilityLabel("Delete, Current Input: \(userInput)")
-            .accessibilityHint("Deletes the last digit entered")
+            HorizontalButton(
+                item: "⬅️",
+                labelMessage: "Delete, Current Input: \(userInput)",
+                labelHint: "Deletes the last digit entered",
+                action:{removeLastNumber(userInput: $userInput)}
+            )
             .onLongPressGesture(minimumDuration: 1.0){
                 userInput = ""
             }
-            
-            Button(action: {
-                userInput += "."
-                AudioServicesPlaySystemSound(1026)
-            }) {
-                HorizontalButton(item: ".")
-            }
-            .accessibilityLabel("Add a decimal point, Current Input: \(userInput)")
-            .accessibilityHint("Decimal point allows for fractional numbers")
+            HorizontalButton(
+                item: ".",
+                labelMessage: "Add a decimal point, Current Input: \(userInput)",
+                labelHint: "Decimal point allows for fractional numbers",
+                action: {addPeriod(userInput: $userInput)}
+            )
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 12)
@@ -131,19 +127,45 @@ struct BottomRowControls: View {
     }
 }
 
-
-
 struct HorizontalButton: View {
     var item: String
+    var labelMessage: String
+    var labelHint: String
+    var action: () -> Void
     
     var body: some View {
-        RoundedRectangle(cornerRadius: 2)
-            .fill(Color.orange.secondary)
-            .frame(maxWidth: .infinity)
-            .frame(height: 45)
-            .overlay(
-                Text("\(item)")
-                    .foregroundColor(.black)
-            )
+        
+        
+        Button(action: {
+            action()
+        }) {
+            RoundedRectangle(cornerRadius: 2)
+                .fill(Color.orange.secondary)
+                .frame(maxWidth: .infinity)
+                .frame(height: 45)
+                .overlay(
+                    Text("\(item)")
+                        .foregroundColor(.black)
+                )
+                .accessibilityLabel(labelMessage)
+                .accessibilityHint(labelHint)
+        }
+
     }
+}
+
+func removeLastNumber(userInput: Binding<String>) {
+    if !userInput.wrappedValue.isEmpty {
+        userInput.wrappedValue.removeLast()
+    }
+    playSoundEffect()
+}
+
+func addPeriod(userInput: Binding<String>) {
+    userInput.wrappedValue += "."
+    playSoundEffect()
+}
+
+private func playSoundEffect() {
+    AudioServicesPlaySystemSound(NumpadConstants.soundEffect)
 }
