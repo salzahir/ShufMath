@@ -47,6 +47,14 @@ struct GameOverView: View {
                     Text("You got \(game.correctAnswers)/\(game.totalQuestions)")
                         .font(.title2)
                         .padding()
+                    Text(game.hadPerfectGame ? "Perfect Game! Goodjob Rockstar" : "Goodgame")
+                        .font(.headline)
+                        .foregroundColor(game.hadPerfectGame ? .green : .primary)
+                        .padding(.bottom)
+                    
+                    Text("Your highest streak this game was \(game.highestStreak)")
+                        .font(.body)
+                        .padding()
                     
                     Text("Thank you for playing")
                         .font(.body)

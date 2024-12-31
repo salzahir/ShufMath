@@ -24,6 +24,7 @@ struct ScoreTitle: View {
             Text("Current High Score is \(game.highScore)")
             Text("Difficulty Mode selected is \(game.gameDifficulty ?? .easy)")
             Text("Max Multiplier selected is \(game.maxMultiplier)")
+            Text("Current Streak is \(game.currentStreak)")
             ProgressView(value: progress){
                 Label: do { Text("\(String(format: "%.1f", progress * 100))%") }
             }
