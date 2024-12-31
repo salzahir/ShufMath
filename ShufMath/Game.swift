@@ -97,6 +97,7 @@ struct Game{
         case medium
         case hard
         case custom
+        case random
     }
     
     /// The different game modes users can play (types of questions)
@@ -143,6 +144,15 @@ struct Game{
             totalQuestions = 30
             skips = 1
             timeLimit = 5
+        // Absolute Chaos for the user can be the easiest game or hardest all goes
+        case .random:
+            maxMultiplier = Int.random(in: 2...12)
+            totalQuestions = Int.random(in: 1...30)
+            skips = Int.random(in: 1...5)
+            gameMode = GameMode.allCases.randomElement()
+            useTimer = Bool.random()
+            timeLimit = Double.random(in: 5...15)
+            
         case .custom:
             break
         }
