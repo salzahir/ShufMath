@@ -11,7 +11,7 @@ import AVFoundation
 struct GridView: View {
     
    let items = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "."]
-   let columns = Array(repeating: GridItem(.flexible(minimum: 15), spacing: 5), count: 3)
+   let columns = Array(repeating: GridItem(.flexible(), spacing: 5), count: 3)
    let soundEffect: SystemSoundID = 1026
     
     @Binding var userInput: String
@@ -40,7 +40,10 @@ struct GridView: View {
                     labelHint: "Deletes the last digit entered",
                     action: {removeLastNumber(userInput: $userInput)}
                 )
+                .padding(.vertical)
+                .padding(.horizontal)
             }
+            .padding(.vertical)
             .padding(.horizontal)
         }
     }
