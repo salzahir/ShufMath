@@ -7,28 +7,31 @@
 
 import Foundation
 
-// The logic and the brains behind the app
+/// Manages the core game logic for math practice, including question generation,
+/// scoring, and statistics tracking
 struct Game{
 
-    // Represents a question in the app
+    /// Represents a question in the game, including the text, the correct answer, and user input.
     struct Question: Codable, Identifiable {
-        var id = UUID() // Unique identifier for each question
+        var id = UUID()
         var questionText: String
         var correctAnswer: Double
         var useInteger: Bool
-        var userAnswer: Double? // Optional in case user runs out of time or skips Question
+        var userAnswer: Double?
         var timeTaken: Double
     }
     
+    /// Tracks user performance across multiple games
     struct UserStats: Codable {
         var gamesPlayed: Int = 0
-        var gamesWon: Int = 0
+        var gamesWon: Int = 0 // Win requires > 70% correct answers
         var highestScore: Int = 0
         var averageScore: Double = 0.0
         var totalScore: Int = 0
         var gamesLost: Int = 0
         var perfectGames: Int = 0
         
+        /// Updates the user’s statistics after each game, including their score, win/loss record, and average score.
         mutating func updateUserStats(score: Int, totalQuestions: Int){
             
             gamesPlayed += 1
@@ -43,6 +46,7 @@ struct Game{
             
             gamesLost = gamesPlayed - gamesWon
             
+            // Updates the highest score if necessary
             if score > highestScore {
                 highestScore = score
             }
@@ -51,7 +55,9 @@ struct Game{
         }
     }
     
-    let marginCheck = 0.1
+    // Game properties
+    
+    let marginCheck = 0.1     /// Margin of error for decimal answers (0.1)
     var hadPerfectGame: Bool = false
     var userStats: UserStats = UserStats()
     var index = 0
@@ -78,12 +84,14 @@ struct Game{
     var timesUp: Bool = false
     var gameMode: GameMode? = .multiplication
 
+    /// Different possible game states
     enum GameState {
         case notStarted
         case inProgress
         case finished
     }
     
+    /// Different Difficulties available
     enum GameDifficulty {
         case easy
         case medium
@@ -91,12 +99,14 @@ struct Game{
         case custom
     }
     
+    /// The different game modes users can play (types of questions)
     enum GameMode: String, CaseIterable {
         case multiplication = "Multiplication"
         case division = "Division"
         case mixed = "Mixed Mode"
     }
     
+    /// Represents alert messages that may appear during the game.
     enum AlertMessage: String {
         case blank = ""
         case selectDifficulty = "Please select a difficulty."
@@ -112,6 +122,9 @@ struct Game{
         case invalidInput = "Invalid Input please enter a valid number."
     }
     
+    // Various game functions
+    
+    /// Sets up the difficulty before the game starts based on users choice
     mutating func gameDifficultySetup(Difficulty: GameDifficulty){
         
         switch Difficulty {
@@ -138,10 +151,12 @@ struct Game{
         self.gameDifficulty = Difficulty
     }
     
+    /// Sets the game mode (e.g., multiplication, division, or mixed).
     mutating func setGameMode(_ mode: GameMode) {
         self.gameMode = mode
     }
     
+    /// Generates an array of  type Question can either be multiplication or division or a chance at either one for mixed
     mutating func generateQuestions(pracNumbers: Int, lengthQuestions: Int) -> [Question] {
         
         var questions: [Question] = []
@@ -172,6 +187,7 @@ struct Game{
         return questions
     }
     
+    /// Helper to make multiplication questions
     private mutating func makeMultiplicationQuestion(choice1: Int, choice2: Int) -> Question {
         // Generate the question text
         let questionText = "What is \(choice1) x \(choice2)?"
@@ -180,6 +196,7 @@ struct Game{
         return Question(questionText: questionText, correctAnswer: correctAnswer, useInteger: true, timeTaken: 0.0)
     }
     
+    /// Helper that generates division questions
     private mutating func divisionQuestion(choice1: Int, choice2: Int) -> Question {
         
         let questionText = "What is \(choice1) ÷ \(choice2)?"
@@ -190,6 +207,7 @@ struct Game{
         return Question(questionText: questionText, correctAnswer: correctAnswer, useInteger: useInteger, timeTaken: 0.0)
     }
     
+    /// Starts the game with values that player chose in game setup view
     mutating func startGame(){
         
         if totalQuestions == 0 && !useCustom {
@@ -210,6 +228,7 @@ struct Game{
         
     }
     
+    /// Resets the game to default values after game is finished
     mutating func playAgain() {
         
         userStats.updateUserStats(score: correctAnswers, totalQuestions: totalQuestions)
@@ -237,6 +256,7 @@ struct Game{
         timesUp = false
     }
     
+    /// Main logic point of processing the players answers go through several checks before completion
     mutating func processAnswer(isSkipping: Bool = false){
         
         // User ran out of time skip the question and adjust
@@ -278,6 +298,7 @@ struct Game{
         
     }
     
+    /// Used when players opt to use a timer in the game handles time out answers
     mutating func handleTimeUp(){
         
         // Alert the user times up
@@ -305,7 +326,7 @@ struct Game{
         return
     }
     
-    // Helper when user decides to try to skip a question
+    /// Helper when user decides to try to skip a question
     mutating func skipQuestion() {
         
         if skips > 0 {
@@ -330,6 +351,7 @@ struct Game{
         
     }
     
+    /// Helper to validate inputs
     mutating private func validInput() -> AlertMessage? {
         
         // Empty String Guard
@@ -347,6 +369,7 @@ struct Game{
         
     }
     
+    /// Does the actual comparison between user answer and correct answer
     mutating func checkAnswer(){
         
         guard let userAnswer = Double(userInput) else {return}
@@ -375,6 +398,7 @@ struct Game{
         }
     }
     
+    /// Increments the player score for a correct answer
     mutating func handleCorrect(){
         correctAnswers += 1
         alertMessage = .correctAnswer
@@ -382,7 +406,7 @@ struct Game{
             questionsArr[index].timeTaken += timerAmount
         }
     }
-    
+    /// Wrong answer handles points accordingly
     mutating func handleIncorrect(){
         // Decrement only above 0 no negative points
         if correctAnswers > 0 {
@@ -395,7 +419,7 @@ struct Game{
             alertMessage = .incorrectNoPoint
         }
     }
-    
+    /// Function to motivate the player to keep going once half way
     mutating func halfwayCheck(){
         
         // Commemorate the user if they are half way through the game
@@ -403,14 +427,14 @@ struct Game{
             extraMessage = AlertMessage.halfway.rawValue
         }
     }
-    
+    /// Helper function to proceed to next question
     mutating func nextQuestion(){
         index += 1
         let _ = isGameFinished()
         return
     }
     
-    
+    /// Checks if the game is finished
     mutating func isGameFinished(alertMessage: AlertMessage? = nil) -> Bool{
         if index == totalQuestions{
             gameState = .finished
@@ -421,7 +445,7 @@ struct Game{
     }
     
     
-    
+    /// Resets the question logic
     mutating func resetQuestion() {
         
         // shows alert at the end
