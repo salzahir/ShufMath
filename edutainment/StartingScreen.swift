@@ -16,7 +16,7 @@ struct StartingScreen: View {
         VStack(spacing: 10){
             // Presettings and Views presented before game started
             if game.index == 0 && game.gameState == .notStarted {
-                Text("Welcome to EduQuiz!")
+                Text("Welcome to ShufMath!")
                     .titleView()
                 
                 GameSetupView(game: $game)
@@ -26,8 +26,6 @@ struct StartingScreen: View {
                     playedPress.toggle()
                 }
                 .playButtonView(playedPress: $playedPress)
-               
-                
             }
         }
     }
