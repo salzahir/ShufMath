@@ -14,16 +14,18 @@ struct GameSetupView: View {
     @State private var isCustomSettingsPresented: Bool = false
     @Binding var game: Game
     @State var showUserStats: Bool = false
+    @State var useRandom: Bool = false
         
     var body: some View {
-        VStack(spacing: 50){
+        VStack(spacing: 35){
             Section("Game Setup") {
                 GameModeSelector(game: $game)
                 DifficultyButtonsView(game: $game)
                 GameFeatureToggles(
                     game: $game,
                     isCustomSettingsPresented: $isCustomSettingsPresented,
-                    showUserStats: $showUserStats
+                    showUserStats: $showUserStats,
+                    useRandom: $useRandom
                 )
             }
         }
@@ -93,39 +95,51 @@ struct GameFeatureToggles: View {
     @Binding var game: Game
     @Binding var isCustomSettingsPresented: Bool
     @Binding var showUserStats: Bool
+    @Binding var useRandom: Bool
     
     var body: some View {
         
-            ToggleButton(
-                title: "Timer?",
-                isEnabled: game.useTimer,
-                color: Color.orange,
-                action: {game.useTimer.toggle()
-                })
+        ToggleButton(
+            title: "Random?",
+            isEnabled: useRandom,
+            color: Color.random,
+            action: {
+                game.gameDifficultySetup(Difficulty: .random)
+                useRandom.toggle()
+            }
+        )
+        
+        ToggleButton(
+            title: "Timer?",
+            isEnabled: game.useTimer,
+            color: Color.orange,
+            action: {game.useTimer.toggle()
+            })
 
-            ToggleButton(
-                title: "Custom",
-                isEnabled: game.gameDifficulty == .custom,
-                color: Color.teal,
-                action: {
-                game.gameDifficultySetup(Difficulty: .custom)
-                isCustomSettingsPresented.toggle()
-                game.useCustom.toggle()
-            })
-            .sheet(isPresented: $isCustomSettingsPresented) {
-                CustomSettingsSheet(game: $game, isCustomSettingsPresented: $isCustomSettingsPresented)
-            }
-            
-            ToggleButton(
-                title: "Show Lifetime Stats",
-                isEnabled: showUserStats,
-                color: Color.indigo,
-                action: {
-                showUserStats.toggle()
-            })
-            .sheet(isPresented: $showUserStats){
-                UserStatsSheet(stats: $game.userStats)
-            }
+        ToggleButton(
+            title: "Custom",
+            isEnabled: game.gameDifficulty == .custom,
+            color: Color.teal,
+            action: {
+            game.gameDifficultySetup(Difficulty: .custom)
+            isCustomSettingsPresented.toggle()
+            game.useCustom.toggle()
+        })
+        .sheet(isPresented: $isCustomSettingsPresented) {
+            CustomSettingsSheet(game: $game, isCustomSettingsPresented: $isCustomSettingsPresented)
+        }
+        
+        ToggleButton(
+            title: "Show Lifetime Stats",
+            isEnabled: showUserStats,
+            color: Color.indigo,
+            action: {
+            showUserStats.toggle()
+        })
+        .sheet(isPresented: $showUserStats){
+            UserStatsSheet(stats: $game.userStats)
+        }
+        
     }
 }
 
