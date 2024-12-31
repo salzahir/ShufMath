@@ -67,7 +67,7 @@ struct ReviewQuestionView: View {
         }
         
         if useTimer{
-            Text(gameQuestion.timeTaken == 0.0 ? "Exceeded time limit \(timeLimit)" : "Time taken: \(String(format: "%.2f", gameQuestion.timeTaken)) seconds")
+            Text(gameQuestion.timeTaken == 0.0 ? "Exceeded time limit \(String(format: "%.2f", timeLimit)) seconds" : "Time taken: \(String(format: "%.2f", gameQuestion.timeTaken)) seconds")
         }
     }
 }
