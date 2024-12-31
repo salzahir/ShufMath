@@ -37,7 +37,7 @@ struct GameModeSelector: View {
         HStack{
             GameSetupButton(
                 buttonText: "×",
-                buttonColor: game.gameMode == .multiplication ? Color.brown : Color.brown.opacity(0.5),
+                buttonColor: game.gameMode == .multiplication ? Color.pink : Color.pink.opacity(0.5),
                 action: {game.setGameMode(.multiplication)}
             )
             GameSetupButton(

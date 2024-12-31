@@ -60,6 +60,7 @@ struct CustomSettingsView: View {
             .stepperViewModifier(color: Color.brown, stepperType: "TimeLimit", gameValue: Int(game.timeLimit))
             .onChange(of: game.timeLimit) {
                 print("Time limit changed: \(game.timeLimit)")}
+            
            Button(action: {
             dismiss()
            }) {

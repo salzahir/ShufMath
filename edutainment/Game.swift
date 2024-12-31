@@ -182,7 +182,7 @@ struct Game{
     
     private mutating func divisionQuestion(choice1: Int, choice2: Int) -> Question {
         
-        let questionText = "What is \(choice1) / \(choice2)?"
+        let questionText = "What is \(choice1) ÷ \(choice2)?"
         let correctAnswer = Double(choice1) / Double(choice2)
         
         let useInteger = correctAnswer.truncatingRemainder(dividingBy: 1) == 0

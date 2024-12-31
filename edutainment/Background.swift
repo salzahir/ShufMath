@@ -25,6 +25,7 @@ struct BackGroundView: View {
     }
 }
 
+// RGB Random colors for review section
 extension Color {
     static var random: Color {
         let red = Double.random(in: 0...1)
