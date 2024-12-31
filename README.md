@@ -36,6 +36,7 @@ The app icon, **appIcon**, represents the app's dynamic and interactive nature. 
 - Add more challenging question types, including fractions or word problems.
 - Implement a streaks feature to reward consecutive correct answers.
 - Introduce power-ups to assist with difficult questions or increase points.
+- **Explore backend potential with APIs to track user progress and enable data synchronization across devices.**
 
 ## Technologies Used 🔧
 - Swift 5
