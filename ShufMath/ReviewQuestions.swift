@@ -58,6 +58,7 @@ struct ReviewQuestionView: View {
             .foregroundStyle(.white)
             .cornerRadius(10)
             .shadow(radius: 10)
+            .multilineTextAlignment(.center)
         }
         
         HStack{

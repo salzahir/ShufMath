@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		3695211A2D15FC72009AA762 /* edutainment.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edutainment.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3695211A2D15FC72009AA762 /* ShufMath.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShufMath.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		3695211C2D15FC72009AA762 /* edutainment */ = {
+		3695211C2D15FC72009AA762 /* ShufMath */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = edutainment;
+			path = ShufMath;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -32,7 +32,7 @@
 		369521112D15FC72009AA762 = {
 			isa = PBXGroup;
 			children = (
-				3695211C2D15FC72009AA762 /* edutainment */,
+				3695211C2D15FC72009AA762 /* ShufMath */,
 				3695211B2D15FC72009AA762 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -40,7 +40,7 @@
 		3695211B2D15FC72009AA762 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3695211A2D15FC72009AA762 /* edutainment.app */,
+				3695211A2D15FC72009AA762 /* ShufMath.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,9 +48,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		369521192D15FC72009AA762 /* edutainment */ = {
+		369521192D15FC72009AA762 /* ShufMath */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 369521282D15FC74009AA762 /* Build configuration list for PBXNativeTarget "edutainment" */;
+			buildConfigurationList = 369521282D15FC74009AA762 /* Build configuration list for PBXNativeTarget "ShufMath" */;
 			buildPhases = (
 				369521162D15FC72009AA762 /* Sources */,
 				369521172D15FC72009AA762 /* Frameworks */,
@@ -61,13 +61,13 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				3695211C2D15FC72009AA762 /* edutainment */,
+				3695211C2D15FC72009AA762 /* ShufMath */,
 			);
-			name = edutainment;
+			name = ShufMath;
 			packageProductDependencies = (
 			);
 			productName = edutainment;
-			productReference = 3695211A2D15FC72009AA762 /* edutainment.app */;
+			productReference = 3695211A2D15FC72009AA762 /* ShufMath.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -85,7 +85,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 369521152D15FC72009AA762 /* Build configuration list for PBXProject "edutainment" */;
+			buildConfigurationList = 369521152D15FC72009AA762 /* Build configuration list for PBXProject "ShufMath" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -99,7 +99,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				369521192D15FC72009AA762 /* edutainment */,
+				369521192D15FC72009AA762 /* ShufMath */,
 			);
 		};
 /* End PBXProject section */
@@ -251,7 +251,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"edutainment/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"ShufMath/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -279,7 +279,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"edutainment/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"ShufMath/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -303,7 +303,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		369521152D15FC72009AA762 /* Build configuration list for PBXProject "edutainment" */ = {
+		369521152D15FC72009AA762 /* Build configuration list for PBXProject "ShufMath" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				369521262D15FC74009AA762 /* Debug */,
@@ -312,7 +312,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		369521282D15FC74009AA762 /* Build configuration list for PBXNativeTarget "edutainment" */ = {
+		369521282D15FC74009AA762 /* Build configuration list for PBXNativeTarget "ShufMath" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				369521292D15FC74009AA762 /* Debug */,
