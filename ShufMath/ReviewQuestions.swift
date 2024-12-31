@@ -60,7 +60,6 @@ struct ReviewQuestionView: View {
             .shadow(radius: 10)
             .multilineTextAlignment(.center)
         }
-        
         HStack{
             Text("Your Answer: \(gameQuestion.userAnswer?.description ?? "Unanswered")")
             Text("Correct Answer: \(String(format: "%.2f", gameQuestion.correctAnswer))")

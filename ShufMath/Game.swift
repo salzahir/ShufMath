@@ -30,9 +30,10 @@ struct Game{
         var totalScore: Int = 0
         var gamesLost: Int = 0
         var perfectGames: Int = 0
-        
+        var longestStreak: Int = 0
+
         /// Updates the user’s statistics after each game, including their score, win/loss record, and average score.
-        mutating func updateUserStats(score: Int, totalQuestions: Int){
+        mutating func updateUserStats(score: Int, totalQuestions: Int, highestStreak: Int){
             
             gamesPlayed += 1
             totalScore += score
@@ -51,6 +52,10 @@ struct Game{
                 highestScore = score
             }
             
+            if highestStreak > longestStreak {
+                longestStreak = highestStreak
+            }
+            
             averageScore = Double(totalScore) / Double(gamesPlayed)
         }
     }
@@ -58,7 +63,7 @@ struct Game{
     // Game properties
     
     let marginCheck = 0.1     /// Margin of error for decimal answers (0.1)
-    var hadPerfectGame: Bool = false
+    var hadPerfectGame: Bool = false /// Set to true if all answers are correct and the game did not time out
     var userStats: UserStats = UserStats()
     var index = 0
     var totalQuestions = 0
@@ -83,6 +88,8 @@ struct Game{
     var timeLimit: Double = 0.0
     var timesUp: Bool = false
     var gameMode: GameMode? = .multiplication
+    var currentStreak = 0
+    var highestStreak = 0
 
     /// Different possible game states
     enum GameState {
@@ -121,6 +128,7 @@ struct Game{
         case halfway = "\n\nYou reached half way!"
         case emptyInput = "Empty input, please enter a number."
         case invalidInput = "Invalid Input please enter a valid number."
+        case streakLost = "You lost your streak"
     }
     
     // Various game functions
@@ -241,7 +249,7 @@ struct Game{
     /// Resets the game to default values after game is finished
     mutating func playAgain() {
         
-        userStats.updateUserStats(score: correctAnswers, totalQuestions: totalQuestions)
+        userStats.updateUserStats(score: correctAnswers, totalQuestions: totalQuestions, highestStreak: highestStreak)
         
         if hadPerfectGame{
             userStats.perfectGames += 1
@@ -254,16 +262,20 @@ struct Game{
         }
         
         // Reset Game Logic Resets Everything back to default values
+        currentStreak = 0
+        highestStreak = 0
         totalQuestions = 0
         correctAnswers = 0
         index = 0
         gameState = .notStarted
         questionsArr = []
         userInput = ""
+        extraMessage = ""
         skips = 3
         useTimer = false
         timerAmount = 0.0
         timesUp = false
+        hadPerfectGame = false
     }
     
     /// Main logic point of processing the players answers go through several checks before completion
@@ -295,17 +307,29 @@ struct Game{
         
         // Check if user has reached halfway milestone
         halfwayCheck()
+        
+        // Check if user has achieved a perfect game
+         if correctAnswers == totalQuestions {
+             hadPerfectGame = true
+         }
 
         // Proceed to next question
         index += 1
         
         // End of the Game
         if isGameFinished(){
+            checkPerfectGame()
             return
         }
         
         resetQuestion()
         
+    }
+    
+    mutating func checkPerfectGame(){
+        if correctAnswers == totalQuestions{
+            hadPerfectGame = true
+        }
     }
     
     /// Used when players opt to use a timer in the game handles time out answers
@@ -411,13 +435,20 @@ struct Game{
     /// Increments the player score for a correct answer
     mutating func handleCorrect(){
         correctAnswers += 1
+        currentStreak += 1
         alertMessage = .correctAnswer
+        
+        // Update highest streak if current streak exceeds it
+        if currentStreak > highestStreak {
+            highestStreak = currentStreak
+        }
         if useTimer {
             questionsArr[index].timeTaken += timerAmount
         }
     }
     /// Wrong answer handles points accordingly
     mutating func handleIncorrect(){
+        
         // Decrement only above 0 no negative points
         if correctAnswers > 0 {
             correctAnswers -= 1
@@ -427,6 +458,12 @@ struct Game{
         // No negative points
         else{
             alertMessage = .incorrectNoPoint
+        }
+        
+        if currentStreak > 0 {
+            highestStreak = currentStreak
+            currentStreak = 0
+            extraMessage += "\n" + AlertMessage.streakLost.rawValue
         }
     }
     /// Function to motivate the player to keep going once half way
