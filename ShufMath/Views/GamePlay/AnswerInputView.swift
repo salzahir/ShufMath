@@ -16,10 +16,13 @@ struct AnswerInputView: View {
         HStack{
             Text(userInput)
                 .textFieldStyle(.roundedBorder)
+                .accessibilityLabel("Your current input is \(userInput).")
+                .accessibilityHint("Answer input field")
         }
         .padding()
         .font(.title2)
         .fontWeight(.bold)
-        .foregroundColor(.blue)
+        .cornerRadius(10)
+        .shadow(radius: 5)
     }
 }

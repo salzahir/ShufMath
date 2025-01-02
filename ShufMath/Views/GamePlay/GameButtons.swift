@@ -16,35 +16,40 @@ struct GameButtons: View {
             Button("Enter"){
                 viewModel.processAnswer(isSkipping: false)
             }
-            .customButtonStyle(buttonText: "Check Answer")
+            .customButtonStyle(buttonText: "Check Answer", color: Color.green)
                                 
             Button("Skip") {
                 viewModel.processAnswer(isSkipping: true)
             }
-            .customButtonStyle(buttonText: "Skip")
+            .customButtonStyle(buttonText: "Skip", color: Color.yellow)
             
-            Button("Restart"){
+            Button("Quit"){
                 viewModel.playAgain()
             }
-            .customButtonStyle(buttonText: "Restart")
+            .customButtonStyle(buttonText: "Quit", color: Color.red)
         }
+        .padding(16)
     }
 }
 
 struct ButtonStyleModifier: ViewModifier {
     var paddingAmount: CGFloat = 8.0
     var buttonText: String
+    var color: Color
     
     func body(content: Content) -> some View {
         content
-            .buttonStyle(.borderedProminent)
+            .frame(maxWidth: .infinity)
             .padding(paddingAmount)
+            .background(color)
+            .foregroundStyle(.white)
+            .cornerRadius(10)
             .accessibilityLabel("Tap to \(buttonText)")
     }
 }
 
 extension View {
-    func customButtonStyle(paddingAmount: CGFloat = 8.0, buttonText: String) -> some View {
-        self.modifier(ButtonStyleModifier(paddingAmount: paddingAmount, buttonText: buttonText))
+    func customButtonStyle(paddingAmount: CGFloat = 8.0, buttonText: String, color: Color) -> some View {
+        self.modifier(ButtonStyleModifier(paddingAmount: paddingAmount, buttonText: buttonText, color: color))
     }
 }

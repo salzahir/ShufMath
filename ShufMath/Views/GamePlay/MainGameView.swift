@@ -29,7 +29,7 @@ struct MainGameView: View {
                 AnswerInputView(userInput: viewModel.userInput)
                 
                 GameButtons(viewModel: viewModel)
-                GridView(userInput: $viewModel.userInput)
+                GridView(viewModel: viewModel)
             }
         }
     }

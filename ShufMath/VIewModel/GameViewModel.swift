@@ -10,6 +10,7 @@
 /// generating questions, processing answers, and providing feedback to the player.
 
 import Foundation
+import AVFoundation
 
 class GameViewModel: ObservableObject {
     
@@ -67,8 +68,28 @@ class GameViewModel: ObservableObject {
           timesUp = false
           timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
       }
-
     
+    
+    let soundEffect: SystemSoundID = 1026
+
+    func addVal(value: String) {
+        userInput += value
+        playSoundEffect()
+//        isPressed.toggle()
+    }
+
+    func removeLastNumber() {
+        if !userInput.isEmpty {
+            userInput.removeLast()
+        }
+        playSoundEffect()
+    }
+    
+    func playSoundEffect() {
+        print("Playing sound")
+        AudioServicesPlaySystemSound(soundEffect)
+    }
+
     // Various game functions
     /// Sets up the difficulty before the game starts based on users choice
     func gameDifficultySetup(Difficulty: GameModel.GameDifficulty){
