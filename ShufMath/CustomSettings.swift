@@ -10,29 +10,29 @@ import SwiftUI
 
 struct CustomSettingsSheet: View {
     
-    @Binding var game: Game
+    @ObservedObject var viewModel: GameViewModel
     @Binding var isCustomSettingsPresented: Bool
     
     var body: some View {
         ZStack{
             Color.indigo
                 .ignoresSafeArea()
-            CustomSettingsView(isCustomSettingsPresented: $isCustomSettingsPresented, game: $game)
+            CustomSettingsView(isCustomSettingsPresented: $isCustomSettingsPresented, viewModel: viewModel)
         }
     }
 }
 
 struct CustomSettingsView: View {
     @Binding var isCustomSettingsPresented: Bool
-    @Binding var game: Game
+    @ObservedObject var viewModel: GameViewModel
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
         VStack(spacing: 10){
             
             GameStepperView(
-                title: "Max Multiplier is \(game.maxMultiplier)",
-                value: $game.maxMultiplier,
+                title: "Max Multiplier is \(viewModel.gameModel.maxMultiplier)",
+                value: $viewModel.gameModel.maxMultiplier,
                 range: 2...12,
                 color: Color.blue,
                 stepperType: "Multiplier"
@@ -40,26 +40,26 @@ struct CustomSettingsView: View {
             
             GamePickerView(
                 gameText: "Choose Number of Questions",
-                gameChoices: game.questionChoices,
-                selectedChoice: $game.gameChoice
+                gameChoices: viewModel.gameModel.questionChoices,
+                selectedChoice: $viewModel.gameModel.gameChoice
             )
             
             GameStepperView(
-                title: "Number of skips is \(game.skips)",
-                value: $game.skips,
+                title: "Number of skips is \(viewModel.gameModel.skips)",
+                value: $viewModel.gameModel.skips,
                 range: 1...5,
                 color: Color.pink,
                 stepperType: "Skips"
             )
             Stepper(
-                "Timelimit is \(game.timeLimit, specifier: "%.1f") seconds",
-                value: $game.timeLimit,
+                "Timelimit is \(viewModel.gameModel.timeLimit, specifier: "%.1f") seconds",
+                value: $viewModel.gameModel.timeLimit,
                 in: 1.0...60.0,
                 step: 1.0
             )
-            .stepperViewModifier(color: Color.brown, stepperType: "TimeLimit", gameValue: Int(game.timeLimit))
-            .onChange(of: game.timeLimit) {
-                print("Time limit changed: \(game.timeLimit)")}
+            .stepperViewModifier(color: Color.brown, stepperType: "TimeLimit", gameValue: Int(viewModel.gameModel.timeLimit))
+            .onChange(of: viewModel.gameModel.timeLimit) {
+                print("Time limit changed: \(viewModel.gameModel.timeLimit)")}
             
            Button(action: {
             dismiss()

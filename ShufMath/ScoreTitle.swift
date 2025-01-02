@@ -9,29 +9,29 @@ import SwiftUI
 
 struct ScoreTitle: View {
     
-    @Binding var game: Game
-    
+    @ObservedObject var viewModel: GameViewModel
+
     // Add Difficulty Mode Selected
     // Add Max Multipler Selected to
     
     var body: some View {
         
-        let progress = game.totalQuestions > 0 ? Double(game.index) / Double(game.totalQuestions) : 0.0
+        let progress = viewModel.gameModel.totalQuestions > 0 ? Double(viewModel.gameModel.index) / Double(viewModel.gameModel.totalQuestions) : 0.0
 
         VStack(alignment: .leading, spacing: 2.5){
-            Text("Current Score is \(game.correctAnswers) / \(game.totalQuestions)")
-            Text("Skips left: \(game.skips)")
-            Text("Current High Score is \(game.highScore)")
-            Text("Difficulty Mode selected is \(game.gameDifficulty ?? .easy)")
-            Text("Max Multiplier selected is \(game.maxMultiplier)")
-            Text("Current Streak is \(game.currentStreak)")
+            Text("Current Score is \(viewModel.gameModel.correctAnswers) / \(viewModel.gameModel.totalQuestions)")
+            Text("Skips left: \(viewModel.gameModel.skips)")
+            Text("Current High Score is \(viewModel.gameModel.highScore)")
+            Text("Difficulty Mode selected is \(viewModel.gameDifficulty ?? GameModel.GameDifficulty.easy)")
+            Text("Max Multiplier selected is \(viewModel.gameModel.maxMultiplier)")
+            Text("Current Streak is \(viewModel.gameModel.currentStreak)")
             ProgressView(value: progress){
                 Label: do { Text("\(String(format: "%.1f", progress * 100))%") }
             }
             .progressViewStyle(LinearProgressViewStyle())
         }
         .customScoreTitleModifier()
-        .accessibilityLabel("Your current score is \(game.correctAnswers) out of \(game.totalQuestions)")
+        .accessibilityLabel("Your current score is \(viewModel.gameModel.correctAnswers) out of \(viewModel.gameModel.totalQuestions)")
     }
 }
 
@@ -54,6 +54,6 @@ extension View {
 }
 
 
-#Preview {
-    ScoreTitle(game: .constant(Game()))
-}
+//#Preview {
+//    ScoreTitle(game: .constant(Game()))
+//}

@@ -12,17 +12,17 @@ import SwiftUI
 struct GameSetupView: View {
     
     @State private var isCustomSettingsPresented: Bool = false
-    @Binding var game: Game
+    @ObservedObject var viewModel: GameViewModel
     @State var showUserStats: Bool = false
     @State var useRandom: Bool = false
         
     var body: some View {
         VStack(spacing: 35){
             Section("Game Setup") {
-                GameModeSelector(game: $game)
-                DifficultyButtonsView(game: $game)
+                GameModeSelector(viewModel: viewModel)
+                DifficultyButtonsView(viewModel: viewModel)
                 GameFeatureToggles(
-                    game: $game,
+                    viewModel: viewModel,
                     isCustomSettingsPresented: $isCustomSettingsPresented,
                     showUserStats: $showUserStats,
                     useRandom: $useRandom
@@ -34,65 +34,65 @@ struct GameSetupView: View {
 }
 
 struct GameModeSelector: View {
-    @Binding var game: Game
+    @ObservedObject var viewModel: GameViewModel
     var body: some View {
         HStack{
             GameSetupButton(
                 buttonText: "×",
-                buttonColor: game.gameMode == .multiplication ? Color.pink : Color.pink.opacity(0.5),
-                action: {game.setGameMode(.multiplication)}
+                buttonColor: viewModel.gameMode == .multiplication ? Color.pink : Color.pink.opacity(0.5),
+                action: {viewModel.setGameMode(.multiplication)}
             )
             GameSetupButton(
                 buttonText: "÷",
-                buttonColor: game.gameMode == .division ? Color.indigo : Color.indigo.opacity(0.5),
-                action: {game.setGameMode(.division)}
+                buttonColor: viewModel.gameMode == .division ? Color.indigo : Color.indigo.opacity(0.5),
+                action: {viewModel.setGameMode(.division)}
             )
             GameSetupButton(
                 buttonText: "Mix",
-                buttonColor: game.gameMode == .mixed ? Color.mint : Color.mint.opacity(0.5),
-                action: {game.setGameMode(.mixed)}
+                buttonColor: viewModel.gameMode == .mixed ? Color.mint : Color.mint.opacity(0.5),
+                action: {viewModel.setGameMode(.mixed)}
             )
         }
     }
 }
 
 struct DifficultyButtonsView: View {
-    @Binding var game: Game
+    @ObservedObject var viewModel: GameViewModel
     var body: some View {
         HStack{
             createDifficultyButton(
                 buttonText: "Easy",
-                difficulty: Game.GameDifficulty.easy,
+                difficulty: GameModel.GameDifficulty.easy,
                 color: Color.green
             )
             createDifficultyButton(
                 buttonText: "Med",
-                difficulty: Game.GameDifficulty.medium,
+                difficulty: GameModel.GameDifficulty.medium,
                 color: Color.yellow
             )
             createDifficultyButton(
                 buttonText: "Hard",
-                difficulty: Game.GameDifficulty.hard,
+                difficulty: GameModel.GameDifficulty.hard,
                 color: Color.red
             )
         }
     }
     // Helper Function to streamline code
-    func createDifficultyButton(buttonText: String, difficulty: Game.GameDifficulty, color: Color) -> some View {
+    func createDifficultyButton(buttonText: String, difficulty: GameModel.GameDifficulty, color: Color) -> some View {
         // Use a ternary operation to indicate button selection status,
         // applying a faded appearance for unselected buttons to improve user feedback.
-        let buttonColor = game.gameDifficulty == difficulty ? color : color.opacity(0.5)
+        let buttonColor = viewModel.gameDifficulty == difficulty ? color : color.opacity(0.5)
         return GameSetupButton(
             buttonText: buttonText,
             buttonColor: buttonColor,
-            action: {game.gameDifficultySetup(Difficulty: difficulty)}
+            action: {viewModel.gameDifficultySetup(Difficulty: difficulty)}
         )
     }
 }
 
 struct GameFeatureToggles: View {
     
-    @Binding var game: Game
+    @ObservedObject var viewModel: GameViewModel
     @Binding var isCustomSettingsPresented: Bool
     @Binding var showUserStats: Bool
     @Binding var useRandom: Bool
@@ -104,29 +104,29 @@ struct GameFeatureToggles: View {
             isEnabled: useRandom,
             color: Color.random,
             action: {
-                game.gameDifficultySetup(Difficulty: .random)
+                viewModel.gameDifficultySetup(Difficulty: .random)
                 useRandom.toggle()
             }
         )
         
         ToggleButton(
             title: "Timer?",
-            isEnabled: game.useTimer,
+            isEnabled: viewModel.useTimer,
             color: Color.orange,
-            action: {game.useTimer.toggle()
+            action: {viewModel.useTimer.toggle()
             })
 
         ToggleButton(
             title: "Custom",
-            isEnabled: game.gameDifficulty == .custom,
+            isEnabled: viewModel.gameDifficulty == .custom,
             color: Color.teal,
             action: {
-            game.gameDifficultySetup(Difficulty: .custom)
+                viewModel.gameDifficultySetup(Difficulty: .custom)
             isCustomSettingsPresented.toggle()
-            game.useCustom.toggle()
+                viewModel.useCustom.toggle()
         })
         .sheet(isPresented: $isCustomSettingsPresented) {
-            CustomSettingsSheet(game: $game, isCustomSettingsPresented: $isCustomSettingsPresented)
+            CustomSettingsSheet(viewModel: viewModel, isCustomSettingsPresented: $isCustomSettingsPresented)
         }
         
         ToggleButton(
@@ -137,7 +137,7 @@ struct GameFeatureToggles: View {
             showUserStats.toggle()
         })
         .sheet(isPresented: $showUserStats){
-            UserStatsSheet(stats: $game.userStats)
+            UserStatsSheet(stats: $viewModel.gameModel.userStats)
         }
         
     }
@@ -179,6 +179,6 @@ struct GameSetupButton: View {
     }
 }
 
-#Preview {
-    GameSetupView(game: .constant(Game()))
-}
+//#Preview {
+//    GameSetupView(game: .constant(Game()))
+//}
