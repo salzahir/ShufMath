@@ -292,10 +292,9 @@ class GameViewModel: ObservableObject {
             }
          
             alertMessage = GameModel.AlertMessage.skippedQuestion
-            showAlert = true
             gameModel.skips -= 1
-            userInput = ""
-        
+            resetQuestion()
+            
         }
         
         else{
