@@ -1,6 +1,6 @@
 # ShufMath 🎓📱
 
-**ShufMath** is a SwiftUI-based educational tool designed to make practicing multiplication and division fun and interactive. With customizable difficulty settings, a timer, and real-time score tracking, this app helps users improve their math skills in an engaging and competitive way.
+**ShufMath** is a SwiftUI-based educational tool designed to make practicing multiplication and division fun and interactive. With customizable difficulty settings, a timer, and real-time score tracking, this app helps users improve their math skills in an engaging and competitive way. The app has been refactored to follow the **MVVM (Model-View-ViewModel)** architecture for better code organization, maintainability, and scalability.
 
 ## Features 🌟
 
@@ -32,7 +32,6 @@ The app icon, **appIcon**, represents the app's dynamic and interactive nature. 
 4. Track your score, watch the timer, and aim to beat your high score!
 
 ## Future Enhancements 🚀
-- Refactor the app to follow the MVVM architecture for better code organization and scalability.
 - Add more challenging question types, including fractions or word problems.
 - Implement a streaks feature to reward consecutive correct answers.
 - Introduce power-ups to assist with difficult questions or increase points.
@@ -42,6 +41,7 @@ The app icon, **appIcon**, represents the app's dynamic and interactive nature. 
 - Swift 5
 - SwiftUI
 - Xcode 14+
+- **MVVM Architecture** for improved scalability and maintainability
 
 ## Game Views
 Here’s an example of the game setup and in-game view:
