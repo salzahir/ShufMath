@@ -22,13 +22,15 @@ class GameViewModel: ObservableObject {
     @Published var useCustom: Bool = false
     @Published var useTimer: Bool = false
     @Published var timesUp: Bool = false
-    
-    
+
     // Simplified variable name to show game is active
     var activeGame: Bool {
         gameModel.index < gameModel.totalQuestions && gameState == GameModel.GameState.inProgress
     }
-
+    
+    var progress: Double{
+        gameModel.totalQuestions > 0 ? Double(gameModel.index) / Double(gameModel.totalQuestions) : 0.0
+    }
 
     // Various game functions
     /// Sets up the difficulty before the game starts based on users choice
@@ -147,7 +149,11 @@ class GameViewModel: ObservableObject {
     /// Resets the game to default values after game is finished
     func playAgain() {
         
-        gameModel.userStats.updateUserStats(score: gameModel.correctAnswers, totalQuestions: gameModel.totalQuestions, highestStreak: gameModel.highestStreak)
+        gameModel.userStats.updateUserStats(
+            score: gameModel.correctAnswers,
+            totalQuestions: gameModel.totalQuestions,
+            highestStreak: gameModel.highestStreak
+        )
         
         if hadPerfectGame{
             gameModel.userStats.perfectGames += 1
