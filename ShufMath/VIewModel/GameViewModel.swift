@@ -323,8 +323,6 @@ class GameViewModel: ObservableObject {
             showAlert = true
         }
         
-        resetTimer()
-        
     }
     
     /// Helper to validate inputs

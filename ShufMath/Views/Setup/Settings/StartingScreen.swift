@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-
 struct StartingScreen: View {
     
     @ObservedObject var viewModel: GameViewModel

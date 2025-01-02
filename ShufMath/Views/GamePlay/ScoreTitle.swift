@@ -17,12 +17,11 @@ struct ScoreTitle: View {
     var body: some View {
         
         VStack(alignment: .leading, spacing: 2.5){
-            Text("Current Score is \(viewModel.gameModel.correctAnswers) / \(viewModel.gameModel.totalQuestions)")
-            Text("Skips left: \(viewModel.gameModel.skips)")
-            Text("Current High Score is \(viewModel.gameModel.highScore)")
-            Text("Difficulty Mode selected is \(viewModel.gameDifficulty ?? GameModel.GameDifficulty.easy)")
-            Text("Max Multiplier selected is \(viewModel.gameModel.maxMultiplier)")
-            Text("Current Streak is \(viewModel.gameModel.currentStreak)")
+            Text("Score: \(viewModel.gameModel.correctAnswers) / \(viewModel.gameModel.totalQuestions)")
+            Text("Skips: \(viewModel.gameModel.skips)")
+            Text("Difficulty: \(viewModel.gameDifficulty ?? GameModel.GameDifficulty.easy)")
+            Text("Multiplier \(viewModel.gameModel.maxMultiplier)")
+            Text("Streak \(viewModel.gameModel.currentStreak)")
             ProgressView(value: viewModel.progress){
                 Label: do { Text("\(String(format: "%.1f", viewModel.progress * 100))%") }
             }

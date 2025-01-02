@@ -7,6 +7,18 @@
 
 import SwiftUI
 
+struct UserStatsSheet: View {
+    @Binding var stats : UserStats
+    
+    var body: some View {
+        ZStack{
+            Color.gray
+                .ignoresSafeArea()
+            UserStatsView(userStats: $stats)
+        }
+    }
+}
+
 struct UserStatsView: View {
     @Binding var userStats: UserStats
     var body: some View {
@@ -53,14 +65,3 @@ extension View{
 }
 
 
-struct UserStatsSheet: View {
-    @Binding var stats : UserStats
-    
-    var body: some View {
-        ZStack{
-            Color.gray
-                .ignoresSafeArea()
-            UserStatsView(userStats: $stats)
-        }
-    }
-}
