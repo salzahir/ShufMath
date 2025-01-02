@@ -23,11 +23,8 @@ struct MainGameView: View {
                 )
                 
                 if viewModel.useTimer {
-                    TimerView(
-                        viewModel: viewModel,
-                        timeLimit: 10.0,
-                        incrementAmount: 0.1
-                    )
+//                    TimerView(viewModel: viewModel)
+                    TimerView(viewModel: viewModel, timeLimit: 10.0, incrementAmount: 0.1)
                 }
                 
                 AnswerInputView(userInput: viewModel.userInput)
@@ -63,6 +60,26 @@ struct QuestionView: View {
     }
 }
 
+//struct TimerView: View {
+//
+//    @ObservedObject var viewModel: GameViewModel
+//    
+//    var body: some View {
+//        ProgressView(
+//            "Time is ticking…",
+//            value: viewModel.gameModel.timerAmount,
+//            total: viewModel.timeLimit
+//        )
+//        .onReceive(viewModel.timer) { _ in
+//            viewModel.updateTimer()
+//        }
+//        .onDisappear {
+//            viewModel.timer.upstream.connect().cancel()
+//        }
+//    }
+//}
+
+
 struct TimerView: View {
 
     @ObservedObject var viewModel: GameViewModel
@@ -85,7 +102,9 @@ struct TimerView: View {
                 timer.upstream.connect().cancel()
                 viewModel.useTimer = false
                 viewModel.timesUp = true
-                viewModel.processAnswer()
+                DispatchQueue.main.async {
+                    viewModel.processAnswer()
+                }
             }
                 
         }
