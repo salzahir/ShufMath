@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-
 struct StartingScreen: View {
     
     @ObservedObject var viewModel: GameViewModel
@@ -14,8 +13,6 @@ struct StartingScreen: View {
     
     var body: some View {
         VStack(spacing: 10){
-            // Presettings and Views presented before game started
-//            if viewModel.gameModel.index == 0 && viewModel.gameState == GameModel.GameState.notStarted {
             if !viewModel.activeGame {
                 Text("Welcome to ShufMath!")
                     .titleView()
