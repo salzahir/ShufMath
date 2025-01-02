@@ -75,6 +75,11 @@ struct TimerView: View {
         .onDisappear {
             viewModel.timer.upstream.connect().cancel()
         }
+        .onAppear{
+            if viewModel.timerAmount == 0.0 {
+                viewModel.resetTimer()
+            }
+        }
     }
 }
 

@@ -42,6 +42,10 @@ class GameViewModel: ObservableObject {
             timerAmount += incrementAmount
         } else {
             // Stops Timer Overflow
+            timer.upstream.connect().cancel()
+            useTimer = false
+            timesUp = true
+            processAnswer()
             resetTimer()
         }
     }
@@ -49,9 +53,9 @@ class GameViewModel: ObservableObject {
     // Reset the timer
       func resetTimer() {
           timer.upstream.connect().cancel()
+          timerAmount = 0.0
           useTimer = true
           timesUp = false
-          timerAmount = 0.0
           timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
       }
 
