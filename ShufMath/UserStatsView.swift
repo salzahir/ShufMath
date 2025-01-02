@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct UserStats: View {
+struct UserStatsView: View {
     @Binding var userStats: GameModel.UserStats
     var body: some View {
         VStack{
@@ -60,7 +60,7 @@ struct UserStatsSheet: View {
         ZStack{
             Color.gray
                 .ignoresSafeArea()
-            UserStats(userStats: $stats)
+            UserStatsView(userStats: $stats)
         }
     }
 }
