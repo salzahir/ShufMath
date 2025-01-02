@@ -102,9 +102,7 @@ struct TimerView: View {
                 timer.upstream.connect().cancel()
                 viewModel.useTimer = false
                 viewModel.timesUp = true
-                DispatchQueue.main.async {
-                    viewModel.processAnswer()
-                }
+                viewModel.processAnswer()
             }
                 
         }
