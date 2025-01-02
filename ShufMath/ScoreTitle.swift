@@ -16,8 +16,6 @@ struct ScoreTitle: View {
     
     var body: some View {
         
-        let progress = viewModel.gameModel.totalQuestions > 0 ? Double(viewModel.gameModel.index) / Double(viewModel.gameModel.totalQuestions) : 0.0
-
         VStack(alignment: .leading, spacing: 2.5){
             Text("Current Score is \(viewModel.gameModel.correctAnswers) / \(viewModel.gameModel.totalQuestions)")
             Text("Skips left: \(viewModel.gameModel.skips)")
@@ -25,8 +23,8 @@ struct ScoreTitle: View {
             Text("Difficulty Mode selected is \(viewModel.gameDifficulty ?? GameModel.GameDifficulty.easy)")
             Text("Max Multiplier selected is \(viewModel.gameModel.maxMultiplier)")
             Text("Current Streak is \(viewModel.gameModel.currentStreak)")
-            ProgressView(value: progress){
-                Label: do { Text("\(String(format: "%.1f", progress * 100))%") }
+            ProgressView(value: viewModel.progress){
+                Label: do { Text("\(String(format: "%.1f", viewModel.progress * 100))%") }
             }
             .progressViewStyle(LinearProgressViewStyle())
         }
