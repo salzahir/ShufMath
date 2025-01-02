@@ -52,14 +52,14 @@ struct CustomSettingsView: View {
                 stepperType: "Skips"
             )
             Stepper(
-                "Timelimit is \(viewModel.gameModel.timeLimit, specifier: "%.1f") seconds",
-                value: $viewModel.gameModel.timeLimit,
+                "Timelimit is \(viewModel.timeLimit, specifier: "%.1f") seconds",
+                value: $viewModel.timeLimit,
                 in: 1.0...60.0,
                 step: 1.0
             )
-            .stepperViewModifier(color: Color.brown, stepperType: "TimeLimit", gameValue: Int(viewModel.gameModel.timeLimit))
-            .onChange(of: viewModel.gameModel.timeLimit) {
-                print("Time limit changed: \(viewModel.gameModel.timeLimit)")}
+            .stepperViewModifier(color: Color.brown, stepperType: "TimeLimit", gameValue: Int(viewModel.timeLimit))
+            .onChange(of: viewModel.timeLimit) {
+                print("Time limit changed: \(viewModel.timeLimit)")}
             
            Button(action: {
             dismiss()

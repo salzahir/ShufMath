@@ -72,7 +72,7 @@ struct GameOverView: View {
                             gameQuestions: viewModel.gameModel.questionsArr,
                             index: viewModel.gameModel.index,
                             useTimer: viewModel.useTimer,
-                            timeLimit: viewModel.gameModel.timeLimit
+                            timeLimit: viewModel.timeLimit
                         )
                     ){
                         Text("Review Answers")

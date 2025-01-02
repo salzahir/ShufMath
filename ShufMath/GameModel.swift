@@ -1,5 +1,5 @@
 //
-//  Game.swift
+//  GameModel.swift
 //  edutainment
 //
 //  Created by Salman Z on 12/23/24.
@@ -74,8 +74,6 @@ struct GameModel{
     var midPoint = 0
     var gameChoice = 1
     var questionChoices = 1...30
-    var timerAmount: Double = 0.0
-    var timeLimit: Double = 0.0
     var currentStreak = 0
     var highestStreak = 0
 
