@@ -23,8 +23,7 @@ struct MainGameView: View {
                 )
                 
                 if viewModel.useTimer {
-//                    TimerView(viewModel: viewModel)
-                    TimerView(viewModel: viewModel, timeLimit: 10.0, incrementAmount: 0.1)
+                    TimerView(viewModel: viewModel)
                 }
                 
                 AnswerInputView(userInput: viewModel.userInput)
@@ -60,54 +59,21 @@ struct QuestionView: View {
     }
 }
 
-//struct TimerView: View {
-//
-//    @ObservedObject var viewModel: GameViewModel
-//    
-//    var body: some View {
-//        ProgressView(
-//            "Time is ticking…",
-//            value: viewModel.gameModel.timerAmount,
-//            total: viewModel.timeLimit
-//        )
-//        .onReceive(viewModel.timer) { _ in
-//            viewModel.updateTimer()
-//        }
-//        .onDisappear {
-//            viewModel.timer.upstream.connect().cancel()
-//        }
-//    }
-//}
-
-
 struct TimerView: View {
 
     @ObservedObject var viewModel: GameViewModel
     
-    var timeLimit: Double
-    var incrementAmount: Double
-    let timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
-
     var body: some View {
         ProgressView(
             "Time is ticking…",
-            value: viewModel.gameModel.timerAmount,
-            total: timeLimit
+            value: viewModel.timerAmount,
+            total: viewModel.timeLimit
         )
-        .onReceive(timer) { _ in
-            if viewModel.gameModel.timerAmount < viewModel.gameModel.timeLimit {
-                viewModel.gameModel.timerAmount += incrementAmount
-            } else {
-                // Stops Timer Overflow
-                timer.upstream.connect().cancel()
-                viewModel.useTimer = false
-                viewModel.timesUp = true
-                viewModel.processAnswer()
-            }
-                
+        .onReceive(viewModel.timer) { _ in
+            viewModel.updateTimer()
         }
         .onDisappear {
-            timer.upstream.connect().cancel()
+            viewModel.timer.upstream.connect().cancel()
         }
     }
 }

@@ -22,6 +22,7 @@ class GameViewModel: ObservableObject {
     @Published var useCustom: Bool = false
     @Published var useTimer: Bool = false
     @Published var timesUp: Bool = false
+    @Published var timerAmount: Double = 0.0
 
     // Simplified variable name to show game is active
     var activeGame: Bool {
@@ -32,21 +33,28 @@ class GameViewModel: ObservableObject {
         gameModel.totalQuestions > 0 ? Double(gameModel.index) / Double(gameModel.totalQuestions) : 0.0
     }
 
-//    @Published var timeLimit: Double = 10.0
-//    @Published var incrementAmount: Double = 0.1
-//    @Published var timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
-//
-//    func updateTimer(){
-//        if gameModel.timerAmount < gameModel.timeLimit {
-//            gameModel.timerAmount += incrementAmount
-//        } else {
-//            // Stops Timer Overflow
-//            timer.upstream.connect().cancel()
-//            useTimer = false
-//            timesUp = true
-//            processAnswer()
-//        }
-//    }
+    @Published var timeLimit: Double = 10.0
+    @Published var incrementAmount: Double = 0.1
+    @Published var timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
+
+    func updateTimer(){
+        if timerAmount < timeLimit {
+            timerAmount += incrementAmount
+        } else {
+            // Stops Timer Overflow
+            resetTimer()
+        }
+    }
+    
+    // Reset the timer
+      func resetTimer() {
+          timer.upstream.connect().cancel()
+          useTimer = true
+          timesUp = false
+          timerAmount = 0.0
+          timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
+      }
+
     
     // Various game functions
     /// Sets up the difficulty before the game starts based on users choice
@@ -57,17 +65,17 @@ class GameViewModel: ObservableObject {
             gameModel.maxMultiplier = gameMode == .multiplication ? 4 : 6
             gameModel.totalQuestions = 10
             gameModel.skips = 5
-            gameModel.timeLimit = 15
+            timeLimit = 15
         case .medium:
             gameModel.maxMultiplier = gameMode == .multiplication ? 8 : 10
             gameModel.totalQuestions = 20
             gameModel.skips = 3
-            gameModel.timeLimit = 10
+            timeLimit = 10
         case .hard:
             gameModel.maxMultiplier = gameMode == .multiplication ? 12 : 15
             gameModel.totalQuestions = 30
             gameModel.skips = 1
-            gameModel.timeLimit = 5
+            timeLimit = 5
         // Absolute Chaos for the user can be the easiest game or hardest all goes
         case .random:
             gameModel.maxMultiplier = Int.random(in: 2...12)
@@ -75,7 +83,7 @@ class GameViewModel: ObservableObject {
             gameModel.skips = Int.random(in: 1...5)
             gameMode = GameModel.GameMode.allCases.randomElement()
             useTimer = Bool.random()
-            gameModel.timeLimit = Double.random(in: 5...15)
+            timeLimit = Double.random(in: 5...15)
             
         case .custom:
             break
@@ -192,7 +200,7 @@ class GameViewModel: ObservableObject {
         extraMessage = ""
         gameModel.skips = 3
         useTimer = false
-        gameModel.timerAmount = 0.0
+        timerAmount = 0.0
         timesUp = false
         hadPerfectGame = false
         userInput = ""
@@ -302,6 +310,8 @@ class GameViewModel: ObservableObject {
             showAlert = true
         }
         
+        resetTimer()
+        
     }
     
     /// Helper to validate inputs
@@ -362,7 +372,7 @@ class GameViewModel: ObservableObject {
             gameModel.highestStreak = gameModel.currentStreak
         }
         if useTimer {
-            gameModel.questionsArr[gameModel.index].timeTaken += gameModel.timerAmount
+            gameModel.questionsArr[gameModel.index].timeTaken += timerAmount
         }
     }
     /// Wrong answer handles points accordingly
@@ -424,10 +434,8 @@ class GameViewModel: ObservableObject {
         if gameModel.index != gameModel.midPoint{
             extraMessage = ""
         }
-        
-        gameModel.timerAmount = 0.0
-        
-        timesUp = false
-
+        if useTimer{
+            resetTimer()
+        }
     }
 }
