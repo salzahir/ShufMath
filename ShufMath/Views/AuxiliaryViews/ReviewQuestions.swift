@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ReviewGameView: View {
     
-    var gameQuestions : [GameModel.Question]
+    var gameQuestions : [Question]
     var index: Int
     var useTimer: Bool
     let cols = [
@@ -36,7 +36,7 @@ struct ReviewGameView: View {
 }
 
 struct ReviewQuestionView: View {
-    var gameQuestion : GameModel.Question
+    var gameQuestion : Question
     var index : Int
     var answerCheck: Bool{
         gameQuestion.correctAnswer == gameQuestion.userAnswer
@@ -71,7 +71,6 @@ struct ReviewQuestionView: View {
     }
 }
 
-
-#Preview {
-//    ReviewGameView(game: .constant(Game()))
-}
+//#Preview {
+//    ReviewGameView(viewModel: .constant(GameViewModel()))
+//}
