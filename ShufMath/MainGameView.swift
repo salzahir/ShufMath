@@ -10,34 +10,30 @@ import SwiftUI
 // Enscapulated MainView logic
 struct MainGameView: View {
     
-    @Binding var game: Game
-    // Simplified variable name to show game is active
-    private var activeGame: Bool {
-            game.index < game.totalQuestions && game.gameState == .inProgress
-    }
-    
+    @ObservedObject var viewModel: GameViewModel
+        
     var body: some View {
         VStack {
-            if activeGame {
-                ScoreTitle(game: $game)
+            if viewModel.activeGame {
+                ScoreTitle(viewModel: viewModel)
                 Spacer()
                 QuestionView(
-                    index: game.index,
-                    questionText: game.questionsArr[game.index].questionText
+                    index: viewModel.gameModel.index,
+                    questionText: viewModel.gameModel.questionsArr[viewModel.gameModel.index].questionText
                 )
                 
-                if game.useTimer {
+                if viewModel.useTimer {
                     TimerView(
-                        game: $game,
+                        viewModel: viewModel,
                         timeLimit: 10.0,
                         incrementAmount: 0.1
                     )
                 }
                 
-                AnswerInputView(userInput: game.userInput)
+                AnswerInputView(userInput: viewModel.userInput)
                 
-                GameButtons(game: $game)
-                GridView(userInput: $game.userInput)
+                GameButtons(viewModel: viewModel)
+                GridView(userInput: $viewModel.userInput)
             }
         }
     }
@@ -69,27 +65,27 @@ struct QuestionView: View {
 
 struct TimerView: View {
 
-    @Binding var game: Game
+    @ObservedObject var viewModel: GameViewModel
+    
     var timeLimit: Double
     var incrementAmount: Double
-    
     let timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
 
     var body: some View {
         ProgressView(
             "Time is ticking…",
-            value: game.timerAmount,
+            value: viewModel.gameModel.timerAmount,
             total: timeLimit
         )
         .onReceive(timer) { _ in
-            if game.timerAmount < timeLimit {
-                game.timerAmount += incrementAmount
+            if viewModel.gameModel.timerAmount < viewModel.gameModel.timeLimit {
+                viewModel.gameModel.timerAmount += incrementAmount
             } else {
                 // Stops Timer Overflow
                 timer.upstream.connect().cancel()
-                game.useTimer = false
-                game.timesUp = true
-                game.processAnswer()
+                viewModel.useTimer = false
+                viewModel.timesUp = true
+                viewModel.processAnswer()
             }
                 
         }
@@ -100,22 +96,22 @@ struct TimerView: View {
 }
 
 struct GameButtons: View {
-    @Binding var game: Game
+    @ObservedObject var viewModel: GameViewModel
     var body: some View {
         // Buttons
         HStack{
             Button("Check Answer"){
-                game.processAnswer(isSkipping: false)
+                viewModel.processAnswer(isSkipping: false)
             }
             .customButtonStyle(buttonText: "Check Answer")
                                 
             Button("Skip") {
-                game.processAnswer(isSkipping: true)
+                viewModel.processAnswer(isSkipping: true)
             }
             .customButtonStyle(buttonText: "Skip")
             
             Button("Restart"){
-                game.playAgain()
+                viewModel.playAgain()
             }
             .customButtonStyle(buttonText: "Restart")
         }
@@ -157,6 +153,6 @@ struct AnswerInputView: View {
 }
 
 
-#Preview {
-    MainGameView(game: .constant(Game()))
-}
+//#Preview {
+//    MainGameView(game: .constant(Game()))
+//}

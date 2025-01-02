@@ -9,20 +9,20 @@ import SwiftUI
 
 struct StartingScreen: View {
     
-    @Binding var game: Game
+    @ObservedObject var viewModel: GameViewModel
     @State var playedPress: Bool = false
     
     var body: some View {
         VStack(spacing: 10){
             // Presettings and Views presented before game started
-            if game.index == 0 && game.gameState == .notStarted {
+            if viewModel.gameModel.index == 0 && viewModel.gameState == GameModel.GameState.notStarted {
                 Text("Welcome to ShufMath!")
                     .titleView()
                 
-                GameSetupView(game: $game)
+                GameSetupView(viewModel: viewModel)
                 Spacer()
                 Button("Play"){
-                    game.startGame()
+                    viewModel.startGame()
                     playedPress.toggle()
                 }
                 .playButtonView(playedPress: $playedPress)
@@ -80,6 +80,6 @@ extension View {
 }
 
 
-#Preview {
-    StartingScreen(game: .constant(Game()))
-}
+//#Preview {
+//    StartingScreen(game: .constant(Game()))
+//}

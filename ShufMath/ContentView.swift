@@ -9,20 +9,20 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @State private var game = Game()
+    @StateObject private var viewModel = GameViewModel()
     @AppStorage("highScore") private var highScore = 0
     
     var body: some View {
         ZStack {
             BackGroundView()
             VStack(spacing: 10){
-                StartingScreen(game: $game)
-                MainGameView(game: $game)
-                GameAlert(game: $game)
+                StartingScreen(viewModel: viewModel)
+                MainGameView(viewModel: viewModel)
+                GameAlert(viewModel: viewModel)
             }
             // Changes isGameOver boolean for alerts based on the gameState
-            .onChange(of: game.gameState) {
-                game.isGameOver = game.gameState == .finished
+            .onChange(of: viewModel.gameState) {
+                viewModel.isGameOver = viewModel.gameState == .finished
             }
         }
     }

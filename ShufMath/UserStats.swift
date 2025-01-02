@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct UserStats: View {
-    @Binding var userStats: Game.UserStats
+    @Binding var userStats: GameModel.UserStats
     var body: some View {
         VStack{
             Section("Player's LifeStats"){
@@ -54,7 +54,7 @@ extension View{
 
 
 struct UserStatsSheet: View {
-    @Binding var stats : Game.UserStats
+    @Binding var stats : GameModel.UserStats
     
     var body: some View {
         ZStack{

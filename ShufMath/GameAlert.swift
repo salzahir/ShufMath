@@ -11,27 +11,27 @@ import SwiftUI
 
 struct GameAlert: View {
     
-    @Binding var game: Game
-    
+    @ObservedObject var viewModel: GameViewModel
+
     var body: some View {
         VStack{
 
             
         }
-        .alert(game.alertMessage.rawValue + game.extraMessage, isPresented: $game.showAlert) {
+        .alert(viewModel.alertMessage.rawValue + viewModel.extraMessage, isPresented: $viewModel.showAlert) {
             Button("OK", role: .cancel){}
         }
         
-        .sheet(isPresented: $game.isGameOver, onDismiss: {game.playAgain()}) {
-                GameOverView(game: $game)
+        .sheet(isPresented: $viewModel.isGameOver, onDismiss: {viewModel.playAgain()}) {
+            GameOverView(viewModel: viewModel)
         }
     }
 }
 
 struct GameOverView: View {
     
-    @Binding var game: Game
-    
+    @ObservedObject var viewModel: GameViewModel
+
     var body: some View {
         
         NavigationStack{
@@ -44,15 +44,15 @@ struct GameOverView: View {
                         .fontWeight(.bold)
                         .padding()
                     
-                    Text("You got \(game.correctAnswers)/\(game.totalQuestions)")
+                    Text("You got \(viewModel.gameModel.correctAnswers)/\(viewModel.gameModel.totalQuestions)")
                         .font(.title2)
                         .padding()
-                    Text(game.hadPerfectGame ? "Perfect Game! Goodjob Rockstar" : "Goodgame")
+                    Text(viewModel.hadPerfectGame ? "Perfect Game! Goodjob Rockstar" : "Goodgame")
                         .font(.headline)
-                        .foregroundColor(game.hadPerfectGame ? .green : .primary)
+                        .foregroundColor(viewModel.hadPerfectGame ? .green : .primary)
                         .padding(.bottom)
                     
-                    Text("Your highest streak this game was \(game.highestStreak)")
+                    Text("Your highest streak this game was \(viewModel.gameModel.highestStreak)")
                         .font(.body)
                         .padding()
                     
@@ -63,11 +63,18 @@ struct GameOverView: View {
                         .padding(.bottom)
                     
                     Button("Play Again"){
-                        game.playAgain()
+                        viewModel.playAgain()
                     }
                     .styledButton(backgroundColor: Color.teal)
 
-                    NavigationLink(destination: ReviewGameView(gameQuestions: game.questionsArr, index: game.index, useTimer: game.useTimer, timeLimit: game.timeLimit)){
+                    NavigationLink(
+                        destination: ReviewGameView(
+                            gameQuestions: viewModel.gameModel.questionsArr,
+                            index: viewModel.gameModel.index,
+                            useTimer: viewModel.useTimer,
+                            timeLimit: viewModel.gameModel.timeLimit
+                        )
+                    ){
                         Text("Review Answers")
                             .styledButton(backgroundColor: Color.yellow)
                     }
@@ -108,7 +115,7 @@ extension View {
 }
 
 
-#Preview {
-    GameOverView(game: .constant(Game()))
-}
+//#Preview {
+//    GameOverView(game: .constant(Game()))
+//}
 
