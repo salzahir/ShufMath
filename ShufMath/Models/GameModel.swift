@@ -12,7 +12,6 @@ import Foundation
 struct GameModel{
     
     // Game properties
-    
     let marginCheck = 0.1     /// Margin of error for decimal answers (0.1)
     var userStats: UserStats = UserStats()
     var index = 0

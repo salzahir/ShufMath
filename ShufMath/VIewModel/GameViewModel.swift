@@ -5,6 +5,10 @@
 //  Created by Salman Z on 1/1/25.
 //
 
+/// The GameViewModel class manages the state of the game and handles game logic.
+/// It is responsible for tracking the player's progress, managing the timer,
+/// generating questions, processing answers, and providing feedback to the player.
+
 import Foundation
 
 class GameViewModel: ObservableObject {
@@ -29,6 +33,8 @@ class GameViewModel: ObservableObject {
         gameModel.index < gameModel.totalQuestions && gameState == GameModel.GameState.inProgress
     }
     
+    /// Returns the game progress as a percentage (0.0 to 1.0).
+    /// Returns 0.0 if there are no questions.
     var progress: Double{
         gameModel.totalQuestions > 0 ? Double(gameModel.index) / Double(gameModel.totalQuestions) : 0.0
     }
@@ -36,7 +42,10 @@ class GameViewModel: ObservableObject {
     @Published var timeLimit: Double = 10.0
     @Published var incrementAmount: Double = 0.1
     @Published var timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
-
+    
+    /// Updates the game timer, checking if the time limit has been reached.
+    /// If the time runs out, it processes the answer and resets the timer.
+    /// - Note: This method also cancels the timer if the time limit is reached.
     func updateTimer(){
         if timerAmount < timeLimit {
             timerAmount += incrementAmount
