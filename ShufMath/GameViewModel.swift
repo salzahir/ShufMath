@@ -32,6 +32,22 @@ class GameViewModel: ObservableObject {
         gameModel.totalQuestions > 0 ? Double(gameModel.index) / Double(gameModel.totalQuestions) : 0.0
     }
 
+//    @Published var timeLimit: Double = 10.0
+//    @Published var incrementAmount: Double = 0.1
+//    @Published var timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
+//
+//    func updateTimer(){
+//        if gameModel.timerAmount < gameModel.timeLimit {
+//            gameModel.timerAmount += incrementAmount
+//        } else {
+//            // Stops Timer Overflow
+//            timer.upstream.connect().cancel()
+//            useTimer = false
+//            timesUp = true
+//            processAnswer()
+//        }
+//    }
+    
     // Various game functions
     /// Sets up the difficulty before the game starts based on users choice
     func gameDifficultySetup(Difficulty: GameModel.GameDifficulty){
