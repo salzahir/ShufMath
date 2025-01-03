@@ -10,9 +10,10 @@ import SwiftUI
 
 
 struct ReviewQuestionView: View {
+//    @ObservedObject var viewModel: GameViewModel
     var gameQuestion : Question
     var index : Int
-    var answerCheck: Bool{
+    var isCorrect: Bool{
         gameQuestion.correctAnswer == gameQuestion.userAnswer
     }
     var useTimer : Bool
@@ -24,11 +25,11 @@ struct ReviewQuestionView: View {
         
         Text("Question number \(index+1) \(gameQuestion.questionText)")
         
-        Text(answerCheck ? "You Got this answer correct" : "You Got this answer wrong")
+        Text(isCorrect ? "You Got this answer correct" : "You Got this answer wrong")
             .fontWeight(.bold)
             .frame(width: .infinity)
             .padding(.bottom)
-            .background(answerCheck ? Color.green : Color.red)
+            .background(isCorrect ? Color.green : Color.red)
             .foregroundStyle(.white)
             .cornerRadius(10)
             .shadow(radius: 10)

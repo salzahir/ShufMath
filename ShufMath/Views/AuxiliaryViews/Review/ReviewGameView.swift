@@ -12,14 +12,14 @@ struct ReviewGameView: View {
     var gameQuestions : [Question]
     var index: Int
     var useTimer: Bool
-    let cols = [
+    let columnss = [
         GridItem(.flexible())
     ]
     var timeLimit: Double
     
     var body: some View {
         ScrollView {
-            LazyVGrid(columns: cols, spacing: 10){
+            LazyVGrid(columns: columnss, spacing: 10){
                 ForEach(gameQuestions.indices, id: \.self) { idx in
                     ReviewQuestionView(gameQuestion: gameQuestions[idx], index: idx, useTimer: useTimer, timeLimit: timeLimit)
                         .padding()
