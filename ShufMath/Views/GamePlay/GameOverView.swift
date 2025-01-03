@@ -49,10 +49,8 @@ struct GameOverView: View {
 
                     NavigationLink(
                         destination: ReviewGameView(
-                            gameQuestions: viewModel.gameModel.questionsArr,
-                            index: viewModel.gameModel.index,
-                            useTimer: viewModel.useTimer,
-                            timeLimit: viewModel.timeLimit
+                            viewModel: viewModel,
+                            gameQuestions: viewModel.gameModel.questionsArr
                         )
                     ){
                         Text("Review Answers")

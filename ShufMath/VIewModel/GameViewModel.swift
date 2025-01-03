@@ -11,6 +11,7 @@
 
 import Foundation
 import AVFoundation
+import SwiftUICore
 
 class GameViewModel: ObservableObject {
     
@@ -29,7 +30,7 @@ class GameViewModel: ObservableObject {
     @Published var timesUp: Bool = false
     @Published var timerAmount: Double = 0.0
 
-    // Simplified variable name to show game is active
+    // Simplified variable name to show game is active for view
     var activeGame: Bool {
         gameModel.index < gameModel.totalQuestions && gameState == GameModel.GameState.inProgress
     }
@@ -39,10 +40,29 @@ class GameViewModel: ObservableObject {
     var progress: Double{
         gameModel.totalQuestions > 0 ? Double(gameModel.index) / Double(gameModel.totalQuestions) : 0.0
     }
-
+    
+    func isAnswerCorrect(question: Question) -> Bool {
+        return question.correctAnswer == question.userAnswer
+    }
+    
+    // Add computed properties to handle answer correctness and color
+    func answerMessage(question: Question) -> String {
+        return isAnswerCorrect(question: question) ? "You got this answer correct" : "You got this answer wrong"
+    }
+    
+    func answerBackgroundColor(question: Question) -> Color {
+           return isAnswerCorrect(question: question) ? .green : .red
+    }
+    
     @Published var timeLimit: Double = 10.0
     @Published var incrementAmount: Double = 0.1
     @Published var timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
+    
+    func timeDisplay(question: Question) -> String {
+            return question.timeTaken == 0.0
+                ? "Exceeded time limit \(String(format: "%.2f", timeLimit)) seconds"
+                : "Time taken: \(String(format: "%.2f", question.timeTaken)) seconds"
+    }
     
     /// Updates the game timer, checking if the time limit has been reached.
     /// If the time runs out, it processes the answer and resets the timer.
@@ -70,12 +90,13 @@ class GameViewModel: ObservableObject {
       }
     
     
+    /// Grid Related Functions
+    ///
     let soundEffect: SystemSoundID = 1026
 
     func addVal(value: String) {
         userInput += value
         playSoundEffect()
-//        isPressed.toggle()
     }
 
     func removeLastNumber() {
@@ -96,35 +117,53 @@ class GameViewModel: ObservableObject {
         
         switch Difficulty {
         case .easy:
-            gameModel.maxMultiplier = gameMode == .multiplication ? 4 : 6
-            gameModel.totalQuestions = 10
-            gameModel.skips = 5
-            timeLimit = 15
+            setupEasyMode()
         case .medium:
-            gameModel.maxMultiplier = gameMode == .multiplication ? 8 : 10
-            gameModel.totalQuestions = 20
-            gameModel.skips = 3
-            timeLimit = 10
+            setupMediumMode()
         case .hard:
-            gameModel.maxMultiplier = gameMode == .multiplication ? 12 : 15
-            gameModel.totalQuestions = 30
-            gameModel.skips = 1
-            timeLimit = 5
+            setupHardMode()
         // Absolute Chaos for the user can be the easiest game or hardest all goes
         case .random:
-            gameModel.maxMultiplier = Int.random(in: 2...12)
-            gameModel.totalQuestions = Int.random(in: 1...30)
-            gameModel.skips = Int.random(in: 1...5)
-            gameMode = GameModel.GameMode.allCases.randomElement()
-            useTimer = Bool.random()
-            timeLimit = Double.random(in: 5...15)
+            setupRandomMode()
             
         case .custom:
             break
+            
+        @unknown default:
+            fatalError("Unknown game difficulty encountered")
         }
-        
         // Update to reflect the chosen difficulty
         gameDifficulty = Difficulty
+    }
+    
+    private func setupEasyMode() {
+        gameModel.maxMultiplier = gameMode == .multiplication ? 4 : 6
+        gameModel.totalQuestions = 10
+        gameModel.skips = 5
+        timeLimit = 15
+    }
+    
+    private func setupMediumMode() {
+        gameModel.maxMultiplier = gameMode == .multiplication ? 8 : 10
+        gameModel.totalQuestions = 20
+        gameModel.skips = 3
+        timeLimit = 10
+    }
+    
+    private func setupHardMode() {
+        gameModel.maxMultiplier = gameMode == .multiplication ? 12 : 15
+        gameModel.totalQuestions = 30
+        gameModel.skips = 1
+        timeLimit = 5
+    }
+    
+    private func setupRandomMode(){
+        gameModel.maxMultiplier = Int.random(in: 2...12)
+        gameModel.totalQuestions = Int.random(in: 1...30)
+        gameModel.skips = Int.random(in: 1...5)
+        gameMode = GameModel.GameMode.allCases.randomElement()
+        useTimer = Bool.random()
+        timeLimit = Double.random(in: 5...15)
     }
     
     /// Sets the game mode (e.g., multiplication, division, or mixed).
@@ -270,22 +309,18 @@ class GameViewModel: ObservableObject {
         // Check if user has reached halfway milestone
         halfwayCheck()
         
-        // Check if user has achieved a perfect game
-        if gameModel.correctAnswers == gameModel.totalQuestions {
-            hadPerfectGame = true
-         }
-
         // Proceed to next question
         gameModel.index += 1
         
         // End of the Game
         if isGameFinished(){
+            // Check if user has achieved a perfect game
             checkPerfectGame()
             return
         }
         
+        // Reset question state for the next round
         resetQuestion()
-        
     }
     
     func checkPerfectGame(){
