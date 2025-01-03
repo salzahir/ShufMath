@@ -14,7 +14,7 @@ struct GameButtons: View {
         // Buttons
         HStack{
             Button("Enter"){
-                viewModel.processAnswer(isSkipping: false)
+                viewModel.processAnswer()
             }
             .customButtonStyle(buttonText: "Check Answer", color: Color.green)
                                 

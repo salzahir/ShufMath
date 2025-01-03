@@ -10,27 +10,21 @@ import SwiftUI
 
 
 struct ReviewQuestionView: View {
-//    @ObservedObject var viewModel: GameViewModel
+    @ObservedObject var viewModel: GameViewModel
     var gameQuestion : Question
-    var index : Int
-    var isCorrect: Bool{
-        gameQuestion.correctAnswer == gameQuestion.userAnswer
-    }
-    var useTimer : Bool
-    var timeLimit: Double
     
     var body: some View{
         
     VStack(alignment: .center, spacing: 10){
         
-        Text("Question number \(index+1) \(gameQuestion.questionText)")
+        Text("Question number \(viewModel.gameModel.index+1) \(gameQuestion.questionText)")
         
-        Text(isCorrect ? "You Got this answer correct" : "You Got this answer wrong")
+        Text(viewModel.answerMessage(question: gameQuestion))
             .fontWeight(.bold)
             .frame(width: .infinity)
             .padding(.bottom)
-            .background(isCorrect ? Color.green : Color.red)
-            .foregroundStyle(.white)
+            .background(viewModel.answerBackgroundColor(question: gameQuestion))
+            .foregroundColor(.white)
             .cornerRadius(10)
             .shadow(radius: 10)
             .multilineTextAlignment(.center)
@@ -40,9 +34,10 @@ struct ReviewQuestionView: View {
             Text("Correct Answer: \(String(format: "%.2f", gameQuestion.correctAnswer))")
         }
         
-        if useTimer{
-            Text(gameQuestion.timeTaken == 0.0 ? "Exceeded time limit \(String(format: "%.2f", timeLimit)) seconds" : "Time taken: \(String(format: "%.2f", gameQuestion.timeTaken)) seconds")
+        if viewModel.useTimer{
+            Text(viewModel.timeDisplay(question: gameQuestion))
         }
+        
     }
 }
 

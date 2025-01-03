@@ -9,19 +9,20 @@ import SwiftUI
 
 struct ReviewGameView: View {
     
+    @ObservedObject var viewModel: GameViewModel
     var gameQuestions : [Question]
-    var index: Int
-    var useTimer: Bool
     let columnss = [
         GridItem(.flexible())
     ]
-    var timeLimit: Double
     
     var body: some View {
         ScrollView {
             LazyVGrid(columns: columnss, spacing: 10){
                 ForEach(gameQuestions.indices, id: \.self) { idx in
-                    ReviewQuestionView(gameQuestion: gameQuestions[idx], index: idx, useTimer: useTimer, timeLimit: timeLimit)
+                    ReviewQuestionView(
+                        viewModel: viewModel,
+                        gameQuestion: viewModel.gameModel.questionsArr[idx]
+                    )
                         .padding()
                         .frame(maxWidth: .infinity)
                         .background(Color.random)
