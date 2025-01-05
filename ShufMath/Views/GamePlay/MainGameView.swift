@@ -25,15 +25,29 @@ struct MainGameView: View {
                 if viewModel.useTimer {
                     TimerView(viewModel: viewModel)
                 }
-            
+                
                 AnswerInputView(userInput: viewModel.userInput)
                 
                 GameButtons(viewModel: viewModel)
                 GridView(viewModel: viewModel)
             }
         }
+        .toolbar{
+            if viewModel.activeGame {
+                ImageButton(
+                    action: {
+                        viewModel.playAgain()
+                    },
+                    buttonText: "Quit",
+                    color: Color.red,
+                    image: "xmark.circle.fill")
+            }
+        }
+        .padding(.top, UIDevice.current.userInterfaceIdiom == .pad ? 40 : 25)
     }
 }
+
+
 
 
 //#Preview {

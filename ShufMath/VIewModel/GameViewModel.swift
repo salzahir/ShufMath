@@ -92,21 +92,23 @@ class GameViewModel: ObservableObject {
     
     /// Grid Related Functions
     ///
-    let soundEffect: SystemSoundID = 1026
+
 
     func addVal(value: String) {
         userInput += value
-        playSoundEffect()
+        playSoundEffect(sound: soundEffect)
     }
 
     func removeLastNumber() {
         if !userInput.isEmpty {
             userInput.removeLast()
         }
-        playSoundEffect()
+        playSoundEffect(sound: soundEffect)
     }
     
-    func playSoundEffect() {
+    let soundEffect: SystemSoundID = 1026
+    
+    func playSoundEffect(sound: SystemSoundID) {
         print("Playing sound")
         AudioServicesPlaySystemSound(soundEffect)
     }
@@ -430,6 +432,7 @@ class GameViewModel: ObservableObject {
     
     /// Increments the player score for a correct answer
     func handleCorrect(){
+        
         gameModel.correctAnswers += 1
         gameModel.currentStreak += 1
         alertMessage = GameModel.AlertMessage.correctAnswer
@@ -441,6 +444,7 @@ class GameViewModel: ObservableObject {
         if useTimer {
             gameModel.questionsArr[gameModel.index].timeTaken += timerAmount
         }
+        playSoundEffect(sound: 1104)
     }
     /// Wrong answer handles points accordingly
     func handleIncorrect(){
@@ -461,6 +465,7 @@ class GameViewModel: ObservableObject {
             gameModel.currentStreak = 0
             extraMessage += "\n" + GameModel.AlertMessage.streakLost.rawValue
         }
+        playSoundEffect(sound: 1006)
     }
     /// Function to motivate the player to keep going once half way
     func halfwayCheck(){

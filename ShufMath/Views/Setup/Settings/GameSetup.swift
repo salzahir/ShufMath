@@ -17,7 +17,7 @@ struct GameSetupView: View {
     @State var useRandom: Bool = false
         
     var body: some View {
-        VStack(spacing: 35){
+        VStack(spacing: 25){
             Section("Game Setup") {
                 GameModeSelector(viewModel: viewModel)
                 DifficultyButtonsView(viewModel: viewModel)

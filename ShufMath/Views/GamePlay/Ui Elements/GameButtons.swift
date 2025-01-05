@@ -13,20 +13,23 @@ struct GameButtons: View {
     var body: some View {
         // Buttons
         HStack{
-            Button("Enter"){
-                viewModel.processAnswer()
-            }
-            .customButtonStyle(buttonText: "Check Answer", color: Color.green)
-                                
-            Button("Skip") {
-                viewModel.processAnswer(isSkipping: true)
-            }
-            .customButtonStyle(buttonText: "Skip", color: Color.yellow)
+    
+            ImageButton(
+                action: {
+                    viewModel.processAnswer()
+                },
+                buttonText: "Enter",
+                color: Color.green,
+                image: "checkmark.circle.fill")
             
-            Button("Quit"){
-                viewModel.playAgain()
-            }
-            .customButtonStyle(buttonText: "Quit", color: Color.red)
+            ImageButton(
+                action: {
+                    viewModel.processAnswer(isSkipping: true)
+                },
+                buttonText: "Skip",
+                color: Color.yellow,
+                image: "arrow.right.circle.fill")
+                                
         }
         .padding(16)
     }
