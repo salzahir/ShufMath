@@ -33,7 +33,7 @@ struct GridView: View {
                 GridButton(
                     userInput: $viewModel.userInput,
                     isPressed: $isPressed,
-                    item: "⬅️",
+                    item: "<",
                     labelMessage: "Delete, Current Input: \(viewModel.userInput)",
                     labelHint: "Deletes the last digit entered",
                     action: {viewModel.removeLastNumber()}

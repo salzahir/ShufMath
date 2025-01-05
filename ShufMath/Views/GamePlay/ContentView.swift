@@ -13,18 +13,22 @@ struct ContentView: View {
     @AppStorage("highScore") private var highScore = 0
     
     var body: some View {
-        ZStack {
-            BackGroundView()
-            VStack(spacing: 10){
-                StartingScreen(viewModel: viewModel)
-                MainGameView(viewModel: viewModel)
-                GameAlert(viewModel: viewModel)
+        NavigationStack{
+            ZStack {
+                BackGroundView()
+                VStack(spacing: 10){
+                    StartingScreen(viewModel: viewModel)
+                    MainGameView(viewModel: viewModel)
+                    GameAlert(viewModel: viewModel)
+                }
+                // Changes isGameOver boolean for alerts based on the gameState
+                .onChange(of: viewModel.gameState) {
+                    viewModel.isGameOver = viewModel.gameState == .finished
+                }
             }
-            // Changes isGameOver boolean for alerts based on the gameState
-            .onChange(of: viewModel.gameState) {
-                viewModel.isGameOver = viewModel.gameState == .finished
-            }
+            
         }
+
     }
 }
 

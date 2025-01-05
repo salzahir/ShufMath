@@ -16,17 +16,17 @@ struct GameButtons: View {
             Button("Enter"){
                 viewModel.processAnswer()
             }
-            .customButtonStyle(buttonText: "Check Answer", color: Color.green)
+            .customButtonStyle(buttonText: "Enter", color: Color.green)
                                 
             Button("Skip") {
                 viewModel.processAnswer(isSkipping: true)
             }
             .customButtonStyle(buttonText: "Skip", color: Color.yellow)
             
-            Button("Quit"){
-                viewModel.playAgain()
-            }
-            .customButtonStyle(buttonText: "Quit", color: Color.red)
+//            Button("Quit"){
+//                viewModel.playAgain()
+//            }
+//            .customButtonStyle(buttonText: "Quit", color: Color.red)
         }
         .padding(16)
     }

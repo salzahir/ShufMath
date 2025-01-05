@@ -13,6 +13,7 @@ struct GamePickerView: View {
     @Binding var selectedChoice: Int
     
     var body: some View{
+        Text("Choose number of questions")
         Picker(gameText, selection: $selectedChoice) {
             ForEach(gameChoices, id: \.self){ number in
                 Text("\(number)")
@@ -39,3 +40,4 @@ extension View{
         self.modifier(PickerViewModifier())
     }
 }
+

@@ -32,6 +32,14 @@ struct MainGameView: View {
                 GridView(viewModel: viewModel)
             }
         }
+        .toolbar{
+            if viewModel.activeGame {
+                Button("Quit"){
+                    viewModel.playAgain()
+                }
+                .customButtonStyle(buttonText: "Quit", color: Color.red)
+            }
+        }
     }
 }
 
