@@ -10,9 +10,6 @@ import SwiftUI
 struct ScoreTitle: View {
     
     @ObservedObject var viewModel: GameViewModel
-
-    // Add Difficulty Mode Selected
-    // Add Max Multipler Selected to
     
     var body: some View {
         
