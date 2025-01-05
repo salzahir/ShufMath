@@ -25,7 +25,7 @@ struct MainGameView: View {
                 if viewModel.useTimer {
                     TimerView(viewModel: viewModel)
                 }
-            
+                
                 AnswerInputView(userInput: viewModel.userInput)
                 
                 GameButtons(viewModel: viewModel)
@@ -34,14 +34,20 @@ struct MainGameView: View {
         }
         .toolbar{
             if viewModel.activeGame {
-                Button("Quit"){
-                    viewModel.playAgain()
-                }
-                .customButtonStyle(buttonText: "Quit", color: Color.red)
+                ImageButton(
+                    action: {
+                        viewModel.playAgain()
+                    },
+                    buttonText: "Quit",
+                    color: Color.red,
+                    image: "xmark.circle.fill")
             }
         }
+        .padding(.top, UIDevice.current.userInterfaceIdiom == .pad ? 40 : 25)
     }
 }
+
+
 
 
 //#Preview {

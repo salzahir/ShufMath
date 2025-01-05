@@ -40,6 +40,6 @@ extension ShapeStyle where Self == Color {
         LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple, Color.red]), startPoint: .top, endPoint: .bottom)
     }
     static var lightBackground: LinearGradient {
-        LinearGradient(gradient: Gradient(colors: [Color.white, Color.pink, Color.teal]), startPoint: .top, endPoint: .bottom)
+        LinearGradient(gradient: Gradient(colors: [Color.teal, Color.white, Color.yellow]), startPoint: .top, endPoint: .bottom)
     }
 }

@@ -11,24 +11,22 @@ struct ReviewGameView: View {
     
     @ObservedObject var viewModel: GameViewModel
     var gameQuestions : [Question]
-    let columnss = [
-        GridItem(.flexible())
-    ]
     
     var body: some View {
         ScrollView {
-            LazyVGrid(columns: columnss, spacing: 10){
+            LazyVStack(spacing: 10){
                 ForEach(gameQuestions.indices, id: \.self) { idx in
                     ReviewQuestionView(
                         viewModel: viewModel,
                         gameQuestion: viewModel.gameModel.questionsArr[idx]
                     )
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.random)
-                        .cornerRadius(10)
-                        .shadow(radius: 10)
-                        .foregroundStyle(.white)
+                    .accessibilityLabel("Question number \(idx + 1)")
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.random)
+                    .cornerRadius(10)
+                    .shadow(radius: 10)
+                    .foregroundStyle(.white)
                 }
             }
         }
