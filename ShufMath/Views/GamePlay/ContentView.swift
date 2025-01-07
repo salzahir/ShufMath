@@ -10,7 +10,6 @@ import SwiftUI
 struct ContentView: View {
     
     @StateObject private var viewModel = GameViewModel()
-    @AppStorage("highScore") private var highScore = 0
     
     var body: some View {
         NavigationStack{

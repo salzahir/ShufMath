@@ -54,7 +54,7 @@ struct GameFeatureToggles: View {
                 showUserStats.toggle()
             })
             .sheet(isPresented: $showUserStats){
-                UserStatsSheet(stats: $viewModel.gameModel.userStats)
+                UserStatsSheet(stats: $viewModel.gameModel.userStats, viewModel: viewModel)
             }
         }
     }

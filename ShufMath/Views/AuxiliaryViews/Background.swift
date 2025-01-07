@@ -43,3 +43,14 @@ extension ShapeStyle where Self == Color {
         LinearGradient(gradient: Gradient(colors: [Color.teal, Color.white, Color.yellow]), startPoint: .top, endPoint: .bottom)
     }
 }
+
+let goodContrastColors: [Color] = [
+    Color(.systemBlue),   // Navy / Royal Blue
+    Color(.systemGreen),  // Forest Green / Emerald
+    Color(.systemRed),    // Burgundy / Maroon
+    Color.black,          // Black
+    Color.gray,           // Charcoal / Slate Gray
+    Color.purple,         // Plum / Aubergine
+    Color.orange,         // Burnt Orange
+    Color.brown           // Dark Brown
+]
