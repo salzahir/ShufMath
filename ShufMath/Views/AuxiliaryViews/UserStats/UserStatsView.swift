@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct UserStatsView: View {
-    @Binding var userStats: UserStats
+    var userStats: UserStats
+    @ObservedObject var viewModel: GameViewModel
+    
     var body: some View {
         VStack{
             Section(){
                 Text("Player's LifeStats")
+                    .foregroundColor(.white)
                     .font(.title)
                     .bold()
                     .padding(.bottom, 15)
@@ -32,7 +35,7 @@ struct UserStatsView: View {
                                 label: "Games Won",
                                 hint: "Total amount of games the player has won"
                             )
-                        
+                                                
                         Text("Player has lost \(userStats.gamesLost) games")
                             .userViewModifier(
                                 backgroundColor: Color.yellow,
@@ -53,11 +56,16 @@ struct UserStatsView: View {
                                 label: "Perfect Games",
                                 hint: "Amount of perfect games the player has earned"
                             )
+                        
+
                     }
                     .padding()
                 }
                 
             }
+        }
+        .onAppear() {
+            viewModel.loadUserData()
         }
     }
 }

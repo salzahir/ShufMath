@@ -23,7 +23,7 @@ struct StartingScreen: View {
                     viewModel.startGame()
                     playedPress.toggle()
                 }
-                .playButtonView(playedPress: $playedPress)
+                .playButtonView(playedPress: $playedPress, activeGame: viewModel.activeGame)
             }
         }
     }
@@ -56,13 +56,14 @@ extension View {
 
 struct playButtonViewModifer: ViewModifier {
     @Binding var playedPress : Bool
+    var activeGame : Bool
     func body(content: Content) -> some View {
         content
             .font(.title2)
             .fontWeight(.bold)
             .padding()
             .frame(maxWidth: .infinity)
-            .background(playedPress ? Color.blue : Color.blue.opacity(0.5))
+            .background(playedPress && activeGame ? Color.blue : Color.blue.opacity(0.25))
             .foregroundColor(.white)
             .cornerRadius(10)
             .shadow(radius: 5)
@@ -71,11 +72,10 @@ struct playButtonViewModifer: ViewModifier {
 }
 
 extension View {
-    public func playButtonView(playedPress: Binding<Bool>) -> some View {
-        self.modifier(playButtonViewModifer(playedPress: playedPress))
+    public func playButtonView(playedPress: Binding<Bool>, activeGame: Bool) -> some View {
+        self.modifier(playButtonViewModifer(playedPress: playedPress, activeGame: activeGame))
     }
 }
-
 
 //#Preview {
 //    StartingScreen(game: .constant(Game()))

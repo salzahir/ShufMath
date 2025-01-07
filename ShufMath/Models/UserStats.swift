@@ -44,4 +44,5 @@ struct UserStats: Codable {
         
         averageScore = Double(totalScore) / Double(gamesPlayed)
     }
+    
 }

@@ -23,7 +23,7 @@ struct ReviewGameView: View {
                     .accessibilityLabel("Question number \(idx + 1)")
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(Color.random)
+                    .background(goodContrastColors.randomElement())
                     .cornerRadius(10)
                     .shadow(radius: 10)
                     .foregroundStyle(.white)

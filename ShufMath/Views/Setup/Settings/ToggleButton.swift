@@ -16,7 +16,7 @@ struct ToggleButton: View {
     var body: some View{
         GameSetupButton(
             buttonText: title,
-            buttonColor: isEnabled ? color : color.opacity(0.5),
+            buttonColor: isEnabled ? color : color.opacity(0.25),
             action: action
         )
     }

@@ -15,6 +15,7 @@ import SwiftUICore
 
 class GameViewModel: ObservableObject {
     
+    
     @Published var gameModel = GameModel()
     @Published var showAlert = false
     @Published var userInput: String = ""
@@ -29,6 +30,22 @@ class GameViewModel: ObservableObject {
     @Published var useTimer: Bool = false
     @Published var timesUp: Bool = false
     @Published var timerAmount: Double = 0.0
+    
+    
+    func saveUserData() {
+        if let savedUserData = try? JSONEncoder().encode(gameModel.userStats) {
+            UserDefaults.standard.set(savedUserData, forKey: "userStats")
+        }
+    }
+    
+    func loadUserData() {
+        if let loadedUserData = UserDefaults.standard.data(forKey: "userStats"){
+            let decoder = JSONDecoder()
+            if let decodedUserData = try? decoder.decode(UserStats.self, from: loadedUserData) {
+                gameModel.userStats = decodedUserData
+            }
+        }
+    }
 
     // Simplified variable name to show game is active for view
     var activeGame: Bool {
@@ -253,6 +270,8 @@ class GameViewModel: ObservableObject {
             totalQuestions: gameModel.totalQuestions,
             highestStreak: gameModel.highestStreak
         )
+        
+        saveUserData()
         
         if hadPerfectGame{
             gameModel.userStats.perfectGames += 1

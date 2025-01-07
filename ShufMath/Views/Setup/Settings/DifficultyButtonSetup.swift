@@ -32,7 +32,7 @@ struct DifficultyButtonsView: View {
     func createDifficultyButton(buttonText: String, difficulty: GameModel.GameDifficulty, color: Color) -> some View {
         // Use a ternary operation to indicate button selection status,
         // applying a faded appearance for unselected buttons to improve user feedback.
-        let buttonColor = viewModel.gameDifficulty == difficulty ? color : color.opacity(0.5)
+        let buttonColor = viewModel.gameDifficulty == difficulty ? color : color.opacity(0.25)
         return GameSetupButton(
             buttonText: buttonText,
             buttonColor: buttonColor,
