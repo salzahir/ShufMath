@@ -29,6 +29,7 @@ struct GridView: View {
                     )
                     .padding(.vertical)
                     .padding(.horizontal)
+                    .sensoryFeedback(.impact(flexibility: .rigid), trigger: viewModel.userInput)
                 }
                 GridButton(
                     userInput: $viewModel.userInput,
@@ -40,6 +41,7 @@ struct GridView: View {
                 )
                 .padding(.vertical)
                 .padding(.horizontal)
+                .sensoryFeedback(.error, trigger: viewModel.userInput)
             }
             .padding(.vertical)
             .padding(.horizontal)
