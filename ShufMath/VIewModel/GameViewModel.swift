@@ -25,12 +25,11 @@ class GameViewModel: ObservableObject {
     @Published var alertMessage: GameModel.AlertMessage = .blank
     @Published var extraMessage = ""
     @Published var gameDifficulty: GameModel.GameDifficulty?
-    @Published var gameMode: GameModel.GameMode? = .multiplication
+    @Published var gameMode: GameModel.GameMode? = nil
     @Published var useCustom: Bool = false
     @Published var useTimer: Bool = false
     @Published var timesUp: Bool = false
     @Published var timerAmount: Double = 0.0
-    
     
     func saveUserData() {
         if let savedUserData = try? JSONEncoder().encode(gameModel.userStats) {
@@ -58,6 +57,10 @@ class GameViewModel: ObservableObject {
         gameModel.totalQuestions > 0 ? Double(gameModel.index) / Double(gameModel.totalQuestions) : 0.0
     }
     
+    var gameLock: Bool{
+        gameModel.totalQuestions == 0 && !useCustom
+    }
+    
     func isAnswerCorrect(question: Question) -> Bool {
         return question.correctAnswer == question.userAnswer
     }
@@ -80,6 +83,7 @@ class GameViewModel: ObservableObject {
                 ? "Exceeded time limit \(String(format: "%.2f", timeLimit)) seconds"
                 : "Time taken: \(String(format: "%.2f", question.timeTaken)) seconds"
     }
+    
     
     /// Updates the game timer, checking if the time limit has been reached.
     /// If the time runs out, it processes the answer and resets the timer.
@@ -243,13 +247,7 @@ class GameViewModel: ObservableObject {
     
     /// Starts the game with values that player chose in game setup view
     func startGame(){
-        
-        if gameModel.totalQuestions == 0 && !useCustom {
-            alertMessage = GameModel.AlertMessage.selectDifficulty
-            showAlert = true
-            return
-        }
-        
+                
         // Sets the number of questions based on whether custom settings are used or not.
         // If custom, it uses `gameChoice`; otherwise, it uses the default `totalQuestions`.
         let questionCount = useCustom ? gameModel.gameChoice : gameModel.totalQuestions
@@ -298,6 +296,8 @@ class GameViewModel: ObservableObject {
         timesUp = false
         hadPerfectGame = false
         userInput = ""
+        gameMode = nil
+        gameDifficulty = nil
     }
     
     /// Main logic point of processing the players answers go through several checks before completion

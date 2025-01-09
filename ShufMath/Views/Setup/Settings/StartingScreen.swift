@@ -10,7 +10,7 @@ struct StartingScreen: View {
     
     @ObservedObject var viewModel: GameViewModel
     @State var playedPress: Bool = false
-    
+        
     var body: some View {
         VStack(spacing: 10){
             if !viewModel.activeGame {
@@ -19,11 +19,13 @@ struct StartingScreen: View {
                 
                 GameSetupView(viewModel: viewModel)
                 Spacer()
+                
                 Button("Play"){
                     viewModel.startGame()
                     playedPress.toggle()
                 }
                 .playButtonView(playedPress: $playedPress, activeGame: viewModel.activeGame)
+                .disabled(viewModel.gameLock)
             }
         }
     }
