@@ -344,15 +344,8 @@ class GameViewModel: ObservableObject {
             return
         }
         
-        // Checks answer
-        checkAnswer()
-        
-        // Check if user has reached halfway milestone
-        halfwayCheck()
-        
-        // Proceed to next question
-        nextQuestion()
-        
+        handleGameProgress()
+                
         // End of the Game
         if isGameFinished(){
             // Check if user has achieved a perfect game
@@ -432,6 +425,12 @@ class GameViewModel: ObservableObject {
         
         return nil
         
+    }
+    
+    func handleGameProgress() {
+        checkAnswer()
+        halfwayCheck()
+        nextQuestion()
     }
     
     /// Does the actual comparison between user answer and correct answer
