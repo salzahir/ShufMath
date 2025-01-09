@@ -58,7 +58,7 @@ class GameViewModel: ObservableObject {
     }
     
     var gameLock: Bool{
-        gameModel.totalQuestions == 0 && !useCustom
+        gameModel.totalQuestions == 0 && !useCustom || gameMode == nil || gameDifficulty == nil
     }
     
     // MARK User Data Management
@@ -260,7 +260,11 @@ class GameViewModel: ObservableObject {
     
     /// Starts the game with values that player chose in game setup view
     func startGame(){
-                
+        
+        guard !gameLock else {
+            fatalError("Game started while in a locked state!")
+        }
+        
         // Sets the number of questions based on whether custom settings are used or not.
         // If custom, it uses `gameChoice`; otherwise, it uses the default `totalQuestions`.
         let questionCount = useCustom ? gameModel.gameChoice : gameModel.totalQuestions
