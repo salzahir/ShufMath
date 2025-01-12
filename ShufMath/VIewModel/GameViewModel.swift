@@ -27,7 +27,7 @@ class GameViewModel: ObservableObject {
     @Published var useCustom: Bool = false
 
     // MARK - Timer Properties
-    @Published var useTimer: Bool = false
+    @Published var useTimer: Bool = false 
     @Published var timesUp: Bool = false
     @Published var timerAmount: Double = 0.0
     @Published var timeLimit: Double = 10.0
@@ -39,10 +39,11 @@ class GameViewModel: ObservableObject {
     @Published var hadPerfectGame: Bool = false /// Set to true if all answers are correct and the game did not time out
     
     // MARK Sound Properties
-    private enum GameSounds {
-        static let input: SystemSoundID = 1026
-        static let correct: SystemSoundID = 1104
+    enum GameSounds {
+        static let input: SystemSoundID = 1104
+        static let correct: SystemSoundID = 1026
         static let incorrect: SystemSoundID = 1006
+        static let skip: SystemSoundID = 1113
     }
     
     // MARK computed properties
@@ -170,6 +171,7 @@ class GameViewModel: ObservableObject {
         }
         // Update to reflect the chosen difficulty
         gameDifficulty = Difficulty
+        playSoundEffect(sound: GameSounds.input)
     }
     
     private func setupEasyMode() {
@@ -205,6 +207,7 @@ class GameViewModel: ObservableObject {
     /// Sets the game mode (e.g., multiplication, division, or mixed).
     func setGameMode(_ mode: GameModel.GameMode) {
         gameMode = mode
+        playSoundEffect(sound: GameSounds.input)
     }
     
     /// Generates an array of  type Question can either be multiplication or division or a chance at either one for mixed
@@ -274,13 +277,14 @@ class GameViewModel: ObservableObject {
         gameModel.totalQuestions = gameModel.questionsArr.count
         gameModel.midPoint = gameModel.totalQuestions / 2
         gameModel.index = 0
-        
+        playSoundEffect(sound: GameSounds.input)
     }
     
     /// Resets the game to default values after game is finished
     func playAgain() {
         updateStats()
         resetGameStats()
+        playSoundEffect(sound: GameSounds.input)
     }
     
     private func updateStats() {
@@ -322,6 +326,7 @@ class GameViewModel: ObservableObject {
         userInput = ""
         gameMode = nil
         gameDifficulty = nil
+        playSoundEffect(sound: GameSounds.input)
     }
     
     /// Main logic point of processing the players answers go through several checks before completion
@@ -386,6 +391,7 @@ class GameViewModel: ObservableObject {
         // Renable timer
         useTimer = true
         
+        playSoundEffect(sound: GameSounds.incorrect)
         return
     }
     
@@ -411,6 +417,7 @@ class GameViewModel: ObservableObject {
             showAlert = true
         }
         
+        playSoundEffect(sound: GameSounds.skip)
     }
     
     /// Helper to validate inputs

@@ -57,7 +57,7 @@ struct CustomSettingsView: View {
                        .fontWeight(.bold)
                        .foregroundColor(.white)
                }
-               .frame(maxWidth: .infinity)
+               .frame(width: 300, height: 50)
                .padding()
                .background(Color.green)
                .cornerRadius(10)

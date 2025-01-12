@@ -32,6 +32,7 @@ struct GameFeatureToggles: View {
                 color: Color.orange,
                 action: {viewModel.useTimer.toggle()
                 })
+            .onChange(of: viewModel.useTimer, {viewModel.playSoundEffect(sound: GameViewModel.GameSounds.input)})
 
             ToggleButton(
                 title: "Custom",
@@ -53,6 +54,7 @@ struct GameFeatureToggles: View {
                 action: {
                 showUserStats.toggle()
             })
+            .onChange(of: showUserStats, {viewModel.playSoundEffect(sound: GameViewModel.GameSounds.input)})
             .sheet(isPresented: $showUserStats){
                 UserStatsSheet(stats: $viewModel.gameModel.userStats, viewModel: viewModel)
             }
