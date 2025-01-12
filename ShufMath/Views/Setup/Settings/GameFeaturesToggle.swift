@@ -26,14 +26,10 @@ struct GameFeatureToggles: View {
                 }
             )
             
-            ToggleButton(
-                title: "Timer?",
-                isEnabled: viewModel.useTimer,
-                color: Color.orange,
-                action: {viewModel.useTimer.toggle()
-                })
-            .onChange(of: viewModel.useTimer, {viewModel.playSoundEffect(sound: GameViewModel.GameSounds.input)})
-
+            Toggle("Timer?", isOn: $viewModel.useTimer)
+                .gameButtonModifier(buttonColor: Color.orange, buttonText: "Timer?")
+                .onChange(of: viewModel.useTimer, {viewModel.playSoundEffect(sound: GameViewModel.GameSounds.input)})
+            
             ToggleButton(
                 title: "Custom",
                 isEnabled: viewModel.gameDifficulty == .custom,
