@@ -7,7 +7,6 @@
 
 import SwiftUI
 struct StartingScreen: View {
-    
     @ObservedObject var viewModel: GameViewModel
     @State var playedPress: Bool = false
         

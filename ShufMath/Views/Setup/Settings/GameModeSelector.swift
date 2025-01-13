@@ -10,6 +10,7 @@ import SwiftUI
 struct GameModeSelector: View {
     @ObservedObject var viewModel: GameViewModel
     var body: some View {
+
         HStack{
             GameSetupButton(
                 buttonText: "×",
@@ -27,5 +28,6 @@ struct GameModeSelector: View {
                 action: {viewModel.setGameMode(.mixed)}
             )
         }
+
     }
 }
