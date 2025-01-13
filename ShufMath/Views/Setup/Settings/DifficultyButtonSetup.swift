@@ -9,7 +9,9 @@ import SwiftUI
 
 struct DifficultyButtonsView: View {
     @ObservedObject var viewModel: GameViewModel
+    
     var body: some View {
+                
         HStack{
             createDifficultyButton(
                 buttonText: "Easy",
