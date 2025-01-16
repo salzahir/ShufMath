@@ -38,7 +38,10 @@ struct GameFeatureToggles: View {
                     viewModel.useCustom.toggle()
             })
             .sheet(isPresented: $isCustomSettingsPresented) {
-                CustomSettingsSheet(viewModel: viewModel, isCustomSettingsPresented: $isCustomSettingsPresented)
+                CustomSettingsSheet(
+                    viewModel: viewModel,
+                    isCustomSettingsPresented: $isCustomSettingsPresented
+                )
             }
             
             ToggleButton(
@@ -48,8 +51,10 @@ struct GameFeatureToggles: View {
                 action: {
                 showUserStats.toggle()
             })
-            .onChange(of: showUserStats, {viewModel.playSoundEffect(sound: GameViewModel.GameSounds.input)})
-            .sheet(isPresented: $showUserStats){
+            .onChange(of: showUserStats) {
+                viewModel.playSoundEffect(sound: GameViewModel.GameSounds.input)
+            }
+            .sheet(isPresented: $showUserStats) {
                 UserStatsSheet(stats: $viewModel.gameModel.userStats, viewModel: viewModel)
             }
         }
