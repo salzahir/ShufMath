@@ -8,7 +8,6 @@
 import SwiftUI
 struct StartingScreen: View {
     @ObservedObject var viewModel: GameViewModel
-    @State var playedPress: Bool = false
         
     var body: some View {
         VStack(spacing: 10){
@@ -21,10 +20,8 @@ struct StartingScreen: View {
                 
                 Button("Play"){
                     viewModel.startGame()
-                    playedPress.toggle()
                 }
-                .playButtonView(playedPress: $playedPress, activeGame: viewModel.activeGame)
-                .disabled(viewModel.gameLock)
+                .playButtonView(gameLock: viewModel.gameLock)
             }
         }
     }
@@ -56,25 +53,25 @@ extension View {
 }
 
 struct playButtonViewModifer: ViewModifier {
-    @Binding var playedPress : Bool
-    var activeGame : Bool
+    let gameLock: Bool
     func body(content: Content) -> some View {
         content
             .font(.title2)
             .fontWeight(.bold)
             .padding()
             .frame(maxWidth: .infinity)
-            .background(playedPress && activeGame ? Color.blue : Color.blue.opacity(0.25))
+            .background(!gameLock ? Color.blue : Color.blue.opacity(0.25))
             .foregroundColor(.white)
             .cornerRadius(10)
             .shadow(radius: 5)
             .padding(.horizontal)
+            .disabled(gameLock)
     }
 }
 
 extension View {
-    public func playButtonView(playedPress: Binding<Bool>, activeGame: Bool) -> some View {
-        self.modifier(playButtonViewModifer(playedPress: playedPress, activeGame: activeGame))
+    public func playButtonView(gameLock: Bool) -> some View {
+        self.modifier(playButtonViewModifer(gameLock: gameLock))
     }
 }
 
