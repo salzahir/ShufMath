@@ -30,6 +30,7 @@ struct ReviewGameView: View {
                 }
             }
         }
+        .interactiveDismissDisabled(true)  // Prevent sheet dismissal while in review breaks app otherwise
         .background(.lightBackground)
     }
 }

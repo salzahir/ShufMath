@@ -26,17 +26,3 @@ struct ImageButton: View {
         .customButtonStyle(buttonText: buttonText, color: color)
     }
 }
-
-
-//var body: some View {
-//    Button(action: action) {
-//        HStack{
-//            Image(systemName: "xmark.circle.fill")
-//                .resizable()
-//                .scaledToFit()
-//                .frame(width: 24, height: 24)
-//            Text("Quit")
-//        }
-//    }
-//    .customButtonStyle(buttonText: "Quit", color: Color.red)
-//}
