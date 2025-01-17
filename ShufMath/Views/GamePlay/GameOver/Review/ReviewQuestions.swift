@@ -39,11 +39,3 @@ struct ReviewQuestionView: View {
     }
 }
 
-//#Preview {
-//    Text("Hello, world!")
-//        .modifier(MyModifier())
-//}
-
-//#Preview {
-//    ReviewGameView(viewModel: .constant(GameViewModel()))
-//}

@@ -19,9 +19,7 @@ struct ContentView: View {
                     GameContainer(viewModel: viewModel)
                 }
             }
-            
         }
-
     }
 }
 

@@ -11,7 +11,6 @@ import SwiftUI
 struct GameOverView: View {
     
     @ObservedObject var viewModel: GameViewModel
-    @Environment(\.dismiss) var dismiss // Use dismiss() instead of presentationMode
 
     var body: some View {
         
@@ -65,9 +64,6 @@ struct GameOverView: View {
                 .shadow(radius: 35)
             }
             
-        }
-        .onDisappear {
-              dismiss() // Dismiss the sheet when the view disappears
         }
     }
 }

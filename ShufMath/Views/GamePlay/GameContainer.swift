@@ -17,8 +17,7 @@ struct GameContainer: View {
             case .inProgress:
                 MainGameView(viewModel: viewModel)
             case .finished:
-                Text("Game Over Screen")
-                    .hidden()
+                Color.clear
                     .sheet(isPresented: $viewModel.isGameOver, onDismiss: {viewModel.playAgain()}) {
                         GameOverView(viewModel: viewModel)
                     }

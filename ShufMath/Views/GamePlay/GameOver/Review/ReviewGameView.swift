@@ -10,8 +10,6 @@ import SwiftUI
 struct ReviewGameView: View {
     
     @ObservedObject var viewModel: GameViewModel
-    @Environment(\.dismiss) var dismiss // Use dismiss() instead of presentationMode
-
     var gameQuestions : [Question]
     
     var body: some View {
@@ -32,14 +30,7 @@ struct ReviewGameView: View {
                 }
             }
         }
+        .interactiveDismissDisabled(true)  // Prevent sheet dismissal while in review breaks app otherwise
         .background(.lightBackground)
-        .gesture(DragGesture()) // Disable swipe back gesture
-        
-    // You can add a button or other gesture to manually dismiss the view
-        .navigationBarItems(trailing: Button(action: {
-            dismiss() // Dismiss the view when the button is tapped
-        }) {
-            Text("Done")
-        })
     }
 }
