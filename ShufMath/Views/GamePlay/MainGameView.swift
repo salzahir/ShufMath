@@ -33,15 +33,13 @@ struct MainGameView: View {
             }
         }
         .toolbar{
-            if viewModel.activeGame {
-                ImageButton(
-                    action: {
-                        viewModel.playAgain()
-                    },
-                    buttonText: "Quit",
-                    color: Color.red,
-                    image: "xmark.circle.fill")
-            }
+            ImageButton(
+                action: {
+                    viewModel.playAgain()
+                },
+                buttonText: "Quit",
+                color: Color.red,
+                image: "xmark.circle.fill")
         }
         .padding(.top, UIDevice.current.userInterfaceIdiom == .pad ? 40 : 25)
     }

@@ -21,10 +21,6 @@ struct GameAlert: View {
         .alert(viewModel.alertMessage.rawValue + viewModel.extraMessage, isPresented: $viewModel.showAlert) {
             Button("OK", role: .cancel){}
         }
-        
-        .sheet(isPresented: $viewModel.isGameOver, onDismiss: {viewModel.playAgain()}) {
-            GameOverView(viewModel: viewModel)
-        }
     }
 }
 
@@ -48,9 +44,4 @@ extension View {
         modifier(StyledButtonModifier(backgroundColor: backgroundColor))
     }
 }
-
-
-//#Preview {
-//    GameOverView(game: .constant(Game()))
-//}
 

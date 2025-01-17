@@ -282,8 +282,13 @@ class GameViewModel: ObservableObject {
     
     /// Resets the game to default values after game is finished
     func playAgain() {
+        print("DEBUG: Starting playAgain")
+        print("DEBUG: Current gameState: \(gameState)")
         updateStats()
         resetGameStats()
+        
+        print("DEBUG: After resetGameStats in playAgain")
+        print("DEBUG: Final gameState: \(gameState)")
         playSoundEffect(sound: GameSounds.input)
     }
     
@@ -293,7 +298,7 @@ class GameViewModel: ObservableObject {
             totalQuestions: gameModel.totalQuestions,
             highestStreak: gameModel.highestStreak
         )
-        
+       
         saveUserData()
         
         if hadPerfectGame{
@@ -308,6 +313,8 @@ class GameViewModel: ObservableObject {
     }
     
     private func resetGameStats() {
+        print("DEBUG: Starting resetGameStats")
+        print("DEBUG: Current gameState before reset: \(gameState)")
         
         // Reset Game Logic Resets Everything back to default values
         gameModel.currentStreak = 0
@@ -315,8 +322,14 @@ class GameViewModel: ObservableObject {
         gameModel.totalQuestions = 0
         gameModel.correctAnswers = 0
         gameModel.index = 0
-        gameState = .notStarted
-        gameModel.questionsArr = []
+        
+        print("DEBUG: About to change gameState to notStarted")
+
+        gameModel.questionsArr = [] // Clear the array first
+        print("DEBUG: Cleared questionsArr, Count: \(gameModel.questionsArr.count)")
+        gameState = .notStarted // Now change the state
+        print("DEBUG: gameState after change: \(gameState)")
+        
         extraMessage = ""
         gameModel.skips = 3
         useTimer = false
@@ -326,6 +339,7 @@ class GameViewModel: ObservableObject {
         userInput = ""
         gameMode = nil
         gameDifficulty = nil
+        print("DEBUG: Finished resetGameStats")
         playSoundEffect(sound: GameSounds.input)
     }
     

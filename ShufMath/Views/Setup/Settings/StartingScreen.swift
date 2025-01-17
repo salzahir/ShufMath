@@ -12,20 +12,18 @@ struct StartingScreen: View {
         
     var body: some View {
         VStack(spacing: 10){
-            if !viewModel.activeGame {
-                Text("Welcome to ShufMath!")
-                    .titleView()
-                
-                GameSetupView(viewModel: viewModel)
-                Spacer()
-                
-                Button("Play"){
-                    viewModel.startGame()
-                    playedPress.toggle()
-                }
-                .playButtonView(playedPress: $playedPress, activeGame: viewModel.activeGame)
-                .disabled(viewModel.gameLock)
+            Text("Welcome to ShufMath!")
+                .titleView()
+            
+            GameSetupView(viewModel: viewModel)
+            Spacer()
+            
+            Button("Play"){
+                viewModel.startGame()
+                playedPress.toggle()
             }
+            .playButtonView(playedPress: $playedPress, activeGame: viewModel.activeGame)
+            .disabled(viewModel.gameLock)
         }
     }
 }
