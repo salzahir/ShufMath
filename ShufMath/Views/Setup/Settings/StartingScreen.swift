@@ -10,20 +10,24 @@ struct StartingScreen: View {
     @ObservedObject var viewModel: GameViewModel
         
     var body: some View {
-        VStack(spacing: 10){
-            if !viewModel.activeGame {
-                Text("Welcome to ShufMath!")
-                    .titleView()
-                
-                GameSetupView(viewModel: viewModel)
-                Spacer()
-                
-                Button("Play"){
-                    viewModel.startGame()
+        GeometryReader { geometry in
+            VStack(spacing: 30){
+                if !viewModel.activeGame {
+                    Text("Welcome to ShufMath!")
+                        .titleView()
+                    
+                    GameSetupView(viewModel: viewModel)
+                                        
+                    Button("Play"){
+                        viewModel.startGame()
+                    }
+                    .buttonStyle(.plain) 
+                    .playButtonView(gameLock: viewModel.gameLock)
                 }
-                .playButtonView(gameLock: viewModel.gameLock)
             }
+            .padding(.top, geometry.size.height * 0.1)
         }
+        .edgesIgnoringSafeArea(.top)
     }
 }
 
@@ -34,6 +38,7 @@ struct titleViewModifer: ViewModifier {
             .fontWeight(.bold)
             .foregroundColor(Color.white)
             .padding([.top, .bottom], 8)
+            .padding(.horizontal)
             .background(
                 LinearGradient(
                     gradient: Gradient(colors: [.mint, .yellow]),
@@ -43,6 +48,8 @@ struct titleViewModifer: ViewModifier {
             )
             .cornerRadius(5)
             .padding(.horizontal)
+            .padding(.top, 20)
+
     }
 }
 
@@ -59,13 +66,14 @@ struct playButtonViewModifer: ViewModifier {
             .font(.title2)
             .fontWeight(.bold)
             .padding()
-            .frame(maxWidth: .infinity)
+            .frame(maxWidth: .infinity, maxHeight: 50)
             .background(!gameLock ? Color.blue : Color.blue.opacity(0.25))
             .foregroundColor(.white)
             .cornerRadius(10)
             .shadow(radius: 5)
             .padding(.horizontal)
             .disabled(gameLock)
+            .contentShape(Rectangle())
     }
 }
 
@@ -75,6 +83,6 @@ extension View {
     }
 }
 
-//#Preview {
-//    StartingScreen(game: .constant(Game()))
-//}
+#Preview {
+    StartingScreen(viewModel: GameViewModel())
+}

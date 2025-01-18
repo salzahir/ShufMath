@@ -12,7 +12,7 @@ struct ReviewQuestionModifier: ViewModifier {
     
     func body(content: Content) -> some View{
         content
-            .frame(width: .infinity)
+            .frame(maxWidth: .infinity)
             .padding()
             .fontWeight(.bold)
             .background(color)

@@ -39,11 +39,11 @@ struct GridView: View {
                     labelHint: "Deletes the last digit entered",
                     action: {viewModel.removeLastNumber()}
                 )
-                .padding(.vertical)
+//                .padding(.vertical)
                 .padding(.horizontal)
                 .sensoryFeedback(.error, trigger: viewModel.userInput)
             }
-            .padding(.vertical)
+//            .padding(.vertical)
             .padding(.horizontal)
         }
     }

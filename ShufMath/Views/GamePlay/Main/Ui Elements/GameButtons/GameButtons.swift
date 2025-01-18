@@ -13,7 +13,6 @@ struct GameButtons: View {
     var body: some View {
         // Buttons
         HStack{
-    
             ImageButton(
                 action: {
                     viewModel.processAnswer()
@@ -31,28 +30,6 @@ struct GameButtons: View {
                 image: "arrow.right.circle.fill")
                                 
         }
-        .padding(16)
-    }
-}
-
-struct ButtonStyleModifier: ViewModifier {
-    var paddingAmount: CGFloat = 8.0
-    var buttonText: String
-    var color: Color
-    
-    func body(content: Content) -> some View {
-        content
-            .frame(maxWidth: .infinity)
-            .padding(paddingAmount)
-            .background(color)
-            .foregroundStyle(.white)
-            .cornerRadius(10)
-            .accessibilityLabel("Tap to \(buttonText)")
-    }
-}
-
-extension View {
-    func customButtonStyle(paddingAmount: CGFloat = 8.0, buttonText: String, color: Color) -> some View {
-        self.modifier(ButtonStyleModifier(paddingAmount: paddingAmount, buttonText: buttonText, color: color))
+        .padding(10)
     }
 }

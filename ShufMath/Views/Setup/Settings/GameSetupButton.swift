@@ -14,6 +14,7 @@ struct GameSetupButton: View {
     
     var body: some View {
         Button(buttonText, action: action)
+            .buttonStyle(.plain)
             .gameButtonModifier(buttonColor: buttonColor, buttonText: buttonText)
     }
 }

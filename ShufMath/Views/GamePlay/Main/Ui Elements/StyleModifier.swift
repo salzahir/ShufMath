@@ -1,28 +1,11 @@
 //
-//  GameAlert.swift
-//  edutainment
+//  StyleModifier.swift
+//  ShufMath
 //
-//  Created by Salman Z on 12/23/24.
+//  Created by Salman Z on 1/18/25.
 //
-
-// Plan To Convert Game Alert View to a seperate Struct
 
 import SwiftUI
-
-struct GameAlert: View {
-    
-    @ObservedObject var viewModel: GameViewModel
-
-    var body: some View {
-        VStack{
-
-            
-        }
-        .alert(viewModel.alertMessage.rawValue + viewModel.extraMessage, isPresented: $viewModel.showAlert) {
-            Button("OK", role: .cancel){}
-        }
-    }
-}
 
 struct StyledButtonModifier: ViewModifier {
     let backgroundColor: Color
@@ -44,4 +27,3 @@ extension View {
         modifier(StyledButtonModifier(backgroundColor: backgroundColor))
     }
 }
-
