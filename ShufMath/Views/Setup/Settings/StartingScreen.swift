@@ -21,6 +21,7 @@ struct StartingScreen: View {
                     Button("Play"){
                         viewModel.startGame()
                     }
+                    .buttonStyle(.plain) 
                     .playButtonView(gameLock: viewModel.gameLock)
                 }
             }

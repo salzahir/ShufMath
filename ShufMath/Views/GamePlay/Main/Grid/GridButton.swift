@@ -27,6 +27,7 @@ struct GridButton: View {
                 .GridViewMod(item: item, userInput: userInput, isPressed: isPressed)
                 .accessibilityLabel(labelMessage)
                 .accessibilityHint(labelHint)
+                .buttonStyle(.plain)
         }
     }
 }

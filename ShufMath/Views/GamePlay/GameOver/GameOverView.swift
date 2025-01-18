@@ -47,6 +47,7 @@ struct GameOverView: View {
                         dismiss()
                         viewModel.playAgain()
                     }
+                    .buttonStyle(.plain)
                     .styledButton(backgroundColor: Color.teal)
 
                     NavigationLink(
@@ -56,6 +57,7 @@ struct GameOverView: View {
                         )
                     ){
                         Text("Review Answers")
+                            .buttonStyle(.plain)
                             .styledButton(backgroundColor: Color.yellow)
                     }
                 }

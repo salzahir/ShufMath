@@ -15,7 +15,6 @@ struct GridButtonModifer: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .buttonStyle(.plain)
             .shadow(radius: 5)
             .frame(height: 50)
             .overlay(
