@@ -11,13 +11,13 @@ struct StartingScreen: View {
         
     var body: some View {
         GeometryReader { geometry in
-            VStack(spacing: 25){
+            VStack(spacing: 30){
                 if !viewModel.activeGame {
                     Text("Welcome to ShufMath!")
                         .titleView()
                     
                     GameSetupView(viewModel: viewModel)
-                    
+                                        
                     Button("Play"){
                         viewModel.startGame()
                     }

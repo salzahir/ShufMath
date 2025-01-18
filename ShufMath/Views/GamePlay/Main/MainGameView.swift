@@ -43,13 +43,5 @@ struct MainGameView: View {
                 color: Color.red,
                 image: "xmark.circle.fill")
         }
-//        .padding(.top, UIDevice.current.userInterfaceIdiom == .pad ? 40 : 25)
     }
 }
-
-
-
-
-//#Preview {
-//    MainGameView(game: .constant(Game()))
-//}

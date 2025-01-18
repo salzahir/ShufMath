@@ -28,26 +28,3 @@ struct ScoreTitle: View {
         .accessibilityLabel("Your current score is \(viewModel.gameModel.correctAnswers) out of \(viewModel.gameModel.totalQuestions)")
     }
 }
-
-struct ScoreTitleModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .fontWeight(.bold)
-            .frame(width: 300, height: 150)
-            .padding()
-            .background(Color.teal.opacity(0.8))
-            .clipShape(RoundedRectangle(cornerRadius: 25))
-            .shadow(radius: 10)
-    }
-}
-
-extension View {
-    func customScoreTitleModifier() -> some View {
-        self.modifier(ScoreTitleModifier())
-    }
-}
-
-
-//#Preview {
-//    ScoreTitle(game: .constant(Game()))
-//}
