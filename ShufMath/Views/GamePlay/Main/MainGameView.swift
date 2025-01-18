@@ -18,7 +18,6 @@ struct MainGameView: View {
                 ScoreTitle(viewModel: viewModel)
                     .padding(.top, UIDevice.current.userInterfaceIdiom == .pad ? 40 : 25)
 
-//                Spacer()
                 QuestionView(
                     index: viewModel.gameModel.index,
                     questionText: viewModel.gameModel.questionsArr[viewModel.gameModel.index].questionText

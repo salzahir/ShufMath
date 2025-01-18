@@ -14,7 +14,7 @@ struct TimerView: View {
     var body: some View {
         ProgressView(
             "Time is ticking…",
-            value: min(viewModel.timerAmount),
+            value: viewModel.timerAmount,
             total: viewModel.timeLimit
         )
         .onReceive(viewModel.timer) { _ in

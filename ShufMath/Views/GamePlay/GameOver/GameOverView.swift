@@ -57,7 +57,6 @@ struct GameOverView: View {
                         )
                     ){
                         Text("Review Answers")
-                            .buttonStyle(.plain)
                             .styledButton(backgroundColor: Color.yellow)
                     }
                 }
@@ -66,6 +65,7 @@ struct GameOverView: View {
                 .background(Color.yellow)
                 .cornerRadius(20)
                 .shadow(radius: 35)
+                .buttonStyle(.plain)
             }
             
         }

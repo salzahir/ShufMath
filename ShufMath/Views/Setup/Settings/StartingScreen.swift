@@ -73,6 +73,7 @@ struct playButtonViewModifer: ViewModifier {
             .shadow(radius: 5)
             .padding(.horizontal)
             .disabled(gameLock)
+            .contentShape(Rectangle())
     }
 }
 
