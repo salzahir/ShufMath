@@ -10,12 +10,13 @@ import SwiftUI
 struct ReviewQuestionView: View {
     @ObservedObject var viewModel: GameViewModel
     var gameQuestion : Question
+    let index: Int
     
     var body: some View{
         
         VStack(alignment: .center, spacing: 10){
             
-            Text("Question number \(viewModel.gameModel.index+1)")
+            Text("Question number \(index)")
                 .reviewQuestionModifier()
             
             Text(gameQuestion.questionText)

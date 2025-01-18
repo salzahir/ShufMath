@@ -68,11 +68,4 @@ struct CustomSettingsView: View {
     }
 }
 
-
-//#Preview {
-//    @Binding var on: Bool
-//    CustomSettingsView(isCustomSettingsPresented: $on, viewModel: GameViewModel())
-//}
-
-
 struct CustomSettingsView_Previews: PreviewProvider { @State static var showSettings = true; static var previews: some View { CustomSettingsView(isCustomSettingsPresented: $showSettings, viewModel: GameViewModel()) } }

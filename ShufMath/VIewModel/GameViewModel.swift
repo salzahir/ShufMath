@@ -151,7 +151,7 @@ class GameViewModel: ObservableObject {
     
     /// Sets up the difficulty before the game starts based on users choice
     func gameDifficultySetup(Difficulty: GameModel.GameDifficulty){
-        
+        useCustom = false
         switch Difficulty {
         case .easy:
             setupEasyMode()
@@ -162,7 +162,6 @@ class GameViewModel: ObservableObject {
         // Absolute Chaos for the user can be the easiest game or hardest all goes
         case .random:
             setupRandomMode()
-            
         case .custom:
             break
             
@@ -282,13 +281,8 @@ class GameViewModel: ObservableObject {
     
     /// Resets the game to default values after game is finished
     func playAgain() {
-        print("DEBUG: Starting playAgain")
-        print("DEBUG: Current gameState: \(gameState)")
         updateStats()
         resetGameStats()
-        
-        print("DEBUG: After resetGameStats in playAgain")
-        print("DEBUG: Final gameState: \(gameState)")
         playSoundEffect(sound: GameSounds.input)
     }
     
@@ -313,9 +307,6 @@ class GameViewModel: ObservableObject {
     }
     
     private func resetGameStats() {
-        print("DEBUG: Starting resetGameStats")
-        print("DEBUG: Current gameState before reset: \(gameState)")
-        
         // Reset Game Logic Resets Everything back to default values
         gameModel.currentStreak = 0
         gameModel.highestStreak = 0
@@ -323,13 +314,8 @@ class GameViewModel: ObservableObject {
         gameModel.correctAnswers = 0
         gameModel.index = 0
         
-        print("DEBUG: About to change gameState to notStarted")
-
         gameModel.questionsArr = [] // Clear the array first
-        print("DEBUG: Cleared questionsArr, Count: \(gameModel.questionsArr.count)")
         gameState = .notStarted // Now change the state
-        print("DEBUG: gameState after change: \(gameState)")
-        
         extraMessage = ""
         gameModel.skips = 3
         useTimer = false
@@ -339,7 +325,7 @@ class GameViewModel: ObservableObject {
         userInput = ""
         gameMode = nil
         gameDifficulty = nil
-        print("DEBUG: Finished resetGameStats")
+        useCustom = false
         playSoundEffect(sound: GameSounds.input)
     }
     

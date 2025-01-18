@@ -18,7 +18,8 @@ struct ReviewGameView: View {
                 ForEach(gameQuestions.indices, id: \.self) { idx in
                     ReviewQuestionView(
                         viewModel: viewModel,
-                        gameQuestion: viewModel.gameModel.questionsArr[idx]
+                        gameQuestion: viewModel.gameModel.questionsArr[idx],
+                        index: idx+1
                     )
                     .accessibilityLabel("Question number \(idx + 1)")
                     .padding()

@@ -36,6 +36,6 @@ struct GameSetupView: View {
                 )
             }
         }
-        .padding()
+//        .padding()
     }
 }

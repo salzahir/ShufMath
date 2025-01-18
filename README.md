@@ -47,10 +47,13 @@ The app icon, **appIcon**, represents the app's dynamic and interactive nature. 
 Here’s an example of the game setup and in-game view:
 
 ### Game Setup
-![Game Setup](images/start.png)
+![Game Setup](images/start.jpg)
 
 ### In-Game View
-![In-Game View](images/in-game.png)
+![In-Game View](images/in-game.jpg)
+
+### Game Over View
+![Game Over View](images/game-over.jpg)
 
 ## Installation 🚀
 1. Clone the repository:
