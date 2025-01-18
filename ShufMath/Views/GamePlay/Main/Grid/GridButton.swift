@@ -22,7 +22,7 @@ struct GridButton: View {
         Button(action: {
             action()
         }) {
-            RoundedRectangle(cornerRadius: 15)
+            RoundedRectangle(cornerRadius: 10)
                 .fill(Color.orange)
                 .GridViewMod(item: item, userInput: userInput, isPressed: isPressed)
                 .accessibilityLabel(labelMessage)

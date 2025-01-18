@@ -13,7 +13,6 @@ struct GameButtons: View {
     var body: some View {
         // Buttons
         HStack{
-    
             ImageButton(
                 action: {
                     viewModel.processAnswer()
@@ -31,7 +30,7 @@ struct GameButtons: View {
                 image: "arrow.right.circle.fill")
                                 
         }
-        .padding(16)
+        .padding(10)
     }
 }
 

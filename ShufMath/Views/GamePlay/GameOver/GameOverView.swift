@@ -11,6 +11,7 @@ import SwiftUI
 struct GameOverView: View {
     
     @ObservedObject var viewModel: GameViewModel
+    @Environment(\.dismiss) var dismiss
 
     var body: some View {
         
@@ -43,6 +44,7 @@ struct GameOverView: View {
                         .padding(.bottom)
                     
                     Button("Play Again"){
+                        dismiss()
                         viewModel.playAgain()
                     }
                     .styledButton(backgroundColor: Color.teal)

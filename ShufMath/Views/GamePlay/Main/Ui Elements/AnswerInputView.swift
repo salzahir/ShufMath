@@ -20,7 +20,7 @@ struct AnswerInputView: View {
                 .accessibilityHint("Answer input field")
         }
         .padding()
-        .font(.title2)
+        .font(.headline)
         .fontWeight(.bold)
         .cornerRadius(10)
         .shadow(radius: 5)

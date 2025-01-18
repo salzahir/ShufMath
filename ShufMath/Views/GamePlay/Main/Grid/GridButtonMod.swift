@@ -15,13 +15,14 @@ struct GridButtonModifer: ViewModifier {
     
     func body(content: Content) -> some View {
         content
+            .buttonStyle(.plain)
             .shadow(radius: 5)
-            .frame(height: 55)
+            .frame(height: 50)
             .overlay(
                 Text("\(item)")
                     .foregroundColor(.black)
             )
-            .cornerRadius(12)
+            .cornerRadius(10)
             .scaleEffect(isPressed ? 0.9 : 1.0)
             .animation(.spring(), value: isPressed)
             .shadow(radius: 3)

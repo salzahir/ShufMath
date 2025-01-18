@@ -16,7 +16,9 @@ struct MainGameView: View {
         VStack {
             if viewModel.activeGame {
                 ScoreTitle(viewModel: viewModel)
-                Spacer()
+                    .padding(.top, UIDevice.current.userInterfaceIdiom == .pad ? 40 : 25)
+
+//                Spacer()
                 QuestionView(
                     index: viewModel.gameModel.index,
                     questionText: viewModel.gameModel.questionsArr[viewModel.gameModel.index].questionText
@@ -30,6 +32,7 @@ struct MainGameView: View {
                 
                 GameButtons(viewModel: viewModel)
                 GridView(viewModel: viewModel)
+                    .padding(.bottom, 10)
             }
         }
         .toolbar{
@@ -41,7 +44,7 @@ struct MainGameView: View {
                 color: Color.red,
                 image: "xmark.circle.fill")
         }
-        .padding(.top, UIDevice.current.userInterfaceIdiom == .pad ? 40 : 25)
+//        .padding(.top, UIDevice.current.userInterfaceIdiom == .pad ? 40 : 25)
     }
 }
 

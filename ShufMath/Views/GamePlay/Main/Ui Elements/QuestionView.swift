@@ -24,7 +24,7 @@ struct QuestionView: View {
                 .onAppear {
                     questionOpacity = 0.0
                     withAnimation(.easeIn(duration: 0.5)) {
-                        questionOpacity = 1.0  // Fades in
+                        questionOpacity = 1.0
                     }
                 }
         }

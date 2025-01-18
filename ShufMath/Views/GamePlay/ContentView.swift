@@ -15,7 +15,7 @@ struct ContentView: View {
         NavigationStack{
             ZStack {
                 BackGroundView()
-                VStack(spacing: 10){
+                VStack(){
                     GameContainer(viewModel: viewModel)
                 }
             }
