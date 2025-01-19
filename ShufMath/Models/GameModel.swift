@@ -1,6 +1,6 @@
 //
 //  GameModel.swift
-//  edutainment
+//  ShufMath
 //
 //  Created by Salman Z on 12/23/24.
 //

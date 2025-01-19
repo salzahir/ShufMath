@@ -1,6 +1,6 @@
 //
-//  ReviewQuestions.swift
-//  edutainment
+//  ReviewQuestion.swift
+//  ShufMath
 //
 //  Created by Salman Z on 12/30/24.
 //
