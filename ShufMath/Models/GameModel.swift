@@ -5,6 +5,8 @@
 //  Created by Salman Z on 12/23/24.
 //
 
+func testFunc () {print("Hello")}
+
 import Foundation
 
 /// Manages the core game logic for math practice, including question generation,

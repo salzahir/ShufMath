@@ -35,7 +35,7 @@ struct MainGameView: View {
             }
         }
         .toolbar{
-            ImageButton(
+            IconLabel(
                 action: {
                     viewModel.playAgain()
                 },

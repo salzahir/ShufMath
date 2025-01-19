@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CustomSettingsView: View {
+    
     @Binding var isCustomSettingsPresented: Bool
     @ObservedObject var viewModel: GameViewModel
     @Environment(\.dismiss) var dismiss
@@ -36,6 +37,7 @@ struct CustomSettingsView: View {
                 color: Color.pink,
                 stepperType: "Skips"
             )
+            
             Stepper(
                 "Timelimit is \(viewModel.timeLimit, specifier: "%.1f") seconds",
                 value: $viewModel.timeLimit,

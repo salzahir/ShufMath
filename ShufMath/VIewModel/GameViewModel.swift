@@ -133,7 +133,6 @@ class GameViewModel: ObservableObject {
         playSoundEffect(sound: GameSounds.input)
     }
     
-    
     func playSoundEffect(sound: SystemSoundID) {
         AudioServicesPlaySystemSound(sound)
     }

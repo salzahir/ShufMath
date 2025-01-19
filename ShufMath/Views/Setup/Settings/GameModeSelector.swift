@@ -28,6 +28,5 @@ struct GameModeSelector: View {
                 action: {viewModel.setGameMode(.mixed)}
             )
         }
-
     }
 }
