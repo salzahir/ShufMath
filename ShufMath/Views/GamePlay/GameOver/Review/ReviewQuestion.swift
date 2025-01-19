@@ -1,6 +1,6 @@
 //
-//  ReviewQuestions.swift
-//  edutainment
+//  ReviewQuestion.swift
+//  ShufMath
 //
 //  Created by Salman Z on 12/30/24.
 //
@@ -22,12 +22,12 @@ struct ReviewQuestionView: View {
             Text(gameQuestion.questionText)
                 .reviewQuestionModifier()
             
-            Text(viewModel.answerMessage(question: gameQuestion))
-                .reviewQuestionModifier(color: viewModel.answerBackgroundColor(question: gameQuestion))
+            Text(gameQuestion.questionStatus.questionMessage)
+                .reviewQuestionModifier(color: gameQuestion.questionStatus.answerBackgroundColor)
         }
         
         HStack{
-            Text("Your Answer: \(gameQuestion.userAnswer?.description ?? "Unanswered")")
+            Text("Your Answer: \(gameQuestion.userAnswer?.description ?? gameQuestion.questionStatus.questionMessage)")
             Spacer()
             Text("Correct Answer: \(String(format: "%.2f", gameQuestion.correctAnswer))")
         }
