@@ -78,25 +78,16 @@ class GameViewModel: ObservableObject {
         }
     }
 
-    // MARK ReviewQuestion View Answer Processing
-    
-    func isAnswerCorrect(question: Question) -> Bool {
-        return question.correctAnswer == question.userAnswer
-    }
-    
-    // Add computed properties to handle answer correctness and color
-    func answerMessage(question: Question) -> String {
-        return isAnswerCorrect(question: question) ? "You got this answer correct" : "You got this answer wrong"
-    }
-    
-    func answerBackgroundColor(question: Question) -> Color {
-           return isAnswerCorrect(question: question) ? .green : .red
-    }
-    
+    // MARK time Display Message
     func timeDisplay(question: Question) -> String {
-            return question.timeTaken == 0.0
-                ? "Exceeded time limit \(String(format: "%.2f", timeLimit)) seconds"
-                : "Time taken: \(String(format: "%.2f", question.timeTaken)) seconds"
+        switch question.questionStatus {
+        case .unanswered:
+            return "Time Limit Exceeded (\(String(format: "%.2f", timeLimit)) seconds)"
+        case .skipped:
+            return "Skipped"
+        case .correct, .incorrect:
+            return "Time taken: \(String(format: "%.2f", question.timeTaken)) seconds"
+        }
     }
     
     /// Updates the game timer, checking if the time limit has been reached.
@@ -246,7 +237,7 @@ class GameViewModel: ObservableObject {
         let questionText = "What is \(choice1) x \(choice2)?"
         let correctAnswer = Double(choice1 *  choice2)
         
-        return Question(questionText: questionText, correctAnswer: correctAnswer, useInteger: true, timeTaken: 0.0)
+        return Question(questionText: questionText, correctAnswer: correctAnswer, useInteger: true, timeTaken: 0.0, questionStatus: .unanswered)
     }
     
     /// Helper that generates division questions
@@ -257,7 +248,7 @@ class GameViewModel: ObservableObject {
         
         let useInteger = correctAnswer.truncatingRemainder(dividingBy: 1) == 0
 
-        return Question(questionText: questionText, correctAnswer: correctAnswer, useInteger: useInteger, timeTaken: 0.0)
+        return Question(questionText: questionText, correctAnswer: correctAnswer, useInteger: useInteger, timeTaken: 0.0, questionStatus: .unanswered)
     }
     
     /// Starts the game with values that player chose in game setup view
@@ -384,6 +375,8 @@ class GameViewModel: ObservableObject {
         
         nextQuestion()
         
+        gameModel.questionsArr[gameModel.index].questionStatus = .incorrect
+
         if isGameFinished(){
             return
         }
@@ -401,7 +394,8 @@ class GameViewModel: ObservableObject {
         if gameModel.skips > 0 {
                         
             gameModel.index += 1
-            
+            gameModel.questionsArr[gameModel.index].questionStatus = .skipped
+
             if isGameFinished(alertMessage: GameModel.AlertMessage.lastQuestionSkipped){
                 return
             }
@@ -409,7 +403,6 @@ class GameViewModel: ObservableObject {
             alertMessage = GameModel.AlertMessage.skippedQuestion
             gameModel.skips -= 1
             resetQuestion()
-            
         }
         
         else{
@@ -487,6 +480,8 @@ class GameViewModel: ObservableObject {
         if useTimer {
             gameModel.questionsArr[gameModel.index].timeTaken += timerAmount
         }
+        
+        gameModel.questionsArr[gameModel.index].questionStatus = .correct
         playSoundEffect(sound: GameSounds.correct)
     }
     
@@ -509,6 +504,9 @@ class GameViewModel: ObservableObject {
             gameModel.currentStreak = 0
             extraMessage += "\n" + GameModel.AlertMessage.streakLost.rawValue
         }
+        
+        gameModel.questionsArr[gameModel.index].questionStatus = .incorrect
+
         playSoundEffect(sound: GameSounds.incorrect)
     }
     
