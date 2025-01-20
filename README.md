@@ -46,7 +46,6 @@ The app icon, **appIcon**, represents the app's dynamic and interactive nature. 
 ## Game Views
 Here’s an example of the game setup and in-game view:
 
-
 ### Welcome Screen
 ![Welcome Setup](images/welcome.jpg)
 
@@ -58,6 +57,13 @@ Here’s an example of the game setup and in-game view:
 
 ### Game Over View
 ![Game Over View](images/game-over.jpg)
+
+## What I Learned
+- **State Management:** Gained proficiency in managing app state with `@StateObject`, `@ObservedObject`, and `@Binding` in SwiftUI, enabling efficient data flow and reactivity.
+- **UI/UX Design:** Applied basic UI/UX principles to improve the user interface, focusing on clarity and responsiveness. Integrated dynamic elements like haptic feedback, sound effects, and progress indicators for a more engaging experience.
+- **Model-View-ViewModel (MVVM) Architecture:** Refined understanding of the MVVM design pattern by restructuring the app to separate business logic from UI components, improving maintainability and testability.
+- **Game Logic Implementation:** Developed custom game logic, including handling user input, scoring, and question management. Implemented logic to ensure valid inputs and a smooth user experience.
+- **Git and Version Control:** Utilized Git for version control, making frequent commits and maintaining a well-structured commit history to track project progress.
 
 ## Installation 🚀
 1. Clone the repository:
