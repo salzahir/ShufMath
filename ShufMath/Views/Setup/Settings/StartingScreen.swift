@@ -14,11 +14,13 @@ struct StartingScreen: View {
             VStack(spacing: 30){
                 if !viewModel.activeGame {
                     GameSetupView(viewModel: viewModel)
-                    Button("Play"){
-                        viewModel.startGame()
+                    
+                    Button(action: { viewModel.startGame() }) {
+                        IconLabelContent(buttonText: "Shuffle", image: "shuffle")
                     }
-                    .buttonStyle(.plain) 
+                    .buttonStyle(.plain)
                     .playButtonView(gameLock: viewModel.gameLock)
+                    
                     Spacer()
                 }
             }

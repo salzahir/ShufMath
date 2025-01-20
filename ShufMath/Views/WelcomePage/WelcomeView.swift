@@ -45,10 +45,10 @@ struct WelcomeView: View {
             .padding(.vertical, 20)
                         
             NavigationLink(destination: GameContainer(viewModel: viewModel)) {
-                Text("Ready to Shuffle?")
+                Text("Setup & Shuffle")
                     .gameButtonModifier(
                         buttonColor: Color.green.opacity(0.5),
-                        buttonText: "Ready to Shuffle?"
+                        buttonText: "Setup & Shuffle"
                     )
             }
             .buttonStyle(.plain)
