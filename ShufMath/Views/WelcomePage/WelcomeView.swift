@@ -9,6 +9,7 @@ import SwiftUI
 
 struct WelcomeView: View {
     @ObservedObject var viewModel: GameViewModel
+    @State var isPressed: Bool = false
 
     var body: some View {
         VStack(spacing: 20) {
@@ -26,7 +27,8 @@ struct WelcomeView: View {
             
             Text("Practice multiplication & division in a fun way!")
                 .multilineTextAlignment(.center)
-                .customButtonStyle(buttonText: "Practice multiplication & division in a fun way!", color: .brown)
+                .font(.headline)
+                .foregroundStyle(.white)
                 .padding(.horizontal)
             
             VStack(alignment: .leading, spacing: 20) {
@@ -44,10 +46,13 @@ struct WelcomeView: View {
                         
             NavigationLink(destination: GameContainer(viewModel: viewModel)) {
                 Text("Ready to Shuffle?")
-                    .buttonStyle(.plain)
-                    .gameButtonModifier(buttonColor: Color.green, buttonText: "Ready to Shuffle?")
-   
+                    .gameButtonModifier(
+                        buttonColor: Color.green.opacity(0.5),
+                        buttonText: "Ready to Shuffle?"
+                    )
             }
+            .buttonStyle(.plain)
+            .buttonStyle(.automatic)
             .padding(.top)
             .padding(.bottom)
         }

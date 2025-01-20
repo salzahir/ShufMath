@@ -15,7 +15,7 @@ struct playButtonViewModifer: ViewModifier {
             .fontWeight(.bold)
             .padding()
             .frame(maxWidth: .infinity, maxHeight: 50)
-            .background(!gameLock ? Color.blue : Color.blue.opacity(0.25))
+            .background(titleGradient.opacity(!gameLock ? 1 : 0.25))
             .foregroundColor(.white)
             .cornerRadius(10)
             .shadow(radius: 5)

@@ -23,7 +23,7 @@ struct GameSetupView: View {
                     .titleView()
                     .accessibilityLabel("Game Setup")
                     .accessibilityHint("This page will set up your game")
-                
+                Spacer()
                 GameModeSelector(viewModel: viewModel)
                 DifficultyButtonsView(viewModel: viewModel)
                 GameFeatureToggles(

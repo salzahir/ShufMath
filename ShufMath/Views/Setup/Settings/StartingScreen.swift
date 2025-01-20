@@ -13,14 +13,13 @@ struct StartingScreen: View {
         GeometryReader { geometry in
             VStack(spacing: 30){
                 if !viewModel.activeGame {
-                    
                     GameSetupView(viewModel: viewModel)
-                                        
                     Button("Play"){
                         viewModel.startGame()
                     }
                     .buttonStyle(.plain) 
                     .playButtonView(gameLock: viewModel.gameLock)
+                    Spacer()
                 }
             }
             .padding(.top, geometry.size.height * 0.1)
