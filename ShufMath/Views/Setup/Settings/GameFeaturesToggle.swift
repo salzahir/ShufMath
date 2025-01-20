@@ -15,7 +15,7 @@ struct GameFeatureToggles: View {
     @Binding var useRandom: Bool
     
     var body: some View {
-        VStack(spacing: 20){
+        VStack(spacing: 25){
             ToggleButton(
                 title: "Random?",
                 isEnabled: useRandom,
@@ -58,6 +58,7 @@ struct GameFeatureToggles: View {
                 UserStatsSheet(stats: $viewModel.gameModel.userStats, viewModel: viewModel)
             }
         }
+        .padding()
     }
 }
 

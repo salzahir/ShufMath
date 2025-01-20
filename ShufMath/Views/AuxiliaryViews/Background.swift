@@ -54,3 +54,9 @@ let goodContrastColors: [Color] = [
     Color.orange,         // Burnt Orange
     Color.brown           // Dark Brown
 ]
+
+let titleGradient = LinearGradient(
+    gradient: Gradient(colors: [.mint, .yellow]),
+    startPoint: .topLeading,
+    endPoint: .bottomTrailing
+)

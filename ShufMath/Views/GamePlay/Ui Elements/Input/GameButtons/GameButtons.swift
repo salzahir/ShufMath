@@ -13,7 +13,7 @@ struct GameButtons: View {
     var body: some View {
         // Buttons
         HStack{
-            ImageButton(
+            IconLabel(
                 action: {
                     viewModel.processAnswer()
                 },
@@ -21,7 +21,7 @@ struct GameButtons: View {
                 color: Color.green,
                 image: "checkmark.circle.fill")
             
-            ImageButton(
+            IconLabel(
                 action: {
                     viewModel.processAnswer(isSkipping: true)
                 },

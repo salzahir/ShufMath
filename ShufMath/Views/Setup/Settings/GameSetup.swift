@@ -20,12 +20,10 @@ struct GameSetupView: View {
         VStack(spacing: 25){
             Section() {
                 Text("Game Setup")
-                    .font(.headline)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
+                    .titleView()
                     .accessibilityLabel("Game Setup")
                     .accessibilityHint("This page will set up your game")
-                
+                Spacer()
                 GameModeSelector(viewModel: viewModel)
                 DifficultyButtonsView(viewModel: viewModel)
                 GameFeatureToggles(
@@ -36,6 +34,9 @@ struct GameSetupView: View {
                 )
             }
         }
-//        .padding()
     }
+}
+
+#Preview {
+    GameSetupView(viewModel: .init())
 }

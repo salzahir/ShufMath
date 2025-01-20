@@ -46,8 +46,12 @@ The app icon, **appIcon**, represents the app's dynamic and interactive nature. 
 ## Game Views
 Here’s an example of the game setup and in-game view:
 
+
+### Welcome Screen
+![Welcome Setup](images/welcome.jpg)
+
 ### Game Setup
-![Game Setup](images/start.jpg)
+![Game Setup](images/setup.jpg)
 
 ### In-Game View
 ![In-Game View](images/in-game.jpg)

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-
 /// Manages the core game logic for math practice, including question generation,
 /// scoring, and statistics tracking
 struct GameModel{
