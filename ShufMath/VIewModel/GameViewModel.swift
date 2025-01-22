@@ -280,14 +280,11 @@ class GameViewModel: ObservableObject {
         gameModel.userStats.updateUserStats(
             score: gameModel.correctAnswers,
             totalQuestions: gameModel.totalQuestions,
-            highestStreak: gameModel.highestStreak
+            highestStreak: gameModel.highestStreak,
+            hadPerfectGame: hadPerfectGame
         )
        
         saveUserData()
-        
-        if hadPerfectGame{
-            gameModel.userStats.perfectGames += 1
-        }
         
         // Sets High Score after Game is Over
         if gameModel.correctAnswers > gameModel.highScore {
@@ -424,6 +421,15 @@ class GameViewModel: ObservableObject {
         // Valid Number Check
         guard let _ = Double(userInput) else{
             return GameModel.AlertMessage.invalidInput
+        }
+        
+        guard let inputValue = Double(userInput), !inputValue.isNaN else {
+            return GameModel.AlertMessage.NaN
+        }
+        
+        // Simple math problems shouldn't have anyhting more than 5 numbers
+        if userInput.count > 5 {
+            alertMessage = .length
         }
         
         return nil

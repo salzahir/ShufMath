@@ -14,10 +14,13 @@ struct ToggleButton: View {
     let action: () -> Void
     
     var body: some View{
-        GameSetupButton(
-            buttonText: title,
-            buttonColor: isEnabled ? color : color.opacity(0.25),
-            action: action
-        )
+//        HStack{
+            GameSetupButton(
+                buttonText: title,
+                buttonColor: isEnabled ? color : color.opacity(0.25),
+                action: action
+            )
+//        }
     }
 }
+

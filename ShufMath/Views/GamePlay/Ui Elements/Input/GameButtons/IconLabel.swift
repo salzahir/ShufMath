@@ -34,5 +34,7 @@ struct IconLabelContent: View {
                 .scaledToFit()
                 .frame(width: 24, height: 24)
         }
+        .frame(maxWidth: .infinity)
+        .contentShape(Rectangle())
     }
 }
