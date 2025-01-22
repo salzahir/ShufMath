@@ -13,8 +13,16 @@ struct GameSetupButton: View {
     let action: () -> Void
     
     var body: some View {
-        Button(buttonText, action: action)
+        VStack{
+            Button(action: action) {
+                Text(buttonText)
+                    .frame(maxWidth: .infinity)
+            }
             .buttonStyle(.plain)
+            .contentShape(Rectangle())
             .gameButtonModifier(buttonColor: buttonColor, buttonText: buttonText)
+        }
+
     }
+
 }

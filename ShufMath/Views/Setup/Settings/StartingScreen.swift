@@ -15,10 +15,12 @@ struct StartingScreen: View {
                 if !viewModel.activeGame {
                     GameSetupView(viewModel: viewModel)
                     
-                    Button(action: { viewModel.startGame() }) {
-                        IconLabelContent(buttonText: "Shuffle", image: "shuffle")
-                    }
-                    .buttonStyle(.plain)
+                    IconLabel(
+                        action: {viewModel.startGame()},
+                        buttonText: "Shuffle",
+                        color: Color.clear,
+                        image: "shuffle"
+                    )
                     .playButtonView(gameLock: viewModel.gameLock)
                     
                     Spacer()
