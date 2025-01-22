@@ -15,11 +15,11 @@ struct GameSetupButton: View {
     var body: some View {
         VStack{
             Button(action: action) {
-                Text(buttonText)
-                    .frame(maxWidth: .infinity)
+            Text(buttonText)
+                .frame(maxWidth: .infinity)
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .contentShape(Rectangle())
             .gameButtonModifier(buttonColor: buttonColor, buttonText: buttonText)
         }
 

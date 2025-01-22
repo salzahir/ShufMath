@@ -64,5 +64,7 @@ struct GameModel{
         case emptyInput = "Empty input, please enter a number."
         case invalidInput = "Invalid Input please enter a valid number."
         case streakLost = "You lost your streak"
+        case NaN = "Not a number"
+        case length = "Input length is too long"
     }
 }

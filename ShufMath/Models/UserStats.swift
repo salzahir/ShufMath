@@ -19,7 +19,7 @@ struct UserStats: Codable {
     var longestStreak: Int = 0
 
     /// Updates the user’s statistics after each game, including their score, win/loss record, and average score.
-    mutating func updateUserStats(score: Int, totalQuestions: Int, highestStreak: Int){
+    mutating func updateUserStats(score: Int, totalQuestions: Int, highestStreak: Int, hadPerfectGame: Bool){
         
         gamesPlayed += 1
         totalScore += score
@@ -40,6 +40,10 @@ struct UserStats: Codable {
         
         if highestStreak > longestStreak {
             longestStreak = highestStreak
+        }
+        
+        if hadPerfectGame {
+            perfectGames += 1
         }
         
         averageScore = Double(totalScore) / Double(gamesPlayed)

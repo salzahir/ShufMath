@@ -16,6 +16,7 @@ struct TimerToggleButton: View {
 
         Toggle("Timer?", isOn: $viewModel.useTimer)
             .gameButtonModifier(buttonColor: buttonColor, buttonText: "Timer?")
+            .contentShape(Rectangle())
             .onChange(of: viewModel.useTimer, {viewModel.playSoundEffect(sound: GameViewModel.GameSounds.input)})
     }
 }
