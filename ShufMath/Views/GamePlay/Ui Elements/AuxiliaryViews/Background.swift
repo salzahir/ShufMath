@@ -46,13 +46,13 @@ extension ShapeStyle where Self == Color {
 
 let goodContrastColors: [Color] = [
     Color(.systemBlue),   // Navy / Royal Blue
-    Color(.systemGreen),  // Forest Green / Emerald
-    Color(.systemRed),    // Burgundy / Maroon
-    Color.black,          // Black
     Color.gray,           // Charcoal / Slate Gray
     Color.purple,         // Plum / Aubergine
     Color.orange,         // Burnt Orange
-    Color.brown           // Dark Brown
+    Color.brown,          // Dark Brown
+    Color.yellow,         // Golden Yellow
+    Color.teal,           // Teal / Cyan
+    Color.pink            // Magenta / Rose
 ]
 
 let titleGradient = LinearGradient(
