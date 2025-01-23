@@ -15,6 +15,7 @@ struct ReviewGameView: View {
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 10){
+                // Questions Section
                 ForEach(gameQuestions.indices, id: \.self) { idx in
                     ReviewQuestionView(
                         viewModel: viewModel,
