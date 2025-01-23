@@ -17,6 +17,7 @@ struct ScoreTitle: View {
             Text("Score: \(viewModel.gameModel.correctAnswers) / \(viewModel.gameModel.totalQuestions)")
             Text("Skips: \(viewModel.gameModel.skips)")
             Text("Difficulty: \(viewModel.gameDifficulty ?? GameModel.GameDifficulty.easy)")
+            Text("Mode: \(viewModel.gameMode ?? GameModel.GameMode.multiplication)")
             Text("Multiplier \(viewModel.gameModel.maxMultiplier)")
             Text("Streak \(viewModel.gameModel.currentStreak)")
             ProgressView(value: viewModel.progress){

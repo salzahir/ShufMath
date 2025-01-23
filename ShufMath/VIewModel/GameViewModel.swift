@@ -22,7 +22,7 @@ class GameViewModel: ObservableObject {
     @Published var gameState: GameModel.GameState = .notStarted
     @Published var alertMessage: GameModel.AlertMessage = .blank
     @Published var extraMessage = ""
-    @Published var gameDifficulty: GameModel.GameDifficulty?
+    @Published var gameDifficulty: GameModel.GameDifficulty? = nil
     @Published var gameMode: GameModel.GameMode? = nil
     @Published var useCustom: Bool = false
 
@@ -94,10 +94,17 @@ class GameViewModel: ObservableObject {
     /// If the time runs out, it processes the answer and resets the timer.
     /// - Note: This method also cancels the timer if the time limit is reached.
     func updateTimer(){
-        guard timerAmount < timeLimit else {
+        guard timerAmount <= timeLimit else {
             handleTimerOverflow()
             return
         }
+        
+//        if timerAmount >= timeLimit {
+//            isGameFinished()
+//            handleTimerOverflow()
+//            return
+//        }
+        
         timerAmount += incrementAmount
     }
     
@@ -185,7 +192,7 @@ class GameViewModel: ObservableObject {
     }
     
     private func setupRandomMode(){
-        gameModel.maxMultiplier = Int.random(in: 2...12)
+        gameModel.maxMultiplier = Int.random(in: 2...15)
         gameModel.totalQuestions = Int.random(in: 1...30)
         gameModel.skips = Int.random(in: 1...5)
         gameMode = GameModel.GameMode.allCases.randomElement()
@@ -355,7 +362,7 @@ class GameViewModel: ObservableObject {
     
     /// Used when players opt to use a timer in the game handles time out answers
     func handleTimeUp(){
-        
+                
         // Alert the user times up
         alertMessage = .timesUp
         showAlert = true
@@ -389,9 +396,9 @@ class GameViewModel: ObservableObject {
         
         if gameModel.skips > 0 {
                         
-            gameModel.index += 1
             gameModel.questionsArr[gameModel.index].questionStatus = .skipped
-
+            nextQuestion()
+            
             if isGameFinished(alertMessage: GameModel.AlertMessage.lastQuestionSkipped){
                 return
             }
@@ -508,6 +515,10 @@ class GameViewModel: ObservableObject {
             gameModel.highestStreak = gameModel.currentStreak
             gameModel.currentStreak = 0
             extraMessage += "\n" + GameModel.AlertMessage.streakLost.rawValue
+        }
+        
+        if useTimer {
+            gameModel.questionsArr[gameModel.index].timeTaken += timerAmount
         }
         
         gameModel.questionsArr[gameModel.index].questionStatus = .incorrect

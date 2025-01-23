@@ -28,27 +28,28 @@ struct GameOverView: View {
                     Text("You got \(viewModel.gameModel.correctAnswers)/\(viewModel.gameModel.totalQuestions)")
                         .font(.title2)
                         .padding()
+                    
                     Text(viewModel.hadPerfectGame ? "Perfect Game! Goodjob Rockstar" : "Goodgame")
                         .font(.headline)
                         .foregroundColor(viewModel.hadPerfectGame ? .green : .primary)
                         .padding(.bottom)
-                    
-                    Text("Your highest streak this game was \(viewModel.gameModel.highestStreak)")
-                        .font(.body)
-                        .padding()
-                    
+                                        
                     Text("Thank you for playing")
                         .font(.body)
                         .fontWeight(.bold)
                         .foregroundColor(.black)
                         .padding(.bottom)
                     
-                    Button("Play Again"){
+                    Button {
                         dismiss()
                         viewModel.playAgain()
+                    } label: {
+                        Text("Play Again")
+                            .frame(maxWidth: .infinity)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-                    .styledButton(backgroundColor: Color.teal)
+                    .styledButton(backgroundColor: .teal)
 
                     NavigationLink(
                         destination: ReviewGameView(
@@ -59,6 +60,14 @@ struct GameOverView: View {
                         Text("Review Answers")
                             .styledButton(backgroundColor: Color.yellow)
                     }
+                    
+                  NavigationLink(
+                      destination: GameSummary(viewModel: viewModel)
+                  ) {
+                      Text("View Game Summary")
+                          .styledButton(backgroundColor: Color.teal)
+                  }
+                    
                 }
                 .foregroundStyle(.black)
                 .padding()
