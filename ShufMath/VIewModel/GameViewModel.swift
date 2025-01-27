@@ -62,6 +62,10 @@ class GameViewModel: ObservableObject {
         gameModel.totalQuestions == 0 && !useCustom || gameMode == nil || gameDifficulty == nil
     }
     
+    var fullAlertMessage: String {
+        "\(alertMessage.rawValue) \(extraMessage)".trimmingCharacters(in: .whitespaces)
+    }
+    
     // MARK User Data Management
     func saveUserData() {
         if let savedUserData = try? JSONEncoder().encode(gameModel.userStats) {

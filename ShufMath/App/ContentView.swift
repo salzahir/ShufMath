@@ -16,6 +16,7 @@ struct ContentView: View {
             ZStack {
                 BackGroundView()
                 WelcomeView(viewModel: viewModel)
+                    .transition(.opacity)
             }
         }
     }

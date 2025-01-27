@@ -29,7 +29,7 @@ struct GameContainer: View {
             }
         }
         .navigationBarBackButtonHidden(true)
-        .alert(viewModel.alertMessage.rawValue + viewModel.extraMessage, isPresented: $viewModel.showAlert) {
+        .alert(viewModel.fullAlertMessage, isPresented: $viewModel.showAlert) {
             Button("OK", role: .cancel){}
         }
         // Changes isGameOver boolean for alerts based on the gameState

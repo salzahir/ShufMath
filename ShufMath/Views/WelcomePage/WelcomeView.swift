@@ -32,14 +32,23 @@ struct WelcomeView: View {
                 .padding(.horizontal)
             
             VStack(alignment: .leading, spacing: 20) {
-                IconLabelContent(buttonText: "Customizable Difficulty", image: "star.fill")
-                    .customButtonStyle(buttonText: "Customizable Difficulty", color: Color.teal)
+                IconLabelContent(
+                    buttonText: "Customizable Difficulty",
+                    image: "star.fill"
+                )
+                .customButtonStyle(buttonText: "Customizable Difficulty", color: Color.teal)
                 
-                IconLabelContent(buttonText: "Track your speed and progress", image: "timer")
-                    .customButtonStyle(buttonText: "Track your speed and progress", color: Color.orange)
+                IconLabelContent(
+                    buttonText: "Track your speed and progress",
+                    image: "timer"
+                )
+                .customButtonStyle(buttonText: "Track your speed and progress", color: Color.orange)
 
-                IconLabelContent(buttonText: "Beat your high scores", image: "chart.line.uptrend.xyaxis")
-                    .customButtonStyle(buttonText: "Beat your high scores", color: Color.yellow)
+                IconLabelContent(
+                    buttonText: "Beat your high scores",
+                    image: "chart.line.uptrend.xyaxis"
+                )
+                .customButtonStyle(buttonText: "Beat your high scores", color: Color.yellow)
             }
             .padding(.horizontal, 30)
             .padding(.vertical, 20)
@@ -50,9 +59,9 @@ struct WelcomeView: View {
                         buttonColor: Color.green.opacity(0.5),
                         buttonText: "Setup & Shuffle"
                     )
+                    .transition(.move(edge: .trailing))
             }
             .buttonStyle(.plain)
-            .buttonStyle(.automatic)
             .padding(.top)
             .padding(.bottom)
         }
