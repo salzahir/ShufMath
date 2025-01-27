@@ -21,7 +21,7 @@ struct GameFeatureToggles: View {
                 isEnabled: useRandom,
                 color: Color.random,
                 action: {
-                    viewModel.gameDifficultySetup(Difficulty: .random)
+                    viewModel.setupGameDifficulty(Difficulty: .random)
                     useRandom.toggle()
                 }
             )
@@ -33,7 +33,7 @@ struct GameFeatureToggles: View {
                 isEnabled: viewModel.gameDifficulty == .custom,
                 color: Color.teal,
                 action: {
-                    viewModel.gameDifficultySetup(Difficulty: .custom)
+                    viewModel.setupGameDifficulty(Difficulty: .custom)
                 isCustomSettingsPresented.toggle()
                     viewModel.useCustom.toggle()
             })

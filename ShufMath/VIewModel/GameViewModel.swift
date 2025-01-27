@@ -141,7 +141,7 @@ class GameViewModel: ObservableObject {
     // Various game functions
     
     /// Sets up the difficulty before the game starts based on users choice
-    func gameDifficultySetup(Difficulty: GameModel.GameDifficulty){
+    func setupGameDifficulty(Difficulty: GameModel.GameDifficulty){
         useCustom = false
         switch Difficulty {
         case .easy:
