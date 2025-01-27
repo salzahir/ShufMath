@@ -98,13 +98,7 @@ class GameViewModel: ObservableObject {
             handleTimerOverflow()
             return
         }
-        
-//        if timerAmount >= timeLimit {
-//            isGameFinished()
-//            handleTimerOverflow()
-//            return
-//        }
-        
+                
         timerAmount += incrementAmount
     }
     
@@ -147,7 +141,7 @@ class GameViewModel: ObservableObject {
     // Various game functions
     
     /// Sets up the difficulty before the game starts based on users choice
-    func gameDifficultySetup(Difficulty: GameModel.GameDifficulty){
+    func setupGameDifficulty(Difficulty: GameModel.GameDifficulty){
         useCustom = false
         switch Difficulty {
         case .easy:
@@ -373,17 +367,13 @@ class GameViewModel: ObservableObject {
             extraMessage += "\n" + GameModel.AlertMessage.incorrectAnswer.rawValue
         }
         
+        gameModel.questionsArr[gameModel.index].questionStatus = .incorrect
+        
         // Reset Timer State
         resetQuestion()
-        
-        nextQuestion()
-        
-        gameModel.questionsArr[gameModel.index].questionStatus = .incorrect
-
-        if isGameFinished(){
-            return
-        }
                 
+        nextQuestion()
+                        
         // Renable timer
         useTimer = true
         
@@ -571,6 +561,7 @@ class GameViewModel: ObservableObject {
         if gameModel.index != gameModel.midPoint{
             extraMessage = ""
         }
+        
         if useTimer{
             resetTimer()
         }

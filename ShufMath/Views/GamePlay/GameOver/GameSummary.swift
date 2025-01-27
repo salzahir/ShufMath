@@ -13,7 +13,7 @@ struct GameSummary: View {
     
     var body: some View {
         
-        VStack {
+        ScrollView {
             Text("Game Summary")
                 .titleView()
 
