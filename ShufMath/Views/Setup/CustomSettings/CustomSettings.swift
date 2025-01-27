@@ -71,3 +71,11 @@ struct CustomSettingsView: View {
 }
 
 struct CustomSettingsView_Previews: PreviewProvider { @State static var showSettings = true; static var previews: some View { CustomSettingsView(isCustomSettingsPresented: $showSettings, viewModel: GameViewModel()) } }
+
+
+
+struct CustomSlider: View {
+    var body: some View {
+        Text("Hello")
+    }
+}

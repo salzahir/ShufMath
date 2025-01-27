@@ -34,12 +34,12 @@ struct GameModel{
     }
     
     /// Different Difficulties available
-    enum GameDifficulty {
-        case easy
-        case medium
-        case hard
-        case custom
-        case random
+    enum GameDifficulty: String {
+        case easy = "Easy"
+        case medium = "Medium"
+        case hard = "Hard"
+        case custom = "Custom"
+        case random = "Random"
     }
     
     /// The different game modes users can play (types of questions)

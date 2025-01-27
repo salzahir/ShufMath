@@ -20,17 +20,18 @@ struct GameContainer: View {
                     .transition(.move(edge: .leading))
                 case .inProgress:
                         MainGameView(viewModel: viewModel)
-                    .transition(.move(edge: .trailing))
+                        .transition(.move(edge: .trailing))
                 case .finished:
                     Color.clear
-                        .sheet(isPresented: $viewModel.isGameOver, onDismiss: {viewModel.playAgain()}) {
-                            GameOverView(viewModel: viewModel)
-                        }
+                    .sheet(isPresented: $viewModel.isGameOver, onDismiss: {viewModel.playAgain()}) {
+                        GameOverView(viewModel: viewModel)
+                    }
             }
         }
-        .navigationBarBackButtonHidden(true) 
-
-        GameAlert(viewModel: viewModel)
+        .navigationBarBackButtonHidden(true)
+        .alert(viewModel.alertMessage.rawValue + viewModel.extraMessage, isPresented: $viewModel.showAlert) {
+            Button("OK", role: .cancel){}
+        }
         // Changes isGameOver boolean for alerts based on the gameState
         .onChange(of: viewModel.gameState) {
             viewModel.isGameOver = viewModel.gameState == .finished
