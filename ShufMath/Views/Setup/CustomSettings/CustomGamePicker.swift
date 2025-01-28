@@ -13,13 +13,20 @@ struct GamePickerView: View {
     @Binding var selectedChoice: Int
     
     var body: some View{
-        Text("Choose number of questions")
-        Picker(gameText, selection: $selectedChoice) {
-            ForEach(gameChoices, id: \.self){ number in
-                Text("\(number)")
+        VStack{
+            Text(gameText)
+                .font(.headline)
+                .foregroundColor(.primary)
+                .padding(.leading, 10)
+            
+            Picker(gameText, selection: $selectedChoice) {
+                ForEach(gameChoices, id: \.self){ number in
+                    Text("\(number)")
+                }
             }
+            .pickerViewModifier()
         }
-        .pickerViewModifier()
+
     }
 }
 
