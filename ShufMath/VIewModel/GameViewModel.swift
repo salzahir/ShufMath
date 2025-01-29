@@ -15,19 +15,44 @@ import SwiftUICore
 
 class GameViewModel: ObservableObject {
     
-    // MARK - Game property Constants
-    private let easyTimeLimit: Double = 15.0
-    private let mediumTimeLimit: Double = 10.0
-    private let hardTimeLimit: Double = 5.0
-    private let easyMaxMultiplier: Int = 6
-    private let mediumMaxMultiplier: Int = 10
-    private let hardMaxMultiplier: Int = 15
-    private let easyTotalQuestions: Int = 10
-    private let mediumTotalQuestions: Int = 20
-    private let hardTotalQuestions: Int = 30
-    private let easySkips: Int = 5
-    private let mediumSkips: Int = 3
-    private let hardSkips: Int = 1
+    /// MARK: - Game Constants
+      enum GameDifficultyConstants {
+          case easy
+          case medium
+          case hard
+          
+          var timeLimit: Double {
+              switch self {
+              case .easy: return 15.0
+              case .medium: return 10.0
+              case .hard: return 5.0
+              }
+          }
+          
+          var maxMultiplier: Int {
+              switch self {
+              case .easy: return 6
+              case .medium: return 10
+              case .hard: return 15
+              }
+          }
+          
+          var totalQuestions: Int {
+              switch self {
+              case .easy: return 10
+              case .medium: return 20
+              case .hard: return 30
+              }
+          }
+          
+          var skips: Int {
+              switch self {
+              case .easy: return 5
+              case .medium: return 3
+              case .hard: return 1
+              }
+          }
+      }
     
     // MARK - Published properties
     @Published var gameModel = GameModel()
@@ -159,48 +184,31 @@ class GameViewModel: ObservableObject {
     // Various game functions
     
     /// Sets up the difficulty before the game starts based on users choice
-    func setupGameDifficulty(Difficulty: GameModel.GameDifficulty){
-        useCustom = false
-        switch Difficulty {
-        case .easy:
-            setupEasyMode()
-        case .medium:
-            setupMediumMode()
-        case .hard:
-            setupHardMode()
-        // Absolute Chaos for the user can be the easiest game or hardest all goes
-        case .random:
-            setupRandomMode()
-        case .custom:
-            break
-            
-        @unknown default:
-            fatalError("Unknown game difficulty encountered")
-        }
-        // Update to reflect the chosen difficulty
-        gameDifficulty = Difficulty
-        playSoundEffect(sound: GameSounds.input)
-    }
-    
-    private func setupEasyMode() {
-        gameModel.maxMultiplier = gameMode == .multiplication ? 4 : 6
-        gameModel.totalQuestions = easyTotalQuestions
-        gameModel.skips = easySkips
-        timeLimit = easyTimeLimit
-    }
-    
-    private func setupMediumMode() {
-        gameModel.maxMultiplier = gameMode == .multiplication ? 8 : 10
-        gameModel.totalQuestions = mediumTotalQuestions
-        gameModel.skips = mediumSkips
-        timeLimit = mediumTimeLimit
-    }
-    
-    private func setupHardMode() {
-        gameModel.maxMultiplier = gameMode == .multiplication ? 12 : 15
-        gameModel.totalQuestions = hardTotalQuestions
-        gameModel.skips = hardSkips
-        timeLimit = hardTimeLimit
+    func setupGameDifficulty(Difficulty: GameModel.GameDifficulty) {
+          let constants: GameDifficultyConstants
+          
+          switch Difficulty {
+          case .easy:
+              constants = .easy
+          case .medium:
+              constants = .medium
+          case .hard:
+              constants = .hard
+          case .random:
+              setupRandomMode()
+              return
+          case .custom:
+              gameDifficulty = .custom
+              return
+          @unknown default:
+              fatalError("Unknown game difficulty encountered")
+          }
+          
+          gameModel.maxMultiplier = gameMode == .multiplication ? 4 : constants.maxMultiplier
+          gameModel.totalQuestions = constants.totalQuestions
+          gameModel.skips = constants.skips
+          timeLimit = constants.timeLimit
+          gameDifficulty = Difficulty
     }
     
     private func setupRandomMode(){
