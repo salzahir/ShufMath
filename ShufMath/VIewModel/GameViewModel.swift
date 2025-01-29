@@ -15,6 +15,20 @@ import SwiftUICore
 
 class GameViewModel: ObservableObject {
     
+    // MARK - Game property Constants
+    private let easyTimeLimit: Double = 15.0
+    private let mediumTimeLimit: Double = 10.0
+    private let hardTimeLimit: Double = 5.0
+    private let easyMaxMultiplier: Int = 6
+    private let mediumMaxMultiplier: Int = 10
+    private let hardMaxMultiplier: Int = 15
+    private let easyTotalQuestions: Int = 10
+    private let mediumTotalQuestions: Int = 20
+    private let hardTotalQuestions: Int = 30
+    private let easySkips: Int = 5
+    private let mediumSkips: Int = 3
+    private let hardSkips: Int = 1
+    
     // MARK - Published properties
     @Published var gameModel = GameModel()
     @Published var showAlert = false
@@ -170,23 +184,23 @@ class GameViewModel: ObservableObject {
     
     private func setupEasyMode() {
         gameModel.maxMultiplier = gameMode == .multiplication ? 4 : 6
-        gameModel.totalQuestions = 10
-        gameModel.skips = 5
-        timeLimit = 15
+        gameModel.totalQuestions = easyTotalQuestions
+        gameModel.skips = easySkips
+        timeLimit = easyTimeLimit
     }
     
     private func setupMediumMode() {
         gameModel.maxMultiplier = gameMode == .multiplication ? 8 : 10
-        gameModel.totalQuestions = 20
-        gameModel.skips = 3
-        timeLimit = 10
+        gameModel.totalQuestions = mediumTotalQuestions
+        gameModel.skips = mediumSkips
+        timeLimit = mediumTimeLimit
     }
     
     private func setupHardMode() {
         gameModel.maxMultiplier = gameMode == .multiplication ? 12 : 15
-        gameModel.totalQuestions = 30
-        gameModel.skips = 1
-        timeLimit = 5
+        gameModel.totalQuestions = hardTotalQuestions
+        gameModel.skips = hardSkips
+        timeLimit = hardTimeLimit
     }
     
     private func setupRandomMode(){
@@ -305,9 +319,8 @@ class GameViewModel: ObservableObject {
         gameModel.totalQuestions = 0
         gameModel.correctAnswers = 0
         gameModel.index = 0
-        
-        gameModel.questionsArr = [] // Clear the array first
-        gameState = .notStarted // Now change the state
+        gameModel.questionsArr = []
+        gameState = .notStarted
         extraMessage = ""
         gameModel.skips = 3
         useTimer = false
@@ -349,7 +362,6 @@ class GameViewModel: ObservableObject {
                 
         // End of the Game
         if isGameFinished(){
-            // Check if user has achieved a perfect game
             checkPerfectGame()
             return
         }
