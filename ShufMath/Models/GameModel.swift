@@ -67,4 +67,59 @@ struct GameModel{
         case NaN = "Not a number"
         case length = "Input length is too long"
     }
+    
+    /// MARK: - Game Constants
+      enum GameDifficultyConstants {
+          case easy
+          case medium
+          case hard
+          
+          // MARK: - Time Related
+          var timeLimit: Double {
+              switch self {
+              case .easy: return 15.0
+              case .medium: return 10.0
+              case .hard: return 5.0
+              }
+          }
+          
+          // MARK: - Game Parameters
+          var maxMultiplier: Int {
+              switch self {
+              case .easy: return 6
+              case .medium: return 10
+              case .hard: return 15
+              }
+          }
+          
+          var totalQuestions: Int {
+              switch self {
+              case .easy: return 10
+              case .medium: return 20
+              case .hard: return 30
+              }
+          }
+          
+          // MARK: - Player Aids
+          var skips: Int {
+              switch self {
+              case .easy: return 5
+              case .medium: return 3
+              case .hard: return 1
+              }
+          }
+          
+          // MARK: - Static Constants
+           static let maxInputLength = 5  // For input validation
+           static let timerInterval = 0.1  // For timer updates
+           static let defaultSkips = 3  // For reset
+           
+           // MARK: - Random Mode Ranges
+           static let randomMultiplierRange = 2...15
+           static let randomQuestionsRange = 1...30
+           static let randomSkipsRange = 1...5
+           static let randomTimeRange = 5.0...15.0
+      }
+    
+
 }

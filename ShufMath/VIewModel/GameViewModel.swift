@@ -14,46 +14,7 @@ import AVFoundation
 import SwiftUICore
 
 class GameViewModel: ObservableObject {
-    
-    /// MARK: - Game Constants
-      enum GameDifficultyConstants {
-          case easy
-          case medium
-          case hard
-          
-          var timeLimit: Double {
-              switch self {
-              case .easy: return 15.0
-              case .medium: return 10.0
-              case .hard: return 5.0
-              }
-          }
-          
-          var maxMultiplier: Int {
-              switch self {
-              case .easy: return 6
-              case .medium: return 10
-              case .hard: return 15
-              }
-          }
-          
-          var totalQuestions: Int {
-              switch self {
-              case .easy: return 10
-              case .medium: return 20
-              case .hard: return 30
-              }
-          }
-          
-          var skips: Int {
-              switch self {
-              case .easy: return 5
-              case .medium: return 3
-              case .hard: return 1
-              }
-          }
-      }
-    
+        
     // MARK - Published properties
     @Published var gameModel = GameModel()
     @Published var showAlert = false
@@ -84,6 +45,9 @@ class GameViewModel: ObservableObject {
         static let incorrect: SystemSoundID = 1006
         static let skip: SystemSoundID = 1113
     }
+    
+    // Create a type alias for easier access
+    typealias DifficultyConstants = GameModel.GameDifficultyConstants
     
     // MARK computed properties
     // Simplified variable name to show game is active for view
@@ -185,7 +149,7 @@ class GameViewModel: ObservableObject {
     
     /// Sets up the difficulty before the game starts based on users choice
     func setupGameDifficulty(Difficulty: GameModel.GameDifficulty) {
-          let constants: GameDifficultyConstants
+        let constants: DifficultyConstants
           
           switch Difficulty {
           case .easy:
@@ -211,13 +175,13 @@ class GameViewModel: ObservableObject {
           gameDifficulty = Difficulty
     }
     
-    private func setupRandomMode(){
-        gameModel.maxMultiplier = Int.random(in: 2...15)
-        gameModel.totalQuestions = Int.random(in: 1...30)
-        gameModel.skips = Int.random(in: 1...5)
+    private func setupRandomMode() {
+        gameModel.maxMultiplier = Int.random(in: DifficultyConstants.randomMultiplierRange)
+        gameModel.totalQuestions = Int.random(in: DifficultyConstants.randomQuestionsRange)
+        gameModel.skips = Int.random(in: DifficultyConstants.randomSkipsRange)
         gameMode = GameModel.GameMode.allCases.randomElement()
         useTimer = Bool.random()
-        timeLimit = Double.random(in: 5...15)
+        timeLimit = Double.random(in: DifficultyConstants.randomTimeRange)
     }
     
     /// Sets the game mode (e.g., multiplication, division, or mixed).
@@ -330,7 +294,7 @@ class GameViewModel: ObservableObject {
         gameModel.questionsArr = []
         gameState = .notStarted
         extraMessage = ""
-        gameModel.skips = 3
+        gameModel.skips = GameModel.GameDifficultyConstants.defaultSkips
         useTimer = false
         timerAmount = 0.0
         timesUp = false
@@ -449,7 +413,7 @@ class GameViewModel: ObservableObject {
         }
         
         // Simple math problems shouldn't have anyhting more than 5 numbers
-        if userInput.count > 5 {
+        if userInput.count > DifficultyConstants.maxInputLength {
             alertMessage = .length
         }
         
