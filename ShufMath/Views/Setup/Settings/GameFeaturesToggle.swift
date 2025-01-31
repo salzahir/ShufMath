@@ -21,8 +21,13 @@ struct GameFeatureToggles: View {
                 isEnabled: useRandom,
                 color: Color.random,
                 action: {
-                    viewModel.setupGameDifficulty(Difficulty: .random)
-                    useRandom.toggle()
+                    do {
+                        try viewModel.setupGameDifficulty(Difficulty: .random)
+                        useRandom.toggle()
+                    } catch {
+                        // Handle the error here, maybe display an alert or log it
+                        print("Error setting up game difficulty: \(error)")
+                    }
                 }
             )
                         
@@ -33,10 +38,16 @@ struct GameFeatureToggles: View {
                 isEnabled: viewModel.gameDifficulty == .custom,
                 color: Color.teal,
                 action: {
-                    viewModel.setupGameDifficulty(Difficulty: .custom)
-                isCustomSettingsPresented.toggle()
-                    viewModel.useCustom.toggle()
-            })
+                    do {
+                        try viewModel.setupGameDifficulty(Difficulty: .custom)
+                        isCustomSettingsPresented.toggle()
+                        viewModel.useCustom.toggle()
+                    } catch {
+                        // Handle the error here, for example, showing an alert
+                        print("Error setting up game difficulty: \(error)")
+                    }
+                }
+            )
             .sheet(isPresented: $isCustomSettingsPresented) {
                 CustomSettingsSheet(
                     viewModel: viewModel,

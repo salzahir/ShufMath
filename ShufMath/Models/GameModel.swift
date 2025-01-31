@@ -67,6 +67,8 @@ struct GameModel{
         case streakLost = "You lost your streak"
         case NaN = "Not a number"
         case length = "Input length is too long"
+        case gameLock = "Game Locked Game Error"
+        case invalidConfig = "Invalid Configuration of game Error"
     }
     
     // MARK: - Game Constants

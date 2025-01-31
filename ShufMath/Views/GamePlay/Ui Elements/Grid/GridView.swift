@@ -25,7 +25,7 @@ struct GridView: View {
                         item: item,
                         labelMessage: "Item \(item), current input \(viewModel.userInput)",
                         labelHint: "Press \(item)",
-                        action: {viewModel.addVal(value: item)}
+                        action: {viewModel.addValue(value: item)}
                     )
                     .padding(.vertical)
                     .padding(.horizontal)
@@ -37,7 +37,7 @@ struct GridView: View {
                     item: "<",
                     labelMessage: "Delete, Current Input: \(viewModel.userInput)",
                     labelHint: "Deletes the last digit entered",
-                    action: {viewModel.removeLastNumber()}
+                    action: {viewModel.removeLastDigit()}
                 )
 //                .padding(.vertical)
                 .padding(.horizontal)

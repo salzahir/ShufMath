@@ -59,6 +59,13 @@ class GameViewModel: ObservableObject {
         static let skip: SystemSoundID = 1113
     }
     
+    // MARK: - Game Errors
+    enum GameError: Error {
+        case gameLocked
+        case invalidConfiguration
+        case unknownError
+    }
+    
     // MARK: - Type Aliases
     typealias DifficultyConstants = GameModel.GameDifficultyConstants
     
@@ -100,7 +107,7 @@ class GameViewModel: ObservableObject {
     }
     
     // MARK: - Time Management
-    func timeDisplay(question: Question) -> String {
+    func formatTimeDisplay(question: Question) -> String {
         switch question.questionStatus {
         case .unanswered:
             return "Time Limit Exceeded (\(String(format: "%.2f", timeLimit)) seconds)"
@@ -136,12 +143,12 @@ class GameViewModel: ObservableObject {
     }
     
     // MARK: - Input Management
-    func addVal(value: String) {
+    func addValue(value: String) {
         userInput += value
         playSoundEffect(sound: GameSounds.input)
     }
     
-    func removeLastNumber() {
+    func removeLastDigit() {
         if !userInput.isEmpty {
             userInput.removeLast()
         }
@@ -154,7 +161,7 @@ class GameViewModel: ObservableObject {
     }
     
     // MARK: - Game Configuration
-    func setupGameDifficulty(Difficulty: GameModel.GameDifficulty) {
+    func setupGameDifficulty(Difficulty: GameModel.GameDifficulty) throws {
         let constants: DifficultyConstants
         
         switch Difficulty {
@@ -171,7 +178,8 @@ class GameViewModel: ObservableObject {
             gameDifficulty = .custom
             return
         @unknown default:
-            fatalError("Unknown game difficulty encountered")
+            print("Unknown game difficulty encountered")
+            throw GameError.invalidConfiguration
         }
         
         gameModel.maxMultiplier = gameMode == .multiplication ? 4 : constants.maxMultiplier
@@ -242,9 +250,10 @@ class GameViewModel: ObservableObject {
 
     /// Starts a new game session with the configured settings
     /// - Throws: Fatal error if game is started in locked state
-    func startGame() {
+    func startGame() throws {
         guard !gameLock else {
-            fatalError("Game started while in a locked state!")
+            print("Game started while in a locked state!")
+            throw GameError.gameLocked
         }
         
         let questionCount = useCustom ? gameModel.gameChoice : gameModel.totalQuestions
@@ -316,8 +325,7 @@ class GameViewModel: ObservableObject {
         }
         
         if let errorMessage = validInput() {
-            alertMessage = errorMessage
-            showAlert = true
+            showAlertMessage(message: errorMessage)
             return
         }
         
@@ -333,8 +341,7 @@ class GameViewModel: ObservableObject {
     
     // MARK: - Game State Handlers
     func handleTimeUp() {
-        alertMessage = .timesUp
-        showAlert = true
+        showAlertMessage(message: .timesUp)
         
         if gameModel.correctAnswers > 0 {
             gameModel.correctAnswers -= 1
@@ -363,8 +370,7 @@ class GameViewModel: ObservableObject {
             gameModel.skips -= 1
             resetQuestion()
         } else {
-            alertMessage = GameModel.AlertMessage.outOfSkips
-            showAlert = true
+            showAlertMessage(message: .outOfSkips)
         }
         
         playSoundEffect(sound: GameSounds.skip)
@@ -497,13 +503,23 @@ class GameViewModel: ObservableObject {
         // Resets input field
         userInput = ""
         
-        // Only reset midMessage after it's been shown
-        if gameModel.index != gameModel.midPoint{
-            extraMessage = ""
-        }
+        resetMidPointMessage()
         
         if useTimer{
             resetTimer()
         }
     }
+    
+    private func resetMidPointMessage() {
+        // Only reset midMessage after it's been shown
+        if gameModel.index != gameModel.midPoint{
+            extraMessage = ""
+        }
+    }
+    
+    private func showAlertMessage(message: GameModel.AlertMessage){
+        showAlert = true
+        alertMessage = message
+    }
 }
+

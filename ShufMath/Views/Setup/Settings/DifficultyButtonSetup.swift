@@ -38,7 +38,14 @@ struct DifficultyButtonsView: View {
         return GameSetupButton(
             buttonText: buttonText,
             buttonColor: buttonColor,
-            action: {viewModel.setupGameDifficulty(Difficulty: difficulty)}
+            action: {
+                do {
+                    try viewModel.setupGameDifficulty(Difficulty: difficulty)
+                } catch {
+                    // Handle the error here, maybe display an alert or print a message
+                    print("Error setting up game difficulty: \(error)")
+                }
+            }
         )
     }
 }
