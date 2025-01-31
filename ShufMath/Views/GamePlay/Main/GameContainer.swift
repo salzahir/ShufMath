@@ -25,7 +25,7 @@ struct GameContainer: View {
                     Color.clear
                     .sheet(isPresented: $viewModel.isGameOver, onDismiss: {viewModel.playAgain()}) {
                         GameOverView(viewModel: viewModel)
-                    }
+                }
             }
         }
         .navigationBarBackButtonHidden(true)

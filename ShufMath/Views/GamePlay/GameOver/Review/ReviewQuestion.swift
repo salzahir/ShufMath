@@ -23,7 +23,7 @@ struct ReviewQuestionView: View {
                 .reviewQuestionModifier()
             
             Text(gameQuestion.questionStatus.questionMessage)
-                .reviewQuestionModifier(color: gameQuestion.questionStatus.answerBackgroundColor)
+                .reviewQuestionModifier(color: gameQuestion.questionStatus.color)
         }
         
         HStack{

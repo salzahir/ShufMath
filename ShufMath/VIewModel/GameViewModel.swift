@@ -6,39 +6,52 @@
 //
 
 /// The GameViewModel class manages the state of the game and handles game logic.
-/// It is responsible for tracking the player's progress, managing the timer,
-/// generating questions, processing answers, and providing feedback to the player.
+/// It is responsible for:
+/// - Tracking player progress and statistics
+/// - Managing game timer and time-based events
+/// - Generating and processing math questions
+/// - Handling user input validation
+/// - Managing game difficulty settings
+/// - Providing audio feedback
+/// - Persisting user statistics
 
 import Foundation
 import AVFoundation
 import SwiftUICore
 
 class GameViewModel: ObservableObject {
-        
-    // MARK - Published properties
+    
+    // MARK: - Published Properties
+    /// Core game state properties that trigger view updates
     @Published var gameModel = GameModel()
-    @Published var showAlert = false
-    @Published var userInput: String = ""
     @Published var gameState: GameModel.GameState = .notStarted
+    @Published var showAlert = false
     @Published var alertMessage: GameModel.AlertMessage = .blank
     @Published var extraMessage = ""
+    
+    // MARK: - Game Configuration Variables
+    /// Properties that define the game's settings and configuration
+    @Published var userInput: String = ""
     @Published var gameDifficulty: GameModel.GameDifficulty? = nil
     @Published var gameMode: GameModel.GameMode? = nil
     @Published var useCustom: Bool = false
-
-    // MARK - Timer Properties
-    @Published var useTimer: Bool = false 
+    
+    // MARK: - Timer Configurations
+    /// Properties related to the game's timing system
+    @Published var useTimer: Bool = false
     @Published var timesUp: Bool = false
     @Published var timerAmount: Double = 0.0
     @Published var timeLimit: Double = 10.0
     @Published var timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
     @Published var incrementAmount: Double = 0.1
     
-    // MARK - Game Status Properties
+    // MARK: - Game Status
+    /// Properties that track the current game's status
     @Published var isGameOver: Bool = false
-    @Published var hadPerfectGame: Bool = false /// Set to true if all answers are correct and the game did not time out
+    @Published var hadPerfectGame: Bool = false
     
-    // MARK Sound Properties
+    // MARK: - Sound Properties
+    /// System sound IDs for different game events
     enum GameSounds {
         static let input: SystemSoundID = 1104
         static let correct: SystemSoundID = 1026
@@ -46,30 +59,31 @@ class GameViewModel: ObservableObject {
         static let skip: SystemSoundID = 1113
     }
     
-    // Create a type alias for easier access
+    // MARK: - Type Aliases
     typealias DifficultyConstants = GameModel.GameDifficultyConstants
     
-    // MARK computed properties
-    // Simplified variable name to show game is active for view
+    // MARK: - Computed Properties
+    /// Indicates whether a game is currently active
     var activeGame: Bool {
         gameModel.index < gameModel.totalQuestions && gameState == GameModel.GameState.inProgress
     }
     
-    /// Returns the game progress as a percentage (0.0 to 1.0).
-    /// Returns 0.0 if there are no questions.
-    var progress: Double{
+    /// Calculates the current progress as a percentage (0.0 to 1.0)
+    var progress: Double {
         gameModel.totalQuestions > 0 ? Double(gameModel.index) / Double(gameModel.totalQuestions) : 0.0
     }
     
-    var gameLock: Bool{
+    /// Determines if the game is in a state where it cannot be started
+    var gameLock: Bool {
         gameModel.totalQuestions == 0 && !useCustom || gameMode == nil || gameDifficulty == nil
     }
     
+    /// Combines the alert message with any extra message content
     var fullAlertMessage: String {
         "\(alertMessage.rawValue) \(extraMessage)".trimmingCharacters(in: .whitespaces)
     }
     
-    // MARK User Data Management
+    // MARK: - User Data Management
     func saveUserData() {
         if let savedUserData = try? JSONEncoder().encode(gameModel.userStats) {
             UserDefaults.standard.set(savedUserData, forKey: "userStats")
@@ -77,15 +91,15 @@ class GameViewModel: ObservableObject {
     }
     
     func loadUserData() {
-        if let loadedUserData = UserDefaults.standard.data(forKey: "userStats"){
+        if let loadedUserData = UserDefaults.standard.data(forKey: "userStats") {
             let decoder = JSONDecoder()
             if let decodedUserData = try? decoder.decode(UserStats.self, from: loadedUserData) {
                 gameModel.userStats = decodedUserData
             }
         }
     }
-
-    // MARK time Display Message
+    
+    // MARK: - Time Management
     func timeDisplay(question: Question) -> String {
         switch question.questionStatus {
         case .unanswered:
@@ -97,19 +111,14 @@ class GameViewModel: ObservableObject {
         }
     }
     
-    /// Updates the game timer, checking if the time limit has been reached.
-    /// If the time runs out, it processes the answer and resets the timer.
-    /// - Note: This method also cancels the timer if the time limit is reached.
-    func updateTimer(){
+    func updateTimer() {
         guard timerAmount <= timeLimit else {
             handleTimerOverflow()
             return
         }
-                
         timerAmount += incrementAmount
     }
     
-    // Stops Timer Overflow
     private func handleTimerOverflow() {
         timer.upstream.connect().cancel()
         useTimer = false
@@ -118,22 +127,20 @@ class GameViewModel: ObservableObject {
         resetTimer()
     }
     
-    // Reset the timer
     func resetTimer() {
-          timer.upstream.connect().cancel()
-          timerAmount = 0.0
-          useTimer = true
-          timesUp = false
-          timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
-      }
+        timer.upstream.connect().cancel()
+        timerAmount = 0.0
+        useTimer = true
+        timesUp = false
+        timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
+    }
     
-    /// Grid Related Functions
-    // MARK Input functions
+    // MARK: - Input Management
     func addVal(value: String) {
         userInput += value
         playSoundEffect(sound: GameSounds.input)
     }
-
+    
     func removeLastNumber() {
         if !userInput.isEmpty {
             userInput.removeLast()
@@ -141,38 +148,37 @@ class GameViewModel: ObservableObject {
         playSoundEffect(sound: GameSounds.input)
     }
     
+    // MARK: - Sound Management
     func playSoundEffect(sound: SystemSoundID) {
         AudioServicesPlaySystemSound(sound)
     }
-
-    // Various game functions
     
-    /// Sets up the difficulty before the game starts based on users choice
+    // MARK: - Game Configuration
     func setupGameDifficulty(Difficulty: GameModel.GameDifficulty) {
         let constants: DifficultyConstants
-          
-          switch Difficulty {
-          case .easy:
-              constants = .easy
-          case .medium:
-              constants = .medium
-          case .hard:
-              constants = .hard
-          case .random:
-              setupRandomMode()
-              return
-          case .custom:
-              gameDifficulty = .custom
-              return
-          @unknown default:
-              fatalError("Unknown game difficulty encountered")
-          }
-          
-          gameModel.maxMultiplier = gameMode == .multiplication ? 4 : constants.maxMultiplier
-          gameModel.totalQuestions = constants.totalQuestions
-          gameModel.skips = constants.skips
-          timeLimit = constants.timeLimit
-          gameDifficulty = Difficulty
+        
+        switch Difficulty {
+        case .easy:
+            constants = .easy
+        case .medium:
+            constants = .medium
+        case .hard:
+            constants = .hard
+        case .random:
+            setupRandomMode()
+            return
+        case .custom:
+            gameDifficulty = .custom
+            return
+        @unknown default:
+            fatalError("Unknown game difficulty encountered")
+        }
+        
+        gameModel.maxMultiplier = gameMode == .multiplication ? 4 : constants.maxMultiplier
+        gameModel.totalQuestions = constants.totalQuestions
+        gameModel.skips = constants.skips
+        timeLimit = constants.timeLimit
+        gameDifficulty = Difficulty
     }
     
     private func setupRandomMode() {
@@ -184,15 +190,14 @@ class GameViewModel: ObservableObject {
         timeLimit = Double.random(in: DifficultyConstants.randomTimeRange)
     }
     
-    /// Sets the game mode (e.g., multiplication, division, or mixed).
+    // MARK: - Game Mode Management
     func setGameMode(_ mode: GameModel.GameMode) {
         gameMode = mode
         playSoundEffect(sound: GameSounds.input)
     }
     
-    /// Generates an array of  type Question can either be multiplication or division or a chance at either one for mixed
+    // MARK: - Question Generation
     func generateQuestions(pracNumbers: Int, lengthQuestions: Int) -> [Question] {
-        
         var questions: [Question] = []
         
         for _ in 0..<lengthQuestions {
@@ -202,17 +207,12 @@ class GameViewModel: ObservableObject {
             let question = switch gameMode {
             case .multiplication:
                 makeMultiplicationQuestion(choice1: choice1, choice2: choice2)
-                
-            // Division Mode
             case .division:
                 divisionQuestion(choice1: choice1, choice2: choice2)
-                
-            // User Selected Mixed Settings
             case .mixed:
                 Bool.random() ?
                 makeMultiplicationQuestion(choice1: choice1, choice2: choice2) :
                 divisionQuestion(choice1: choice1, choice2: choice2)
-                
             case nil:
                 fatalError("Game Mode not set")
             }
@@ -221,35 +221,32 @@ class GameViewModel: ObservableObject {
         return questions
     }
     
-    /// Helper to make multiplication questions
+    // MARK: - Question Helpers
     private func makeMultiplicationQuestion(choice1: Int, choice2: Int) -> Question {
-        // Generate the question text
         let questionText = "What is \(choice1) x \(choice2)?"
-        let correctAnswer = Double(choice1 *  choice2)
+        let correctAnswer = Double(choice1 * choice2)
         
         return Question(questionText: questionText, correctAnswer: correctAnswer, useInteger: true, timeTaken: 0.0, questionStatus: .unanswered)
     }
     
-    /// Helper that generates division questions
     private func divisionQuestion(choice1: Int, choice2: Int) -> Question {
-        
         let questionText = "What is \(choice1) ÷ \(choice2)?"
         let correctAnswer = Double(choice1) / Double(choice2)
-        
         let useInteger = correctAnswer.truncatingRemainder(dividingBy: 1) == 0
-
+        
         return Question(questionText: questionText, correctAnswer: correctAnswer, useInteger: useInteger, timeTaken: 0.0, questionStatus: .unanswered)
     }
     
-    /// Starts the game with values that player chose in game setup view
-    func startGame(){
-        
+    // MARK: - Game Flow Control
+    /// Functions that control the core game loop and state transitions
+
+    /// Starts a new game session with the configured settings
+    /// - Throws: Fatal error if game is started in locked state
+    func startGame() {
         guard !gameLock else {
             fatalError("Game started while in a locked state!")
         }
         
-        // Sets the number of questions based on whether custom settings are used or not.
-        // If custom, it uses `gameChoice`; otherwise, it uses the default `totalQuestions`.
         let questionCount = useCustom ? gameModel.gameChoice : gameModel.totalQuestions
         gameModel.questionsArr = generateQuestions(pracNumbers: gameModel.maxMultiplier, lengthQuestions: questionCount)
         gameModel.questionsArr.shuffle()
@@ -260,13 +257,14 @@ class GameViewModel: ObservableObject {
         playSoundEffect(sound: GameSounds.input)
     }
     
-    /// Resets the game to default values after game is finished
+    // MARK: - Game Reset
     func playAgain() {
         updateStats()
         resetGameStats()
         playSoundEffect(sound: GameSounds.input)
     }
     
+    // MARK: - User Stats Management
     private func updateStats() {
         gameModel.userStats.updateUserStats(
             score: gameModel.correctAnswers,
@@ -274,18 +272,15 @@ class GameViewModel: ObservableObject {
             highestStreak: gameModel.highestStreak,
             hadPerfectGame: hadPerfectGame
         )
-       
+        
         saveUserData()
         
-        // Sets High Score after Game is Over
         if gameModel.correctAnswers > gameModel.highScore {
             gameModel.highScore = gameModel.correctAnswers
-            
         }
     }
     
     private func resetGameStats() {
-        // Reset Game Logic Resets Everything back to default values
         gameModel.currentStreak = 0
         gameModel.highestStreak = 0
         gameModel.totalQuestions = 0
@@ -306,87 +301,68 @@ class GameViewModel: ObservableObject {
         playSoundEffect(sound: GameSounds.input)
     }
     
-    /// Main logic point of processing the players answers go through several checks before completion
-    func processAnswer(isSkipping: Bool = false){
-        
-        // User ran out of time skip the question and adjust
-        // points accordingly
-        
+    // MARK: - Answer Processing
+    /// Processes the user's answer or handles skipping/timeout scenarios
+    /// - Parameter isSkipping: Boolean indicating if the user is skipping the question
+    func processAnswer(isSkipping: Bool = false) {
         if timesUp {
             handleTimeUp()
             return
         }
         
-        // Skipping Question Check
-        if isSkipping{
+        if isSkipping {
             skipQuestion()
             return
         }
         
-        // Valid Input Checker
-        if let errorMessage = validInput(){
+        if let errorMessage = validInput() {
             alertMessage = errorMessage
             showAlert = true
             return
         }
         
         handleGameProgress()
-                
-        // End of the Game
-        if isGameFinished(){
+        
+        if isGameFinished() {
             checkPerfectGame()
             return
         }
         
-        // Reset question state for the next round
         resetQuestion()
     }
     
-    /// Used when players opt to use a timer in the game handles time out answers
-    func handleTimeUp(){
-                
-        // Alert the user times up
+    // MARK: - Game State Handlers
+    func handleTimeUp() {
         alertMessage = .timesUp
         showAlert = true
         
-        // Decrement points if above 0
-        if gameModel.correctAnswers > 0{
+        if gameModel.correctAnswers > 0 {
             gameModel.correctAnswers -= 1
             extraMessage += "\n" + GameModel.AlertMessage.incorrectAnswer.rawValue
         }
         
         gameModel.questionsArr[gameModel.index].questionStatus = .incorrect
         
-        // Reset Timer State
         resetQuestion()
-                
         nextQuestion()
-                        
-        // Renable timer
         useTimer = true
         
         playSoundEffect(sound: GameSounds.incorrect)
-        return
     }
     
-    /// Helper when user decides to try to skip a question
     func skipQuestion() {
-        
         if gameModel.skips > 0 {
-                        
             gameModel.questionsArr[gameModel.index].questionStatus = .skipped
             nextQuestion()
             
-            if isGameFinished(alertMessage: GameModel.AlertMessage.lastQuestionSkipped){
+            if isGameFinished(alertMessage: GameModel.AlertMessage.lastQuestionSkipped) {
                 return
             }
-         
+            
             alertMessage = GameModel.AlertMessage.skippedQuestion
             gameModel.skips -= 1
             resetQuestion()
-        }
-        
-        else{
+        } else {
             alertMessage = GameModel.AlertMessage.outOfSkips
             showAlert = true
         }
@@ -394,17 +370,15 @@ class GameViewModel: ObservableObject {
         playSoundEffect(sound: GameSounds.skip)
     }
     
-    /// Helper to validate inputs
+    // MARK: - Input Validation
+    /// Validates user input for mathematical answers
+    /// - Returns: An error message if input is invalid, nil if valid
     private func validInput() -> GameModel.AlertMessage? {
-        
-        // Empty String Guard
         guard !userInput.isEmpty else {
-            
             return GameModel.AlertMessage.emptyInput
         }
         
-        // Valid Number Check
-        guard let _ = Double(userInput) else{
+        guard let _ = Double(userInput) else {
             return GameModel.AlertMessage.invalidInput
         }
         
@@ -412,61 +386,50 @@ class GameViewModel: ObservableObject {
             return GameModel.AlertMessage.NaN
         }
         
-        // Simple math problems shouldn't have anyhting more than 5 numbers
         if userInput.count > DifficultyConstants.maxInputLength {
             alertMessage = .length
         }
         
         return nil
-        
     }
     
+    // MARK: - Game Progress Management
     func handleGameProgress() {
         checkAnswer()
         halfwayCheck()
         nextQuestion()
     }
     
-    /// Does the actual comparison between user answer and correct answer
-    func checkAnswer(){
+    /// Checks the current answer against the correct answer and updates game state
+    func checkAnswer() {
+        guard let userAnswer = Double(userInput) else {return }
         
-        guard let userAnswer = Double(userInput) else {return}
-        
-        // Save userAnswer in the array to allow potential for review
         gameModel.questionsArr[gameModel.index].userAnswer = userAnswer
-        
         let correctAnswer = gameModel.questionsArr[gameModel.index].correctAnswer
         
         let isCorrect: Bool
-        
-        // Integer Handling
         if gameModel.questionsArr[gameModel.index].useInteger {
             isCorrect = userAnswer == correctAnswer
         } else {
-            isCorrect = abs(correctAnswer - userAnswer) < gameModel.marginCheck
+            isCorrect = abs(correctAnswer - userAnswer) < GameModel.marginCheck
         }
         
-        // Increment by 1 for correct answer
-        if isCorrect{
+        if isCorrect {
             handleCorrect()
-        }
-        
-        else{
+        } else {
             handleIncorrect()
         }
     }
     
-    /// Increments the player score for a correct answer
-    func handleCorrect(){
-        
+    func handleCorrect() {
         gameModel.correctAnswers += 1
         gameModel.currentStreak += 1
         alertMessage = GameModel.AlertMessage.correctAnswer
         
-        // Update highest streak if current streak exceeds it
         if gameModel.currentStreak > gameModel.highestStreak {
             gameModel.highestStreak = gameModel.currentStreak
         }
+        
         if useTimer {
             gameModel.questionsArr[gameModel.index].timeTaken += timerAmount
         }
@@ -475,17 +438,11 @@ class GameViewModel: ObservableObject {
         playSoundEffect(sound: GameSounds.correct)
     }
     
-    /// Wrong answer handles points accordingly
-    func handleIncorrect(){
-        
-        // Decrement only above 0 no negative points
+    func handleIncorrect() {
         if gameModel.correctAnswers > 0 {
             gameModel.correctAnswers -= 1
             alertMessage = GameModel.AlertMessage.incorrectAnswer
-        }
-        
-        // No negative points
-        else{
+        } else {
             alertMessage = GameModel.AlertMessage.incorrectNoPoint
         }
         
@@ -500,24 +457,19 @@ class GameViewModel: ObservableObject {
         }
         
         gameModel.questionsArr[gameModel.index].questionStatus = .incorrect
-
         playSoundEffect(sound: GameSounds.incorrect)
     }
     
-    /// Function to motivate the player to keep going once half way
-    func halfwayCheck(){
-        
-        // Commemorate the user if they are half way through the game
-        if gameModel.index+1 == gameModel.midPoint{
+    // MARK: - Game Progress Checks
+    func halfwayCheck() {
+        if gameModel.index + 1 == gameModel.midPoint {
             extraMessage = GameModel.AlertMessage.halfway.rawValue
         }
     }
     
-    /// Helper function to proceed to next question
-    func nextQuestion(){
+    func nextQuestion() {
         gameModel.index += 1
         let _ = isGameFinished()
-        return
     }
     
     /// Checks if the game is finished

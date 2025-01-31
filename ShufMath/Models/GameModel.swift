@@ -6,12 +6,13 @@
 //
 
 import Foundation
+
 /// Manages the core game logic for math practice, including question generation,
 /// scoring, and statistics tracking
 struct GameModel{
     
-    // Game properties
-    let marginCheck = 0.1     /// Margin of error for decimal answers (0.1)
+    // MARK: - Game Properties
+    static let marginCheck = 0.1     /// Margin of error for decimal answers (0.1)
     var userStats: UserStats = UserStats()
     var index = 0
     var totalQuestions = 0
@@ -26,14 +27,14 @@ struct GameModel{
     var currentStreak = 0
     var highestStreak = 0
 
-    /// Different possible game states
+    // MARK: - Game States
     enum GameState {
         case notStarted
         case inProgress
         case finished
     }
     
-    /// Different Difficulties available
+    // MARK: - Game Difficulties
     enum GameDifficulty: String {
         case easy = "Easy"
         case medium = "Medium"
@@ -41,15 +42,15 @@ struct GameModel{
         case custom = "Custom"
         case random = "Random"
     }
-    
-    /// The different game modes users can play (types of questions)
+
+    // MARK: - GameModes
     enum GameMode: String, CaseIterable {
         case multiplication = "Multiplication"
         case division = "Division"
         case mixed = "Mixed Mode"
     }
-    
-    /// Represents alert messages that may appear during the game.
+
+    // MARK: - Alert Messages
     enum AlertMessage: String {
         case blank = ""
         case selectDifficulty = "Please select a difficulty."
@@ -68,7 +69,7 @@ struct GameModel{
         case length = "Input length is too long"
     }
     
-    /// MARK: - Game Constants
+    // MARK: - Game Constants
       enum GameDifficultyConstants {
           case easy
           case medium
@@ -91,7 +92,7 @@ struct GameModel{
               case .hard: return 15
               }
           }
-          
+          // MARK: - Question Parameters
           var totalQuestions: Int {
               switch self {
               case .easy: return 10

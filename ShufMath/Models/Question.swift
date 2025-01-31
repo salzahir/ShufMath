@@ -18,12 +18,15 @@ struct Question: Codable, Identifiable {
     var timeTaken: Double
     var questionStatus: QuestionStatus
     
+
+    // MARK: - QuestionStatus
     enum QuestionStatus: Codable {
         case unanswered
         case correct
         case incorrect
         case skipped
         
+        // MARK: - Question Message
         var questionMessage: String {
             switch self {
                 case .unanswered: return "Unanswered"
@@ -32,14 +35,17 @@ struct Question: Codable, Identifiable {
                 case .skipped: return "Skipped"
             }
         }
-        
-        var answerBackgroundColor: Color {
-            switch self {
-                case .unanswered: return .gray
-                case .correct: return .green
-                case .incorrect: return .red
-                case .skipped: return .yellow
-            }
+    }
+}
+
+// MARK: - BackGround Colors
+extension Question.QuestionStatus {
+    var color: Color {
+        switch self {
+            case .unanswered: return .gray
+            case .correct: return .green
+            case .incorrect: return .red
+            case .skipped: return .yellow
         }
     }
 }
