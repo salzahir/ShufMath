@@ -69,6 +69,7 @@ struct GameModel{
         case length = "Input length is too long"
         case gameLock = "Game Locked Game Error"
         case invalidConfig = "Invalid Configuration of game Error"
+        case unknown = "Unknown Error"
     }
     
     // MARK: - Game Constants

@@ -16,14 +16,7 @@ struct StartingScreen: View {
                     GameSetupView(viewModel: viewModel)
                     
                     IconLabel(
-                        action: {
-                            do {
-                                try viewModel.startGame()
-                            } catch {
-                                // Handle the error here, maybe display an alert or log it
-                                print("Error starting game: \(error)")
-                            }
-                        },
+                        action: {viewModel.safeStartGame()},
                         buttonText: "Shuffle",
                         color: Color.clear,
                         image: "shuffle"

@@ -58,14 +58,7 @@ class GameViewModel: ObservableObject {
         static let incorrect: SystemSoundID = 1006
         static let skip: SystemSoundID = 1113
     }
-    
-    // MARK: - Game Errors
-    enum GameError: Error {
-        case gameLocked
-        case invalidConfiguration
-        case unknownError
-    }
-    
+        
     // MARK: - Type Aliases
     typealias DifficultyConstants = GameModel.GameDifficultyConstants
     
@@ -88,6 +81,36 @@ class GameViewModel: ObservableObject {
     /// Combines the alert message with any extra message content
     var fullAlertMessage: String {
         "\(alertMessage.rawValue) \(extraMessage)".trimmingCharacters(in: .whitespaces)
+    }
+    
+    // MARK: - Error Handling
+    /// Safe wrapper functions for core game operations that might fail
+    /// Safely attempts to start a new game with error handling
+    
+    enum GameError: Error {
+        case gameLocked
+        case invalidConfiguration
+        case unknownError
+    }
+    
+    func safeStartGame() {
+        do {
+            try startGame()
+        } catch GameError.gameLocked {
+            showAlertMessage(message: .gameLock)
+        } catch {
+            showAlertMessage(message: .unknown)
+        }
+    }
+    
+    func safeSetupDiff(difficulty: GameModel.GameDifficulty) {
+        do {
+            try setupGameDifficulty(Difficulty: difficulty)
+        } catch GameError.invalidConfiguration {
+            showAlertMessage(message: .invalidConfig)
+        } catch {
+            showAlertMessage(message: .unknown)
+        }
     }
     
     // MARK: - User Data Management
@@ -178,7 +201,6 @@ class GameViewModel: ObservableObject {
             gameDifficulty = .custom
             return
         @unknown default:
-            print("Unknown game difficulty encountered")
             throw GameError.invalidConfiguration
         }
         
@@ -517,9 +539,10 @@ class GameViewModel: ObservableObject {
         }
     }
     
-    private func showAlertMessage(message: GameModel.AlertMessage){
+    private func showAlertMessage(message: GameModel.AlertMessage, extra: String = ""){
         showAlert = true
         alertMessage = message
+        extraMessage = extra
     }
 }
 
