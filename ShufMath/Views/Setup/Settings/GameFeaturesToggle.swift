@@ -29,7 +29,11 @@ struct GameFeatureToggles: View {
                 title: "Custom",
                 isEnabled: viewModel.gameDifficulty == .custom,
                 color: Color.teal,
-                action: {viewModel.safeSetupDiff(difficulty: .custom)}
+                action: {
+                    viewModel.safeSetupDiff(difficulty: .custom)
+                    isCustomSettingsPresented.toggle()
+                    viewModel.useCustom.toggle()
+                }
             )
             .sheet(isPresented: $isCustomSettingsPresented) {
                 CustomSettingsSheet(
