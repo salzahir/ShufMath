@@ -18,6 +18,7 @@
 import Foundation
 import AVFoundation
 import SwiftUICore
+import os
 
 class GameViewModel: ObservableObject {
     
@@ -82,7 +83,9 @@ class GameViewModel: ObservableObject {
     var fullAlertMessage: String {
         "\(alertMessage.rawValue) \(extraMessage)".trimmingCharacters(in: .whitespaces)
     }
-    
+        
+    let logger = Logger(subsystem: "com.yourapp.identifier", category: "network")
+
     // MARK: - Error Handling
     /// Safe wrapper functions for core game operations that might fail
     /// Safely attempts to start a new game with error handling
@@ -120,10 +123,15 @@ class GameViewModel: ObservableObject {
     func safeStartGame() {
         do {
             try startGame()
-        } catch GameError.gameLocked {
-            showAlertMessage(message: .gameLock)
+        } catch GameError.gameLocked(let reason) {
+            showAlertMessage(message: .gameLock, extra: reason)
+            logger.error("Game is locked: \(reason)")
+        } catch GameError.invalidConfiguration(let details) {
+            showAlertMessage(message: .invalidConfig, extra: details)
+            logger.error("Invalid configuration: \(details)")
         } catch {
             showAlertMessage(message: .unknown)
+            logger.error("Unknown error: \(error)")
         }
     }
     
@@ -292,13 +300,17 @@ class GameViewModel: ObservableObject {
     }
     
     // MARK: - Game Flow Control
-    /// Functions that control the core game loop and state transitions
-
-    /// Starts a new game session with the configured settings
-    /// - Throws: Fatal error if game is started in locked state
+    /// Manages the core game loop and state transitions.
+    /// Starts a new game session with the configured settings.
+    /// - Throws: `GameError.gameLocked` if the game is in a locked state.
+    ///           `GameError.invalidGameMode` if no valid game mode is selected.
     func startGame() throws {
         guard !gameLock else {
             throw GameError.gameLocked(reason: "Game started while in a locked state!")
+        }
+        
+        guard let _ = gameMode else {
+            throw GameError.invalidGameMode
         }
         
         let questionCount = useCustom ? gameModel.gameChoice : gameModel.totalQuestions
