@@ -87,10 +87,34 @@ class GameViewModel: ObservableObject {
     /// Safe wrapper functions for core game operations that might fail
     /// Safely attempts to start a new game with error handling
     
-    enum GameError: Error {
-        case gameLocked
-        case invalidConfiguration
+    enum GameError: LocalizedError {
+        case gameLocked(reason: String)
+        case invalidConfiguration(details: String)
+        case invalidGameMode
+        case invalidInput(value: String)
+        case timerError(description: String)
+        case persistenceError(operation: String, underlyingError: String)
         case unknownError
+        
+        var errorDescription: String? {
+            switch self {
+            case .gameLocked(let reason):
+                return "Cannot start game: \(reason)"
+            case .invalidConfiguration(let details):
+                return "Invalid game configuration: \(details)"
+            case .invalidGameMode:
+                return "Game mode not properly set"
+            case .invalidInput(let value):
+                return "Invalid input provided: \(value)"
+            case .timerError(let description):
+                return "Timer error: \(description)"
+            case .persistenceError(let operation, let error):
+                return "Data persistence failed during \(operation): \(error)"
+            case .unknownError:
+                return "Unkown Error occurred during game operation"
+            }
+            
+        }
     }
     
     func safeStartGame() {
@@ -201,7 +225,7 @@ class GameViewModel: ObservableObject {
             gameDifficulty = .custom
             return
         @unknown default:
-            throw GameError.invalidConfiguration
+            throw GameError.invalidConfiguration(details: "Unknown Configuration")
         }
         
         gameModel.maxMultiplier = gameMode == .multiplication ? 4 : constants.maxMultiplier
@@ -274,8 +298,7 @@ class GameViewModel: ObservableObject {
     /// - Throws: Fatal error if game is started in locked state
     func startGame() throws {
         guard !gameLock else {
-            print("Game started while in a locked state!")
-            throw GameError.gameLocked
+            throw GameError.gameLocked(reason: "Game started while in a locked state!")
         }
         
         let questionCount = useCustom ? gameModel.gameChoice : gameModel.totalQuestions
