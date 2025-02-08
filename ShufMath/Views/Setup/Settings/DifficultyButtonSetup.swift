@@ -38,7 +38,7 @@ struct DifficultyButtonsView: View {
         return GameSetupButton(
             buttonText: buttonText,
             buttonColor: buttonColor,
-            action: {viewModel.setupGameDifficulty(Difficulty: difficulty)}
+            action: {viewModel.safeSetupDiff(difficulty: difficulty)}
         )
     }
 }

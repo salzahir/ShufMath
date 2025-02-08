@@ -18,6 +18,7 @@
 import Foundation
 import AVFoundation
 import SwiftUICore
+import os
 
 class GameViewModel: ObservableObject {
     
@@ -58,7 +59,7 @@ class GameViewModel: ObservableObject {
         static let incorrect: SystemSoundID = 1006
         static let skip: SystemSoundID = 1113
     }
-    
+        
     // MARK: - Type Aliases
     typealias DifficultyConstants = GameModel.GameDifficultyConstants
     
@@ -82,6 +83,67 @@ class GameViewModel: ObservableObject {
     var fullAlertMessage: String {
         "\(alertMessage.rawValue) \(extraMessage)".trimmingCharacters(in: .whitespaces)
     }
+        
+    let logger = Logger(subsystem: "com.yourapp.identifier", category: "network")
+
+    // MARK: - Error Handling
+    /// Safe wrapper functions for core game operations that might fail
+    /// Safely attempts to start a new game with error handling
+    
+    enum GameError: LocalizedError {
+        case gameLocked(reason: String)
+        case invalidConfiguration(details: String)
+        case invalidGameMode
+        case invalidInput(value: String)
+        case timerError(description: String)
+        case persistenceError(operation: String, underlyingError: String)
+        case unknownError
+        
+        var errorDescription: String? {
+            switch self {
+            case .gameLocked(let reason):
+                return "Cannot start game: \(reason)"
+            case .invalidConfiguration(let details):
+                return "Invalid game configuration: \(details)"
+            case .invalidGameMode:
+                return "Game mode not properly set"
+            case .invalidInput(let value):
+                return "Invalid input provided: \(value)"
+            case .timerError(let description):
+                return "Timer error: \(description)"
+            case .persistenceError(let operation, let error):
+                return "Data persistence failed during \(operation): \(error)"
+            case .unknownError:
+                return "Unkown Error occurred during game operation"
+            }
+            
+        }
+    }
+    
+    func safeStartGame() {
+        do {
+            try startGame()
+        } catch GameError.gameLocked(let reason) {
+            showAlertMessage(message: .gameLock, extra: reason)
+            logger.error("Game is locked: \(reason)")
+        } catch GameError.invalidConfiguration(let details) {
+            showAlertMessage(message: .invalidConfig, extra: details)
+            logger.error("Invalid configuration: \(details)")
+        } catch {
+            showAlertMessage(message: .unknown)
+            logger.error("Unknown error: \(error)")
+        }
+    }
+    
+    func safeSetupDiff(difficulty: GameModel.GameDifficulty) {
+        do {
+            try setupGameDifficulty(Difficulty: difficulty)
+        } catch GameError.invalidConfiguration {
+            showAlertMessage(message: .invalidConfig)
+        } catch {
+            showAlertMessage(message: .unknown)
+        }
+    }
     
     // MARK: - User Data Management
     func saveUserData() {
@@ -100,7 +162,7 @@ class GameViewModel: ObservableObject {
     }
     
     // MARK: - Time Management
-    func timeDisplay(question: Question) -> String {
+    func formatTimeDisplay(question: Question) -> String {
         switch question.questionStatus {
         case .unanswered:
             return "Time Limit Exceeded (\(String(format: "%.2f", timeLimit)) seconds)"
@@ -136,12 +198,12 @@ class GameViewModel: ObservableObject {
     }
     
     // MARK: - Input Management
-    func addVal(value: String) {
+    func addValue(value: String) {
         userInput += value
         playSoundEffect(sound: GameSounds.input)
     }
     
-    func removeLastNumber() {
+    func removeLastDigit() {
         if !userInput.isEmpty {
             userInput.removeLast()
         }
@@ -154,7 +216,7 @@ class GameViewModel: ObservableObject {
     }
     
     // MARK: - Game Configuration
-    func setupGameDifficulty(Difficulty: GameModel.GameDifficulty) {
+    func setupGameDifficulty(Difficulty: GameModel.GameDifficulty) throws {
         let constants: DifficultyConstants
         
         switch Difficulty {
@@ -171,7 +233,7 @@ class GameViewModel: ObservableObject {
             gameDifficulty = .custom
             return
         @unknown default:
-            fatalError("Unknown game difficulty encountered")
+            throw GameError.invalidConfiguration(details: "Unknown Configuration")
         }
         
         gameModel.maxMultiplier = gameMode == .multiplication ? 4 : constants.maxMultiplier
@@ -238,13 +300,17 @@ class GameViewModel: ObservableObject {
     }
     
     // MARK: - Game Flow Control
-    /// Functions that control the core game loop and state transitions
-
-    /// Starts a new game session with the configured settings
-    /// - Throws: Fatal error if game is started in locked state
-    func startGame() {
+    /// Manages the core game loop and state transitions.
+    /// Starts a new game session with the configured settings.
+    /// - Throws: `GameError.gameLocked` if the game is in a locked state.
+    ///           `GameError.invalidGameMode` if no valid game mode is selected.
+    func startGame() throws {
         guard !gameLock else {
-            fatalError("Game started while in a locked state!")
+            throw GameError.gameLocked(reason: "Game started while in a locked state!")
+        }
+        
+        guard let _ = gameMode else {
+            throw GameError.invalidGameMode
         }
         
         let questionCount = useCustom ? gameModel.gameChoice : gameModel.totalQuestions
@@ -316,8 +382,7 @@ class GameViewModel: ObservableObject {
         }
         
         if let errorMessage = validInput() {
-            alertMessage = errorMessage
-            showAlert = true
+            showAlertMessage(message: errorMessage)
             return
         }
         
@@ -333,8 +398,7 @@ class GameViewModel: ObservableObject {
     
     // MARK: - Game State Handlers
     func handleTimeUp() {
-        alertMessage = .timesUp
-        showAlert = true
+        showAlertMessage(message: .timesUp)
         
         if gameModel.correctAnswers > 0 {
             gameModel.correctAnswers -= 1
@@ -363,8 +427,7 @@ class GameViewModel: ObservableObject {
             gameModel.skips -= 1
             resetQuestion()
         } else {
-            alertMessage = GameModel.AlertMessage.outOfSkips
-            showAlert = true
+            showAlertMessage(message: .outOfSkips)
         }
         
         playSoundEffect(sound: GameSounds.skip)
@@ -497,13 +560,24 @@ class GameViewModel: ObservableObject {
         // Resets input field
         userInput = ""
         
-        // Only reset midMessage after it's been shown
-        if gameModel.index != gameModel.midPoint{
-            extraMessage = ""
-        }
+        resetMidPointMessage()
         
         if useTimer{
             resetTimer()
         }
     }
+    
+    private func resetMidPointMessage() {
+        // Only reset midMessage after it's been shown
+        if gameModel.index != gameModel.midPoint{
+            extraMessage = ""
+        }
+    }
+    
+    private func showAlertMessage(message: GameModel.AlertMessage, extra: String = ""){
+        showAlert = true
+        alertMessage = message
+        extraMessage = extra
+    }
 }
+

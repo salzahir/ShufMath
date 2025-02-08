@@ -34,7 +34,7 @@ struct ReviewQuestionView: View {
         .reviewQuestionModifier()
         
         if viewModel.useTimer{
-            Text(viewModel.timeDisplay(question: gameQuestion))
+            Text(viewModel.formatTimeDisplay(question: gameQuestion))
                 .reviewQuestionModifier()
         }
     }

@@ -20,10 +20,7 @@ struct GameFeatureToggles: View {
                 title: "Random?",
                 isEnabled: useRandom,
                 color: Color.random,
-                action: {
-                    viewModel.setupGameDifficulty(Difficulty: .random)
-                    useRandom.toggle()
-                }
+                action: {viewModel.safeSetupDiff(difficulty: .random)}
             )
                         
             TimerToggleButton(viewModel: viewModel)
@@ -33,10 +30,11 @@ struct GameFeatureToggles: View {
                 isEnabled: viewModel.gameDifficulty == .custom,
                 color: Color.teal,
                 action: {
-                    viewModel.setupGameDifficulty(Difficulty: .custom)
-                isCustomSettingsPresented.toggle()
+                    viewModel.safeSetupDiff(difficulty: .custom)
+                    isCustomSettingsPresented.toggle()
                     viewModel.useCustom.toggle()
-            })
+                }
+            )
             .sheet(isPresented: $isCustomSettingsPresented) {
                 CustomSettingsSheet(
                     viewModel: viewModel,

@@ -16,7 +16,7 @@ struct StartingScreen: View {
                     GameSetupView(viewModel: viewModel)
                     
                     IconLabel(
-                        action: {viewModel.startGame()},
+                        action: {viewModel.safeStartGame()},
                         buttonText: "Shuffle",
                         color: Color.clear,
                         image: "shuffle"
