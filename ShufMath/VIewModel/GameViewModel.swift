@@ -190,6 +190,7 @@ class GameViewModel: ObservableObject {
     }
     
     func resetTimer() {
+        guard useTimer else{return}
         timer.upstream.connect().cancel()
         timerAmount = 0.0
         useTimer = true
@@ -216,7 +217,7 @@ class GameViewModel: ObservableObject {
     }
     
     // MARK: - Game Configuration
-    func setupGameDifficulty(Difficulty: GameModel.GameDifficulty) throws {
+    private func setupGameDifficulty(Difficulty: GameModel.GameDifficulty) throws {
         let constants: DifficultyConstants
         
         switch Difficulty {
@@ -549,15 +550,12 @@ class GameViewModel: ObservableObject {
         
         // shows alert at the end
         showAlert = true
-                
+        
         // Resets input field
         userInput = ""
         
         resetMidPointMessage()
-        
-        if useTimer{
-            resetTimer()
-        }
+        resetTimer()
     }
     
     private func resetMidPointMessage() {
