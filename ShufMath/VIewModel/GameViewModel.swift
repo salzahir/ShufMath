@@ -84,7 +84,7 @@ class GameViewModel: ObservableObject {
         "\(alertMessage.rawValue) \(extraMessage)".trimmingCharacters(in: .whitespaces)
     }
         
-    let logger = Logger(subsystem: "com.yourapp.identifier", category: "network")
+    let logger = Logger(subsystem: "com.zah", category: "network")
 
     // MARK: - Error Handling
     /// Safe wrapper functions for core game operations that might fail
@@ -268,13 +268,13 @@ class GameViewModel: ObservableObject {
             
             let question = switch gameMode {
             case .multiplication:
-                makeMultiplicationQuestion(choice1: choice1, choice2: choice2)
+                makeQuestion(choice1: choice1, choice2: choice2, operation: { Double($0 * $1) }, symbol: "x")
             case .division:
-                divisionQuestion(choice1: choice1, choice2: choice2)
+                makeQuestion(choice1: choice1, choice2: choice2, operation: { Double($0) / Double($1) }, symbol: "÷")
             case .mixed:
                 Bool.random() ?
-                makeMultiplicationQuestion(choice1: choice1, choice2: choice2) :
-                divisionQuestion(choice1: choice1, choice2: choice2)
+                makeQuestion(choice1: choice1, choice2: choice2, operation: { Double($0 * $1) }, symbol: "x") :
+                makeQuestion(choice1: choice1, choice2: choice2, operation: { Double($0) / Double($1) }, symbol: "÷")
             case nil:
                 fatalError("Game Mode not set")
             }
@@ -282,20 +282,13 @@ class GameViewModel: ObservableObject {
         }
         return questions
     }
-    
+        
     // MARK: - Question Helpers
-    private func makeMultiplicationQuestion(choice1: Int, choice2: Int) -> Question {
-        let questionText = "What is \(choice1) x \(choice2)?"
-        let correctAnswer = Double(choice1 * choice2)
-        
-        return Question(questionText: questionText, correctAnswer: correctAnswer, useInteger: true, timeTaken: 0.0, questionStatus: .unanswered)
-    }
-    
-    private func divisionQuestion(choice1: Int, choice2: Int) -> Question {
-        let questionText = "What is \(choice1) ÷ \(choice2)?"
-        let correctAnswer = Double(choice1) / Double(choice2)
+    private func makeQuestion(choice1: Int, choice2: Int, operation: (Int, Int) -> Double, symbol: String) -> Question {
+        let questionText = "What is \(choice1) \(symbol) \(choice2)?"
+        let correctAnswer = operation(choice1, choice2)
         let useInteger = correctAnswer.truncatingRemainder(dividingBy: 1) == 0
-        
+
         return Question(questionText: questionText, correctAnswer: correctAnswer, useInteger: useInteger, timeTaken: 0.0, questionStatus: .unanswered)
     }
     
