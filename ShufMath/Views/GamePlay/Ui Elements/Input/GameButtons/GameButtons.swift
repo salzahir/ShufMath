@@ -15,7 +15,7 @@ struct GameButtons: View {
         HStack{
             IconLabel(
                 action: {
-                    viewModel.processAnswer()
+                    viewModel.handleAnswer()
                 },
                 buttonText: "Enter",
                 color: Color.green,
@@ -23,7 +23,7 @@ struct GameButtons: View {
             
             IconLabel(
                 action: {
-                    viewModel.processAnswer(isSkipping: true)
+                    viewModel.handleAnswer(isSkipping: true)
                 },
                 buttonText: "Skip",
                 color: Color.yellow,

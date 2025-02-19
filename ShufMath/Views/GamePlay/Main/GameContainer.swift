@@ -23,7 +23,7 @@ struct GameContainer: View {
                         .transition(.move(edge: .trailing))
                 case .finished:
                     Color.clear
-                    .sheet(isPresented: $viewModel.isGameOver, onDismiss: {viewModel.playAgain()}) {
+                    .sheet(isPresented: $viewModel.isGameOver, onDismiss: {viewModel.resetGame()}) {
                         GameOverView(viewModel: viewModel)
                 }
             }

@@ -39,11 +39,11 @@ class GameViewModel: ObservableObject {
     
     // MARK: - Timer Configurations
     /// Properties related to the game's timing system
+    var timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
     @Published var useTimer: Bool = false
     @Published var timesUp: Bool = false
     @Published var timerAmount: Double = 0.0
     @Published var timeLimit: Double = 10.0
-    @Published var timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
     @Published var incrementAmount: Double = 0.1
     
     // MARK: - Game Status
@@ -137,7 +137,7 @@ class GameViewModel: ObservableObject {
     
     func safeSetupDiff(difficulty: GameModel.GameDifficulty) {
         do {
-            try setupGameDifficulty(Difficulty: difficulty)
+            try setupGameDifficulty(difficulty: difficulty)
         } catch GameError.invalidConfiguration {
             showAlertMessage(message: .invalidConfig)
         } catch {
@@ -185,7 +185,7 @@ class GameViewModel: ObservableObject {
         timer.upstream.connect().cancel()
         useTimer = false
         timesUp = true
-        processAnswer()
+        handleAnswer()
         resetTimer()
     }
     
@@ -217,10 +217,10 @@ class GameViewModel: ObservableObject {
     }
     
     // MARK: - Game Configuration
-    private func setupGameDifficulty(Difficulty: GameModel.GameDifficulty) throws {
+    private func setupGameDifficulty(difficulty: GameModel.GameDifficulty) throws {
         let constants: DifficultyConstants
         
-        switch Difficulty {
+        switch difficulty {
         case .easy:
             constants = .easy
         case .medium:
@@ -241,7 +241,7 @@ class GameViewModel: ObservableObject {
         gameModel.totalQuestions = constants.totalQuestions
         gameModel.skips = constants.skips
         timeLimit = constants.timeLimit
-        gameDifficulty = Difficulty
+        gameDifficulty = difficulty
     }
     
     private func setupRandomMode() {
@@ -254,7 +254,7 @@ class GameViewModel: ObservableObject {
     }
     
     // MARK: - Game Mode Management
-    func setGameMode(_ mode: GameModel.GameMode) {
+    func setupGameMode(_ mode: GameModel.GameMode) {
         gameMode = mode
         playSoundEffect(sound: GameSounds.input)
     }
@@ -318,7 +318,7 @@ class GameViewModel: ObservableObject {
     }
     
     // MARK: - Game Reset
-    func playAgain() {
+    func resetGame() {
         updateStats()
         resetGameStats()
         playSoundEffect(sound: GameSounds.input)
@@ -364,7 +364,7 @@ class GameViewModel: ObservableObject {
     // MARK: - Answer Processing
     /// Processes the user's answer or handles skipping/timeout scenarios
     /// - Parameter isSkipping: Boolean indicating if the user is skipping the question
-    func processAnswer(isSkipping: Bool = false) {
+    func handleAnswer(isSkipping: Bool = false) {
         if timesUp {
             handleTimeUp()
             return
