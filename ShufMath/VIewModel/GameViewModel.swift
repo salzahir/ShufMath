@@ -254,6 +254,12 @@ class GameViewModel: ObservableObject {
     }
     
     // MARK: - Game Mode Management
+    /// Configures the game mode and plays a sound effect.
+    ///
+    /// This function sets the current game mode and provides audio feedback
+    /// when a mode is selected.
+    ///
+    /// - Parameter mode: The selected game mode of type `GameModel.GameMode`.
     func setupGameMode(_ mode: GameModel.GameMode) {
         gameMode = mode
         playSoundEffect(sound: GameSounds.input)
@@ -362,8 +368,18 @@ class GameViewModel: ObservableObject {
     }
     
     // MARK: - Answer Processing
-    /// Processes the user's answer or handles skipping/timeout scenarios
-    /// - Parameter isSkipping: Boolean indicating if the user is skipping the question
+
+    /// Processes the user's answer, handles skipping, or manages timeout scenarios.
+    ///
+    /// This function determines the appropriate action based on the current game state:
+    /// - If time has run out, it triggers the time-out handler.
+    /// - If the user chooses to skip, it moves to the next question.
+    /// - If the input is invalid, it displays an error message.
+    /// - Otherwise, it updates game progress and checks if the game is finished.
+    ///
+    /// - Parameter isSkipping: A Boolean indicating whether the user is skipping the current question.
+    ///   - `true`: The question is skipped, and the next one is loaded.
+    ///   - `false`: The answer is processed normally.
     func handleAnswer(isSkipping: Bool = false) {
         if timesUp {
             handleTimeUp()
@@ -518,7 +534,7 @@ class GameViewModel: ObservableObject {
     }
     
     // MARK: - Game Progress Checks
-    func halfwayCheck() {
+    private func halfwayCheck() {
         if gameModel.index + 1 == gameModel.midPoint {
             extraMessage = GameModel.AlertMessage.halfway.rawValue
         }
@@ -530,7 +546,7 @@ class GameViewModel: ObservableObject {
     }
     
     /// Checks if the game is finished
-    func isGameFinished(alertMessage: GameModel.AlertMessage? = nil) -> Bool{
+    func isGameFinished(alertMessage: GameModel.AlertMessage? = nil) -> Bool {
         if gameModel.index == gameModel.totalQuestions{
             gameState = GameModel.GameState.finished
             self.alertMessage = alertMessage ?? .blank
@@ -539,7 +555,7 @@ class GameViewModel: ObservableObject {
         return false
     }
     
-    func checkPerfectGame(){
+    private func checkPerfectGame() {
         if gameModel.correctAnswers == gameModel.totalQuestions{
             hadPerfectGame = true
         }
@@ -565,7 +581,7 @@ class GameViewModel: ObservableObject {
         }
     }
     
-    private func showAlertMessage(message: GameModel.AlertMessage, extra: String = ""){
+    private func showAlertMessage(message: GameModel.AlertMessage, extra: String = "") {
         showAlert = true
         alertMessage = message
         extraMessage = extra
