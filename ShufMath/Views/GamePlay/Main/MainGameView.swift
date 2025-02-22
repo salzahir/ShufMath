@@ -37,7 +37,7 @@ struct MainGameView: View {
         .toolbar{
             IconLabel(
                 action: {
-                    viewModel.playAgain()
+                    viewModel.resetGame()
                 },
                 buttonText: "Quit",
                 color: Color.red,

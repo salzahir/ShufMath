@@ -39,11 +39,11 @@ class GameViewModel: ObservableObject {
     
     // MARK: - Timer Configurations
     /// Properties related to the game's timing system
+    var timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
     @Published var useTimer: Bool = false
     @Published var timesUp: Bool = false
     @Published var timerAmount: Double = 0.0
     @Published var timeLimit: Double = 10.0
-    @Published var timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
     @Published var incrementAmount: Double = 0.1
     
     // MARK: - Game Status
@@ -84,7 +84,7 @@ class GameViewModel: ObservableObject {
         "\(alertMessage.rawValue) \(extraMessage)".trimmingCharacters(in: .whitespaces)
     }
         
-    let logger = Logger(subsystem: "com.yourapp.identifier", category: "network")
+    let logger = Logger(subsystem: "com.zah", category: "network")
 
     // MARK: - Error Handling
     /// Safe wrapper functions for core game operations that might fail
@@ -137,7 +137,7 @@ class GameViewModel: ObservableObject {
     
     func safeSetupDiff(difficulty: GameModel.GameDifficulty) {
         do {
-            try setupGameDifficulty(Difficulty: difficulty)
+            try setupGameDifficulty(difficulty: difficulty)
         } catch GameError.invalidConfiguration {
             showAlertMessage(message: .invalidConfig)
         } catch {
@@ -185,11 +185,12 @@ class GameViewModel: ObservableObject {
         timer.upstream.connect().cancel()
         useTimer = false
         timesUp = true
-        processAnswer()
+        handleAnswer()
         resetTimer()
     }
     
     func resetTimer() {
+        guard useTimer else{return}
         timer.upstream.connect().cancel()
         timerAmount = 0.0
         useTimer = true
@@ -216,10 +217,10 @@ class GameViewModel: ObservableObject {
     }
     
     // MARK: - Game Configuration
-    func setupGameDifficulty(Difficulty: GameModel.GameDifficulty) throws {
+    private func setupGameDifficulty(difficulty: GameModel.GameDifficulty) throws {
         let constants: DifficultyConstants
         
-        switch Difficulty {
+        switch difficulty {
         case .easy:
             constants = .easy
         case .medium:
@@ -240,7 +241,7 @@ class GameViewModel: ObservableObject {
         gameModel.totalQuestions = constants.totalQuestions
         gameModel.skips = constants.skips
         timeLimit = constants.timeLimit
-        gameDifficulty = Difficulty
+        gameDifficulty = difficulty
     }
     
     private func setupRandomMode() {
@@ -253,7 +254,13 @@ class GameViewModel: ObservableObject {
     }
     
     // MARK: - Game Mode Management
-    func setGameMode(_ mode: GameModel.GameMode) {
+    /// Configures the game mode and plays a sound effect.
+    ///
+    /// This function sets the current game mode and provides audio feedback
+    /// when a mode is selected.
+    ///
+    /// - Parameter mode: The selected game mode of type `GameModel.GameMode`.
+    func setupGameMode(_ mode: GameModel.GameMode) {
         gameMode = mode
         playSoundEffect(sound: GameSounds.input)
     }
@@ -268,13 +275,13 @@ class GameViewModel: ObservableObject {
             
             let question = switch gameMode {
             case .multiplication:
-                makeMultiplicationQuestion(choice1: choice1, choice2: choice2)
+                makeQuestion(choice1: choice1, choice2: choice2, operation: { Double($0 * $1) }, symbol: "x")
             case .division:
-                divisionQuestion(choice1: choice1, choice2: choice2)
+                makeQuestion(choice1: choice1, choice2: choice2, operation: { Double($0) / Double($1) }, symbol: "÷")
             case .mixed:
                 Bool.random() ?
-                makeMultiplicationQuestion(choice1: choice1, choice2: choice2) :
-                divisionQuestion(choice1: choice1, choice2: choice2)
+                makeQuestion(choice1: choice1, choice2: choice2, operation: { Double($0 * $1) }, symbol: "x") :
+                makeQuestion(choice1: choice1, choice2: choice2, operation: { Double($0) / Double($1) }, symbol: "÷")
             case nil:
                 fatalError("Game Mode not set")
             }
@@ -282,20 +289,13 @@ class GameViewModel: ObservableObject {
         }
         return questions
     }
-    
+        
     // MARK: - Question Helpers
-    private func makeMultiplicationQuestion(choice1: Int, choice2: Int) -> Question {
-        let questionText = "What is \(choice1) x \(choice2)?"
-        let correctAnswer = Double(choice1 * choice2)
-        
-        return Question(questionText: questionText, correctAnswer: correctAnswer, useInteger: true, timeTaken: 0.0, questionStatus: .unanswered)
-    }
-    
-    private func divisionQuestion(choice1: Int, choice2: Int) -> Question {
-        let questionText = "What is \(choice1) ÷ \(choice2)?"
-        let correctAnswer = Double(choice1) / Double(choice2)
+    private func makeQuestion(choice1: Int, choice2: Int, operation: (Int, Int) -> Double, symbol: String) -> Question {
+        let questionText = "What is \(choice1) \(symbol) \(choice2)?"
+        let correctAnswer = operation(choice1, choice2)
         let useInteger = correctAnswer.truncatingRemainder(dividingBy: 1) == 0
-        
+
         return Question(questionText: questionText, correctAnswer: correctAnswer, useInteger: useInteger, timeTaken: 0.0, questionStatus: .unanswered)
     }
     
@@ -324,7 +324,7 @@ class GameViewModel: ObservableObject {
     }
     
     // MARK: - Game Reset
-    func playAgain() {
+    func resetGame() {
         updateStats()
         resetGameStats()
         playSoundEffect(sound: GameSounds.input)
@@ -368,9 +368,19 @@ class GameViewModel: ObservableObject {
     }
     
     // MARK: - Answer Processing
-    /// Processes the user's answer or handles skipping/timeout scenarios
-    /// - Parameter isSkipping: Boolean indicating if the user is skipping the question
-    func processAnswer(isSkipping: Bool = false) {
+
+    /// Processes the user's answer, handles skipping, or manages timeout scenarios.
+    ///
+    /// This function determines the appropriate action based on the current game state:
+    /// - If time has run out, it triggers the time-out handler.
+    /// - If the user chooses to skip, it moves to the next question.
+    /// - If the input is invalid, it displays an error message.
+    /// - Otherwise, it updates game progress and checks if the game is finished.
+    ///
+    /// - Parameter isSkipping: A Boolean indicating whether the user is skipping the current question.
+    ///   - `true`: The question is skipped, and the next one is loaded.
+    ///   - `false`: The answer is processed normally.
+    func handleAnswer(isSkipping: Bool = false) {
         if timesUp {
             handleTimeUp()
             return
@@ -524,7 +534,7 @@ class GameViewModel: ObservableObject {
     }
     
     // MARK: - Game Progress Checks
-    func halfwayCheck() {
+    private func halfwayCheck() {
         if gameModel.index + 1 == gameModel.midPoint {
             extraMessage = GameModel.AlertMessage.halfway.rawValue
         }
@@ -536,7 +546,7 @@ class GameViewModel: ObservableObject {
     }
     
     /// Checks if the game is finished
-    func isGameFinished(alertMessage: GameModel.AlertMessage? = nil) -> Bool{
+    func isGameFinished(alertMessage: GameModel.AlertMessage? = nil) -> Bool {
         if gameModel.index == gameModel.totalQuestions{
             gameState = GameModel.GameState.finished
             self.alertMessage = alertMessage ?? .blank
@@ -545,7 +555,7 @@ class GameViewModel: ObservableObject {
         return false
     }
     
-    func checkPerfectGame(){
+    private func checkPerfectGame() {
         if gameModel.correctAnswers == gameModel.totalQuestions{
             hadPerfectGame = true
         }
@@ -556,15 +566,12 @@ class GameViewModel: ObservableObject {
         
         // shows alert at the end
         showAlert = true
-                
+        
         // Resets input field
         userInput = ""
         
         resetMidPointMessage()
-        
-        if useTimer{
-            resetTimer()
-        }
+        resetTimer()
     }
     
     private func resetMidPointMessage() {
@@ -574,7 +581,7 @@ class GameViewModel: ObservableObject {
         }
     }
     
-    private func showAlertMessage(message: GameModel.AlertMessage, extra: String = ""){
+    private func showAlertMessage(message: GameModel.AlertMessage, extra: String = "") {
         showAlert = true
         alertMessage = message
         extraMessage = extra

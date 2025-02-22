@@ -15,17 +15,17 @@ struct GameModeSelector: View {
             GameSetupButton(
                 buttonText: "×",
                 buttonColor: viewModel.gameMode == .multiplication ? Color.pink : Color.pink.opacity(0.25),
-                action: {viewModel.setGameMode(.multiplication)}
+                action: {viewModel.setupGameMode(.multiplication)}
             )
             GameSetupButton(
                 buttonText: "÷",
                 buttonColor: viewModel.gameMode == .division ? Color.indigo : Color.indigo.opacity(0.25),
-                action: {viewModel.setGameMode(.division)}
+                action: {viewModel.setupGameMode(.division)}
             )
             GameSetupButton(
                 buttonText: "Mix",
                 buttonColor: viewModel.gameMode == .mixed ? Color.mint : Color.mint.opacity(0.25),
-                action: {viewModel.setGameMode(.mixed)}
+                action: {viewModel.setupGameMode(.mixed)}
             )
         }
     }

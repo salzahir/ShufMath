@@ -42,7 +42,7 @@ struct GameOverView: View {
                     
                     Button {
                         dismiss()
-                        viewModel.playAgain()
+                        viewModel.resetGame()
                     } label: {
                         Text("Play Again")
                             .frame(maxWidth: .infinity)
